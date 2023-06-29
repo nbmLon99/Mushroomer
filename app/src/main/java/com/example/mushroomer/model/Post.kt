@@ -1,7 +1,5 @@
 package com.example.mushroomer.model
 
-import android.os.Parcel
-import android.os.Parcelable
 import java.util.Date
 
 const val UNDEFINED : Long =  -1L;

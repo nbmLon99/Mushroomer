@@ -1,4 +1,4 @@
 package com.example.mushroomer.data.posts
 
-interface PostRepository {
+interface PostsRepository {
 }
