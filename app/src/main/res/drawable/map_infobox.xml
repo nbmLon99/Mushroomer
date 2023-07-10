@@ -1,0 +1,5 @@
+<!-- rounded_background.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="20dp" /> <!-- 라운딩 반지름 설정 -->
+    <solid android:color="#FFF" /> <!-- 배경 색상 설정 -->
+</shape>
