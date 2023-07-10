@@ -7,4 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="mainGrren">0x8BB868</color>
+    <color name="chatPurple">0x501DBD</color>
 </resources>
