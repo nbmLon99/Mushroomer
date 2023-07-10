@@ -8,8 +8,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="trans">0x00000000</color>
+    <color name="trans">#00000000</color>
 
-    <color name="mainGrren">0x8BB868</color>
-    <color name="chatPurple">0x501DBD</color>
+    <color name="mainGreen">#8BB868</color>
+    <color name="chatPurple">#501DBD</color>
+    <color name="bgGray">#0F000000</color>
 </resources>
