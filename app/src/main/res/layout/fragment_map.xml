@@ -15,7 +15,7 @@
     <TextView
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/map_infobox"
+        android:background="@drawable/bg_map_infobox"
 
         android:text="송이버섯 , 2007-01-01"
         android:textStyle="bold"
