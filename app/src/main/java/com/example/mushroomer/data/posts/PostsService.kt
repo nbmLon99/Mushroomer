@@ -1,6 +1,6 @@
 package com.example.mushroomer.data.posts
 
-import android.telecom.Call
+import retrofit2.Call
 import com.example.mushroomer.model.Post
 import retrofit2.http.GET
 
