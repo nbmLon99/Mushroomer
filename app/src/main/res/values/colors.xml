@@ -14,6 +14,7 @@
     <color name="chatPurple">#501DBD</color>
     <color name="bgGray">#0F000000</color>
     <color name="bgDark">#BB000000</color>
-    
     <color name="negativeRed">#B85050</color>
+
+    <color name="progressBar">#CCC077</color>
 </resources>
