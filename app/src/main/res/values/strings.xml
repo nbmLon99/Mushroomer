@@ -13,5 +13,10 @@
     <string name="typeEat">식용 버섯</string>
     <string name="typePoison">독버섯</string>
 
+    <!-- 카메라 프래그먼트 -->
+    <string name="startCheck">검사시작!</string>
+    <string name="closeCheck">취소</string>
+    <string name="positiveBtn">네, 이대로 검사를 진행하겠습니다!</string>
+    <string name="negativeBtn">아니요, 추가 촬영 후 진행하겠습니다!</string>
 
 </resources>
