@@ -8,6 +8,6 @@ interface PostsService {
     @GET("/Board")
     fun getPostsByIdx(): Call<Post>
 
-    
+
 
 }
