@@ -1,3 +1,5 @@
+package com.example.mushroomer.ui.camera
+
 import android.Manifest
 import android.content.pm.PackageManager
 import android.hardware.camera2.CameraAccessException
