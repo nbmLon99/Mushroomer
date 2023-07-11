@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
 
 //         뷰 바인딩을 통해 바텀 네비게이션 뷰 참조
         val bottomNavigationView = binding.bottomNavigationView
+        bottomNavigationView.selectedItemId = R.id.camera
 
         bottomNavigationView.setOnItemSelectedListener  { menuItem ->
             when (menuItem.itemId) {
@@ -60,7 +61,7 @@ class MainActivity : AppCompatActivity() {
 
         // 초기 프래그먼트를 설정
         supportFragmentManager.beginTransaction()
-            .replace(R.id.FragmentContainer, DogamFragment())
+            .replace(R.id.FragmentContainer, CameraFragment())
             .commit()
     }
 }
