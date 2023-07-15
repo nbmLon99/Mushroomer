@@ -11,50 +11,50 @@
     <string name="undiscoverDisplay">발견 못한 버섯도 함께 보기</string>
     <string name="content">특징</string>
 
+    <string name="myMushPictures">나의 발견</string>
+
+
+    <!-- 도감 다이얼로그 -->
+    <string name="typeEat">식용 버섯</string>
+    <string name="typePoison">독버섯</string>
+    <string name="startCheck">검사시작!</string>
+    <string name="closeCheck">취소</string>
+
+    <!-- 카메라 프래그먼트 -->
+    <string name="positiveBtn">네, 이대로 검사를 진행하겠습니다!</string>
+    <string name="negativeBtn">아니요, 추가 촬영 후 진행하겠습니다!</string>
+    <string name="title_profile">내 정보</string>
+    <string name="subtitle_id">계정</string>
+
+
+    <!-- 프로필 프래그먼트 -->
+    <string name="subtitle_app">앱 설정</string>
+
+    <string name="subtitle_other">기타</string>
+    <string name="chg_id_pwd">비밀번호 변경</string>
+    <string name="chg_id_email">이메일 변경</string>
+
+
+    <string name="chg_id_nickname">닉네임 변경</string>
+    <string name="chg_id_exit">회원 탈퇴</string>
+    <string name="chg_app_login">로그인 방법 변경</string>
+    <string name="chg_oth_logout">로그아웃</string>
+
+    <string name="showMorePosts">더 보기</string>
+
+
+    <!--커뮤 프래그먼트 -->
+    <string name="QnABoard">버섯 Q&amp;A</string>
+    <string name="myPicBoard">버섯 자랑</string>
+    <string name="FreeBoard">자유게시판</string>
+    <string name="sort_time">최신순</string>
+
+    <string name="sort_like">추천순</string>
     <string-array name="sorting_item">
         <item>도감넘버</item>
         <item>희귀도</item>
         <item>이름</item>
     </string-array>
-
-
-    <!-- 도감 다이얼로그 -->
-    <string name="myMushPictures">나의 발견</string>
-    <string name="typeEat">식용 버섯</string>
-    <string name="typePoison">독버섯</string>
-    <string name="startCheck">검사시작!</string>
-
-    <!-- 카메라 프래그먼트 -->
-    <string name="closeCheck">취소</string>
-    <string name="positiveBtn">네, 이대로 검사를 진행하겠습니다!</string>
-    <string name="negativeBtn">아니요, 추가 촬영 후 진행하겠습니다!</string>
-    <string name="title_profile">내 정보</string>
-
-
-    <!-- 프로필 프래그먼트 -->
-    <string name="subtitle_id">계정</string>
-
-    <string name="subtitle_app">앱 설정</string>
-    <string name="subtitle_other">기타</string>
-    <string name="chg_id_pwd">비밀번호 변경</string>
-
-
-    <string name="chg_id_email">이메일 변경</string>
-    <string name="chg_id_nickname">닉네임 변경</string>
-    <string name="chg_id_exit">회원 탈퇴</string>
-    <string name="chg_app_login">로그인 방법 변경</string>
-
-    <string name="chg_oth_logout">로그아웃</string>
-
-
-    <!--커뮤 프래그먼트 -->
-    <string name="showMorePosts">더 보기</string>
-    <string name="QnABoard">버섯 Q&amp;A</string>
-    <string name="myPicBoard">버섯 자랑</string>
-    <string name="FreeBoard">자유게시판</string>
-
-    <string name="sort_time">최신순</string>
-    <string name="sort_like">추천순</string>
 
 
 </resources>
