@@ -48,6 +48,11 @@
 
 
     <!--커뮤 프래그먼트 -->
+    <string name="showMorePosts">더 보기</string>
+    <string name="QnABoard">버섯 Q&amp;A</string>
+    <string name="myPicBoard">버섯 자랑</string>
+    <string name="FreeBoard">자유게시판</string>
+
     <string-array name="sorting_post">
         <item>추천순</item>
         <item>최신순</item>
