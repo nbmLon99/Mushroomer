@@ -1,39 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="180dp"
     android:layout_height="220dp"
-
-    android:padding="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     >
-    <LinearLayout
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-        <ImageView
+        app:cardCornerRadius="16dp"
+        app:cardElevation="5dp"
+        android:layout_margin="5dp"
+
+        >
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:src="@drawable/example_mushroom"
-            android:scaleType="fitXY"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:src="@drawable/example_mushroom"
+                android:scaleType="fitXY"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+
+                android:text="송이버섯"
+                android:textSize="14sp"
+                android:gravity="center"
+                />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/undiscoveredCover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:background="@color/bgDark"
+            android:visibility="gone"
             />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
 
-            android:text="송이버섯"
-            android:textSize="14sp"
-            android:gravity="center"
-            />
-    </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
-    <FrameLayout
-        android:id="@+id/undiscoveredCover"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-
-        android:background="@color/bgDark"
-        android:visibility="gone"
-        />
 </FrameLayout>
