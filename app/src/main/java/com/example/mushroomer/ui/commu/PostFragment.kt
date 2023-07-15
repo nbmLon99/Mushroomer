@@ -58,3 +58,30 @@ class PostFragment : Fragment() {
             }
     }
 }
+
+
+/**
+ *
+ * val radioGroup = findViewById<RadioGroup>(R.id.radio_group)
+val radioButton1 = findViewById<RadioButton>(R.id.radio_button_1)
+val radioButton2 = findViewById<RadioButton>(R.id.radio_button_2)
+
+radioGroup.setOnCheckedChangeListener { _, checkedId ->
+when (checkedId) {
+R.id.radio_button_1 -> {
+radioButton1.setTypeface(null, Typeface.BOLD)
+radioButton1.paintFlags = radioButton1.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+
+radioButton2.setTypeface(null, Typeface.NORMAL)
+radioButton2.paintFlags = radioButton2.paintFlags and Paint.UNDERLINE_TEXT_FLAG.inv()
+}
+R.id.radio_button_2 -> {
+radioButton2.setTypeface(null, Typeface.BOLD)
+radioButton2.paintFlags = radioButton2.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+
+radioButton1.setTypeface(null, Typeface.NORMAL)
+radioButton1.paintFlags = radioButton1.paintFlags and Paint.UNDERLINE_TEXT_FLAG.inv()
+}
+}
+}
+ */

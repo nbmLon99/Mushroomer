@@ -33,7 +33,7 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:padding="10dp"
-            android:layout_marginRight="30dp"
+            android:layout_marginRight="10dp"
 
             android:src="@drawable/icons_search"
 

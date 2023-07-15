@@ -53,10 +53,8 @@
     <string name="myPicBoard">버섯 자랑</string>
     <string name="FreeBoard">자유게시판</string>
 
-    <string-array name="sorting_post">
-        <item>추천순</item>
-        <item>최신순</item>
-    </string-array>
+    <string name="sort_time">최신순</string>
+    <string name="sort_like">추천순</string>
 
 
 </resources>
