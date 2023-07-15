@@ -10,6 +10,14 @@
     <string name="sorting">정렬 기준</string>
     <string name="undiscoverDisplay">발견 못한 버섯도 함께 보기</string>
 
+    <string-array name="sorting_item">
+        <item>도감넘버</item>
+        <item>희귀도</item>
+        <item>이름</item>
+    </string-array>
+
+
+
     <!-- 도감 다이얼로그 -->
     <string name="content">특징</string>
     <string name="myMushPictures">나의 발견</string>
@@ -22,9 +30,23 @@
     <string name="positiveBtn">네, 이대로 검사를 진행하겠습니다!</string>
     <string name="negativeBtn">아니요, 추가 촬영 후 진행하겠습니다!</string>
 
-    <string-array name="sorting_item">
-        <item>도감넘버</item>
-        <item>희귀도</item>
-        <item>이름</item>
-    </string-array>
+
+    <!-- 프로필 프래그먼트 -->
+    <string name="title_profile">내 정보</string>
+
+    <string name="subtitle_id">계정</string>
+    <string name="subtitle_app">앱 설정</string>
+    <string name="subtitle_other">기타</string>
+
+
+    <string name="chg_id_pwd">비밀번호 변경</string>
+    <string name="chg_id_email">이메일 변경</string>
+    <string name="chg_id_nickname">닉네임 변경</string>
+    <string name="chg_id_exit">회원 탈퇴</string>
+
+    <string name="chg_app_login">로그인 방법 변경</string>
+
+    <string name="chg_oth_logout">로그아웃</string>
+
+
 </resources>
