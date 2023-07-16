@@ -12,7 +12,7 @@
         />
     <item
         android:id="@+id/camera"
-        android:icon="@drawable/icons_hom"
+        android:icon="@drawable/icons_home"
         android:title="홈"
         />
     <item
