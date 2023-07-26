@@ -12,9 +12,13 @@
 
     <color name="mainGreen">#8BB868</color>
     <color name="textGreen">#006644</color>
+    <color name="SecondGreen">#33003E0E</color>
+
     <color name="likeRed">#FF0000</color>
     <color name="chatPurple">#501DBD</color>
+    <color name="textGray">#333</color>
     <color name="bgGray">#0F000000</color>
+
     <color name="bgWhite">#AFFF</color>
     <color name="bgDark">#BB000000</color>
     <color name="negativeRed">#B85050</color>

@@ -66,6 +66,17 @@
     <string name="sort_time">최신순</string>
     <string name="myPosts">내가 쓴 글</string>
     <string name="myComment">내가 쓴 댓글</string>
+    <string name="Reporting">신고</string>
+    <string name="ReportingReasonText">신고하려는 이유를 선택해주세요.</string>
+
+
+    <string name="ReportingReason1">1. 스팸 또는 광고</string>
+    <string name="ReportingReason2">2. 음란물</string>
+    <string name="ReportingReason3">3. 과도한 욕설</string>
+    <string name="ReportingReason4">4. 잘못된 정보</string>
+    <string name="ReportingReason5">5. 유해하거나 위험한 행위</string>
+    <string name="ReportingReason6">6. 권리 침해</string>
+
 
     <string name="writing">글 쓰기</string>
     <string name="uploading">등록</string>
