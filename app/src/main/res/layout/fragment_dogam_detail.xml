@@ -86,7 +86,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:padding="16dp"
+                android:padding="10dp"
                 android:text="@string/content"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -116,7 +116,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:padding="16dp"
+                android:padding="10dp"
                 android:text="@string/myMushPictures"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -131,7 +131,7 @@
 
                 tools:listitem="@layout/item_mushpictures"
                 android:paddingVertical="10dp"
-                android:paddingHorizontal="16dp"
+                android:paddingHorizontal="8dp"
                 >
 
             </androidx.recyclerview.widget.RecyclerView>
@@ -142,7 +142,7 @@
             android:id="@+id/rarity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingVertical="10dp"
+            android:paddingVertical="5dp"
 
             android:text="전체 사용자 중 20%만이 이 버섯을 발견하였습니다!"
             android:textAlignment="center"
