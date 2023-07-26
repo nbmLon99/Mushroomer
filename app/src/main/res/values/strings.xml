@@ -38,6 +38,7 @@
     <string name="negativeBtn">아니요, 추가 촬영 후 진행하겠습니다!</string>
     <string name="title_profile">내 정보</string>
     <string name="subtitle_id">계정</string>
+    <string name="new_mush">NEW!!</string>
 
 
     <!-- 프로필 프래그먼트 -->
