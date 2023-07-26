@@ -67,6 +67,12 @@
     <string name="myPosts">내가 쓴 글</string>
     <string name="myComment">내가 쓴 댓글</string>
 
+    <string name="writing">글 쓰기</string>
+    <string name="uploading">등록</string>
+
+    <string name="showDetails"><u><b>자세히 보기</b></u></string>
+    <string name="CommuRules"><u><b>커뮤니티 이용 규칙</b></u></string>
+
 
     <string name="sort_like">추천순</string>
     <string-array name="sorting_item">
