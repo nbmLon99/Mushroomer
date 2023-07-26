@@ -64,6 +64,8 @@
     <string name="HotBoard">인기게시판</string>
     <string name="HotRules">추천수 N개 이상의 게시글들입니다.</string>
     <string name="sort_time">최신순</string>
+    <string name="myPosts">내가 쓴 글</string>
+    <string name="myComment">내가 쓴 댓글</string>
 
 
     <string name="sort_like">추천순</string>
