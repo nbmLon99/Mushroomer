@@ -14,10 +14,10 @@ private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [PostFragment.newInstance] factory method to
+ * Use the [CommuFragment_hot.newInstance] factory method to
  * create an instance of this fragment.
  */
-class PostFragment : Fragment() {
+class CommuFragment_hot : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -35,7 +35,7 @@ class PostFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_post, container, false)
+        return inflater.inflate(R.layout.fragment_commu_hot, container, false)
     }
 
     companion object {
@@ -45,12 +45,12 @@ class PostFragment : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment PostFragment.
+         * @return A new instance of fragment CommuFragment_hot.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            PostFragment().apply {
+            CommuFragment_hot().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)
@@ -58,30 +58,3 @@ class PostFragment : Fragment() {
             }
     }
 }
-
-
-/**
- *
- * val radioGroup = findViewById<RadioGroup>(R.id.radio_group)
-val radioButton1 = findViewById<RadioButton>(R.id.radio_button_1)
-val radioButton2 = findViewById<RadioButton>(R.id.radio_button_2)
-
-radioGroup.setOnCheckedChangeListener { _, checkedId ->
-when (checkedId) {
-R.id.radio_button_1 -> {
-radioButton1.setTypeface(null, Typeface.BOLD)
-radioButton1.paintFlags = radioButton1.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-
-radioButton2.setTypeface(null, Typeface.NORMAL)
-radioButton2.paintFlags = radioButton2.paintFlags and Paint.UNDERLINE_TEXT_FLAG.inv()
-}
-R.id.radio_button_2 -> {
-radioButton2.setTypeface(null, Typeface.BOLD)
-radioButton2.paintFlags = radioButton2.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-
-radioButton1.setTypeface(null, Typeface.NORMAL)
-radioButton1.paintFlags = radioButton1.paintFlags and Paint.UNDERLINE_TEXT_FLAG.inv()
-}
-}
-}
- */

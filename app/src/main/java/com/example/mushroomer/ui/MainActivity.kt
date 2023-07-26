@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.mushroomer.R
 import com.example.mushroomer.databinding.ActivityMainBinding
 import com.example.mushroomer.ui.camera.CameraFragment
-import com.example.mushroomer.ui.commu.CommuFragment
+import com.example.mushroomer.ui.commu.CommuFragment_home
 import com.example.mushroomer.ui.dogam.DogamFragment
 import com.example.mushroomer.ui.map.MapFragment
 import com.example.mushroomer.ui.profile.ProfileFragment
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 
                 R.id.community -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.FragmentContainer, CommuFragment())
+                        .replace(R.id.FragmentContainer, CommuFragment_home())
                         .commit()
                     true
                 }

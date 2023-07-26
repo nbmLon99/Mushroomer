@@ -12,21 +12,4 @@
         android:layout_height="match_parent">
     </RelativeLayout>
 
-    <TextView
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_map_infobox"
-
-        android:text="송이버섯 , 2007-01-01"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:textAlignment="center"
-        android:padding="10dp"
-
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginBottom="50dp"
-        />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
