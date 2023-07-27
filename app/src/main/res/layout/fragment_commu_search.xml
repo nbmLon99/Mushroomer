@@ -11,6 +11,7 @@
     <!-- 제목 영역 -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/titleFrame"
+        android:background="@color/titleGreen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
