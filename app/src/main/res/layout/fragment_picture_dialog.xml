@@ -1,10 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.dogam.PictureDialogFragment">
+    tools:context=".ui.dogam.PictureDialogFragment"
+    android:orientation="vertical"
+    >
+
+    <!-- 제목 영역 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/titleFrame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            android:layout_marginLeft="10dp"
+
+            android:text="2023.05.27"
+            android:textStyle="bold|italic"
+            android:gravity="bottom"
+
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+
+            android:text="송이 버섯"
+            android:textStyle="bold"
+            android:textSize="25sp"
+
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            />
+        <ImageView
+            android:id="@+id/btn_delete"
+
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:padding="10dp"
+            android:layout_marginRight="10dp"
+
+            android:src="@drawable/icons_delete"
+
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <com.smarteist.autoimageslider.SliderView
         android:id="@+id/imageSlider"
@@ -23,5 +74,50 @@
         app:sliderIndicatorUnselectedColor="#FFF"
         app:sliderStartAutoCycle="false" />
 
+    <TextView
+        android:id="@+id/btn_goAnother"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
 
-</FrameLayout>
+
+        android:text="@string/pic_goDogam"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:padding="15dp"
+
+        />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"
+        />
+
+    <TextView
+        android:id="@+id/btn_goBoard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:text="@string/pic_goBoard"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:padding="15dp"
+
+        />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"
+        />
+    <TextView
+        android:id="@+id/btn_close"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/close"
+
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:padding="15dp"
+        />
+
+
+</LinearLayout>

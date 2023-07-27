@@ -33,6 +33,13 @@
     <string name="startCheck">검사시작!</string>
     <string name="closeCheck">취소</string>
 
+    <!-- 사진 다이얼로그 -->
+    <string name="pic_goMap">지도에서 위치 확인하기</string>
+    <string name="pic_goDogam">도감에서 정보 확인하기</string>
+    <string name="pic_goBoard">내가 찍은 버섯 자랑하러가기</string>
+
+
+
     <!-- 카메라 프래그먼트 -->
     <string name="positiveBtn">네, 이대로 검사를 진행하겠습니다!</string>
     <string name="negativeBtn">아니요, 추가 촬영 후 진행하겠습니다!</string>
