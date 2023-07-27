@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    >
+
+    <ImageView
+        android:id="@+id/replyIcon"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+
+        android:src="@drawable/icons_reply"
+        android:layout_gravity="bottom"
+        android:visibility="gone"
+        android:layout_marginLeft="10dp"
+        />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="10dp"
+        app:cardCornerRadius="10dp"
+        android:background="@color/bgGray"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="10dp"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <TextView
+                    android:id="@+id/post_title"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+
+                    android:text="제목이 들어갈 곳입니다."
+                    android:textStyle="bold"
+                    />
+
+                <ImageView
+                    android:id="@+id/btn_postMore"
+                    android:layout_width="30dp"
+                    android:layout_height="match_parent"
+                    android:padding="1dp"
+                    android:src="@drawable/icons_more" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/post_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:text="내용이 들어가는 곳입니다."
+                android:paddingVertical="10dp"
+                android:textSize="12sp"
+                />
+            <TextView
+                android:id="@+id/post_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:textSize="10sp"
+                android:text="날짜가 들어갈 곳입니다."
+                android:textFontWeight="300"
+                />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <ImageView
+            android:id="@+id/iv_user"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/icons_profile"
+            />
+        <TextView
+            android:id="@+id/tv_user"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="닉네임"
+            android:textAlignment="center"
+            android:textSize="10sp"
+            />
+    </LinearLayout>
+</LinearLayout>
