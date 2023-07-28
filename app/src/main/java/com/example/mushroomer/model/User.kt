@@ -1,14 +1,17 @@
 package com.example.mushroomer.model
 
-import java.util.Date
 
-//pw는 서버단에서만 검증하는게 맞아 보여서 제외함.
+/**
+ * @param userIdx           user 구분자
+ * @param profileImage      프로필 이미지
+ * @param name              이름
+ * @param nickname          닉네임
+ * @param email             이메일
+ */
 data class User(
     val userIdx : Long,
+    val profileImage : String,
+    val name : String,
     val nickname : String,
     val email : String,
-    val name : String,
-    val createdAt : Date,
-    val updatedAt : Date,
-    val status : String
 )
