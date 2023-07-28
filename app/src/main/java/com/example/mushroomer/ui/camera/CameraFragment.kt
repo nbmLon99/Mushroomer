@@ -26,9 +26,11 @@ import java.util.Locale
 
 class CameraFragment : Fragment() {
     private lateinit var binding: FragmentCameraBinding
+    private lateinit var picturesAdapter : PicturesAdapter
     private lateinit var cameraManager: CameraManager
     private lateinit var cameraDevice: CameraDevice
     private lateinit var captureSession: CameraCaptureSession
+
 
     private val cameraId: String by lazy {
         cameraManager.cameraIdList[0]
@@ -46,7 +48,8 @@ class CameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         cameraManager = requireActivity().getSystemService(CameraManager::class.java)
-
+        picturesAdapter = PicturesAdapter()
+        binding.pictureRV.adapter = picturesAdapter
         binding.shootBtn.setOnClickListener {
             takePhoto()
         }
@@ -168,6 +171,7 @@ class CameraFragment : Fragment() {
                         result.get(CaptureResult.JPEG_ORIENTATION)
                             ?.let { fileOutputStream.write(it) }
                         fileOutputStream.close()
+                        picturesAdapter.addPicture(filePath)
                     } catch (e: IOException) {
                         e.printStackTrace()
                     }
