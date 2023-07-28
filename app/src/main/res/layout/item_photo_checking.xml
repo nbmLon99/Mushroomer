@@ -10,6 +10,7 @@
         android:layout_height="match_parent"
 
         android:src="@drawable/example_mushroom"
+        android:scaleType="centerCrop"
         />
 
     <ImageView
