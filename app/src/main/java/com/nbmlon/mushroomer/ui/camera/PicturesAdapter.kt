@@ -5,12 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.nbmlon.mushroomer.GlideApp
 import com.nbmlon.mushroomer.databinding.ItemPhotoCheckingBinding
 import com.nbmlon.mushroomer.ui.camera.PicturesAdapter.PictureViewHolder
 import java.io.File
-
-
 
 
 class PicturesAdapter() : RecyclerView.Adapter<PictureViewHolder>() {
@@ -20,9 +18,10 @@ class PicturesAdapter() : RecyclerView.Adapter<PictureViewHolder>() {
 
     inner class PictureViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
         fun bind(pos : Int){
-            Glide.with(itemView)
+            GlideApp.with(itemView.context)
                 .load(pictures[pos])
                 .into(itemBinding.photo)
+
             itemBinding.clearBtn.setOnClickListener {
                 removePicture(pos)
             }
