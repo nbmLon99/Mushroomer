@@ -6,11 +6,11 @@ plugins {
 
 
 android {
-    namespace 'com.example.mushroomer'
+    namespace 'com.nbmlon.mushroomer'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.mushroomer"
+        applicationId "com.nbmlon.mushroomer"
         minSdk 28
         targetSdk 33
         versionCode 1
