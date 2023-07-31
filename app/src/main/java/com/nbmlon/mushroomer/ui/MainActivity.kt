@@ -1,6 +1,9 @@
 package com.nbmlon.mushroomer.ui
 
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Base64
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.ActivityMainBinding
@@ -9,6 +12,8 @@ import com.nbmlon.mushroomer.ui.commu.CommuFragment_home
 import com.nbmlon.mushroomer.ui.dogam.DogamFragment
 import com.nbmlon.mushroomer.ui.map.MapFragment
 import com.nbmlon.mushroomer.ui.profile.ProfileFragment
+import java.security.MessageDigest
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding // 뷰 바인딩 변수
@@ -21,6 +26,23 @@ class MainActivity : AppCompatActivity() {
 //         뷰 바인딩을 통해 바텀 네비게이션 뷰 참조
         val bottomNavigationView = binding.bottomNavigationView
         bottomNavigationView.selectedItemId = R.id.camera
+
+        try {
+            val information =
+                packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
+            val signatures = information.signingInfo.apkContentsSigners
+            val md = MessageDigest.getInstance("SHA")
+            for (signature in signatures) {
+                val md: MessageDigest
+                md = MessageDigest.getInstance("SHA")
+                md.update(signature.toByteArray())
+                var hashcode = String(Base64.encode(md.digest(), 0))
+                Log.d("hashcode", "" + hashcode)
+            }
+        } catch (e: Exception) {
+            Log.d("hashcode", "에러::" + e.toString())
+
+        }
 
         bottomNavigationView.setOnItemSelectedListener  { menuItem ->
             when (menuItem.itemId) {
