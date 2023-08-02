@@ -32,8 +32,10 @@ class PicturesAdapter(im: ImageManager) : RecyclerView.Adapter<PictureViewHolder
 
             itemBinding.clearBtn.setOnClickListener {
                 imageManager.deleteImage(pictures[pos])
-                pictures.removeAt(absoluteAdapterPosition)
-                notifyItemRemoved(absoluteAdapterPosition)
+                pictures.removeAt(pos)
+                notifyItemRemoved(pos)
+                // 포스팅!! -> 왜 필요할까??
+                notifyItemRangeChanged(pos,itemCount)
             }
         }
     }
@@ -48,20 +50,12 @@ class PicturesAdapter(im: ImageManager) : RecyclerView.Adapter<PictureViewHolder
     }
 
     override fun onBindViewHolder(holder: PictureViewHolder, position: Int) {
-        holder.bind(position)
-    }
-
-
-
-    //wontfix
-    private fun removePicture(uri : Uri){
-        val acPos = pictures.indexOf(uri)
-        pictures.removeAt(acPos)
-        notifyItemRemoved(acPos)
+        holder.bind(holder.bindingAdapterPosition)
     }
 
     fun addPicture(uri : Uri){
         pictures.add(uri)
         notifyItemInserted(pictures.size-1)
+
     }
 }
