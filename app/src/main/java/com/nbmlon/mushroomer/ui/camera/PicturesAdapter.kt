@@ -42,12 +42,11 @@ class PicturesAdapter(im: ImageManager) : RecyclerView.Adapter<PictureViewHolder
     }
 
     override fun onBindViewHolder(holder: PictureViewHolder, position: Int) {
-        holder.bind(holder.bindingAdapterPosition)
+        holder.bind(position)
     }
 
     fun addPicture(uri : Uri){
         pictures.add(uri)
         notifyItemInserted(pictures.size-1)
-
     }
 }
