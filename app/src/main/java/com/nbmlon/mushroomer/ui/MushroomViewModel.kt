@@ -1,4 +1,6 @@
 package com.nbmlon.mushroomer.ui
 
-class MushroomViewModel {
+import androidx.lifecycle.ViewModel
+
+class MushroomViewModel : ViewModel() {
 }

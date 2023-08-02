@@ -22,6 +22,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCameraBinding
 import java.nio.ByteBuffer
@@ -32,7 +33,7 @@ import java.util.concurrent.Executors
 
 /** Helper type alias used for analysis use case callbacks */
 typealias LumaListener = (luma: Double) -> Unit
-class CameraFragment : Fragment(), ImageManager {
+class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
     companion object {
         private const val TAG = "CameraFragment"
         private const val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
@@ -50,8 +51,11 @@ class CameraFragment : Fragment(), ImageManager {
     private lateinit var binding: FragmentCameraBinding
     private lateinit var picturesAdapter: PicturesAdapter
     private lateinit var cameraExecutor: ExecutorService
-
     private var imageCapture: ImageCapture? = null
+
+
+    private val analyzingViewModel: AnalyzingViewModel by viewModels()
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,9 +68,13 @@ class CameraFragment : Fragment(), ImageManager {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        picturesAdapter = PicturesAdapter(this@CameraFragment as ImageManager)
+        picturesAdapter = PicturesAdapter(this@CameraFragment as ImageListner)
         binding.pictureRV.adapter = picturesAdapter
         binding.shootBtn.setOnClickListener { takePhoto() }
+        binding.startCheckBtn.setOnClickListener {
+            if(picturesAdapter.itemCount < 5) { showAlertMessage() }
+            else{ startAnalyze() }
+        }
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
@@ -220,5 +228,20 @@ class CameraFragment : Fragment(), ImageManager {
             Toast.makeText(requireActivity(),"권한이없음",Toast.LENGTH_LONG).show()
         }
 
+    }
+
+
+    private fun showAlertMessage(){
+        val dialogFragment = CameraFragment_alert().apply {
+            arguments = Bundle().apply {
+                putInt(CameraFragment_alert.ITEM_COUNT, picturesAdapter.itemCount)
+            }
+        }
+        dialogFragment.show(parentFragmentManager, CameraFragment_alert.TAG)
+    }
+
+
+    override fun startAnalyze() {
+        analyzingViewModel.performAnalysis(picturesAdapter.getPictures())
     }
 }

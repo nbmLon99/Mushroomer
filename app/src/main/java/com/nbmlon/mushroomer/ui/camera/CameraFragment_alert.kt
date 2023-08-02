@@ -1,60 +1,37 @@
 package com.nbmlon.mushroomer.ui.camera
 
+
+import android.app.AlertDialog
+import android.app.Dialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import com.nbmlon.mushroomer.R
+import androidx.fragment.app.DialogFragment
+import com.nbmlon.mushroomer.databinding.FragmentCameraAlertBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class CameraFragment_alert : DialogFragment() {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [CameraFragment_alert.newInstance] factory method to
- * create an instance of this fragment.
- */
-class CameraFragment_alert : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    companion object {
+        const val TAG = "CameraFragment_alert"
+        const val ITEM_COUNT = "itemCount"
+    }
+
+    private var itemCount = -1
+    private lateinit var binding : FragmentCameraAlertBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            itemCount = it.getInt(ITEM_COUNT, -1)
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_camera_alert, container, false)
-    }
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        binding = FragmentCameraAlertBinding.inflate(layoutInflater)
+        binding.btnCancel.setOnClickListener { this@CameraFragment_alert.dismiss() }
+        binding.btnAnalyze.setOnClickListener { (parentFragment as AnalyzeStartListener).startAnalyze() }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CameraFragment_dialog.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CameraFragment_alert().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        val builder = AlertDialog.Builder(requireActivity())
+        builder.setView(binding.root)
+        return builder.create()
     }
 }
