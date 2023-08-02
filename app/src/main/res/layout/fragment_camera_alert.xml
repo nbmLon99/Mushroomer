@@ -24,6 +24,7 @@
 
             />
         <Button
+            android:id="@+id/btnAnalyze"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -35,6 +36,7 @@
             android:text="@string/positiveBtn"
             />
         <Button
+            android:id="@+id/btnCancel"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
