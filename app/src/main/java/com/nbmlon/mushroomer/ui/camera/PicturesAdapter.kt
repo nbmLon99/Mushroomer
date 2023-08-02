@@ -1,21 +1,13 @@
 package com.nbmlon.mushroomer.ui.camera
 
-import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.nbmlon.mushroomer.GlideApp
 import com.nbmlon.mushroomer.databinding.ItemPhotoCheckingBinding
 import com.nbmlon.mushroomer.ui.camera.PicturesAdapter.PictureViewHolder
-import java.io.File
-import javax.sql.DataSource
 
 
 class PicturesAdapter(im: ImageManager) : RecyclerView.Adapter<PictureViewHolder>() {

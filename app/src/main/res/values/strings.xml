@@ -46,6 +46,8 @@
     <string name="title_profile">내 정보</string>
     <string name="subtitle_id">계정</string>
     <string name="new_mush">NEW!!</string>
+    <string name="TOAST_pictureMaximum">검사할 수 있는 최대 사진은 5장입니다!</string>
+
 
 
     <!-- 프로필 프래그먼트 -->

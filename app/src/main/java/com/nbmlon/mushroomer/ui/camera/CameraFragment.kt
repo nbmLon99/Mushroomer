@@ -1,26 +1,8 @@
 package com.nbmlon.mushroomer.ui.camera
 
 import android.Manifest
-import android.app.AlertDialog
-import android.content.ContentResolver
 import android.content.ContentValues
-import android.content.DialogInterface
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.ImageFormat
-import android.hardware.Camera
-import android.hardware.camera2.CameraAccessException
-import android.hardware.camera2.CameraCaptureSession
-import android.hardware.camera2.CameraDevice
-import android.hardware.camera2.CameraManager
-import android.hardware.camera2.CaptureRequest
-import android.hardware.camera2.CaptureResult
-import android.hardware.camera2.TotalCaptureResult
-import android.hardware.camera2.params.OutputConfiguration
-import android.hardware.camera2.params.SessionConfiguration
-import android.media.Image
-import android.media.ImageReader
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -29,7 +11,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -40,15 +21,11 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCameraBinding
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -190,11 +167,14 @@ class CameraFragment : Fragment(), ImageManager {
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults){
-
-                    val msg = "Photo capture succeeded: ${output.savedUri}"
-                    picturesAdapter.addPicture(output.savedUri!!)
-                    binding.pictureRV.smoothScrollToPosition(picturesAdapter.itemCount-1)
-                    Log.d(TAG, msg)
+                    if(picturesAdapter.itemCount <= 5){
+                        val msg = "Photo capture succeeded: ${output.savedUri}"
+                        picturesAdapter.addPicture(output.savedUri!!)
+                        binding.pictureRV.smoothScrollToPosition(picturesAdapter.itemCount-1)
+                        Log.d(TAG, msg)
+                    }else{
+                        Toast.makeText(requireActivity(),resources.getText(R.string.TOAST_pictureMaximum),Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         )
