@@ -10,9 +10,9 @@ import com.nbmlon.mushroomer.databinding.ItemPhotoCheckingBinding
 import com.nbmlon.mushroomer.ui.camera.PicturesAdapter.PictureViewHolder
 
 
-class PicturesAdapter(im: ImageManager) : RecyclerView.Adapter<PictureViewHolder>() {
+class PicturesAdapter(im: ImageListner) : RecyclerView.Adapter<PictureViewHolder>() {
     private lateinit var itemBinding: ItemPhotoCheckingBinding
-    private var imageManager: ImageManager = im
+    private var imageManager: ImageListner = im
     private val pictures : ArrayList<Uri> = ArrayList()
 
 
@@ -48,5 +48,9 @@ class PicturesAdapter(im: ImageManager) : RecyclerView.Adapter<PictureViewHolder
     fun addPicture(uri : Uri){
         pictures.add(uri)
         notifyItemInserted(pictures.size-1)
+    }
+
+    fun getPictures() : ArrayList<Uri>{
+        return pictures
     }
 }
