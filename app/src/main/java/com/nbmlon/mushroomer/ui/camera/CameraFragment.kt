@@ -193,6 +193,7 @@ class CameraFragment : Fragment(), ImageManager {
 
                     val msg = "Photo capture succeeded: ${output.savedUri}"
                     picturesAdapter.addPicture(output.savedUri!!)
+                    binding.pictureRV.smoothScrollToPosition(picturesAdapter.itemCount-1)
                     Log.d(TAG, msg)
                 }
             }
