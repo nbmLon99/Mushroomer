@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer
+package com.nbmlon.mushroomer.utils
 
 import android.content.Context
 import com.bumptech.glide.GlideBuilder
