@@ -32,8 +32,7 @@ import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-/** Helper type alias used for analysis use case callbacks */
-typealias LumaListener = (luma: Double) -> Unit
+
 class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
     companion object {
         private const val TAG = "CameraFragment"
@@ -48,7 +47,9 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
                 }
             }.toTypedArray()
     }
-    private lateinit var binding: FragmentCameraBinding
+    private var _binding: FragmentCameraBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var picturesAdapter: PicturesAdapter
     private lateinit var cameraExecutor: ExecutorService
     private var imageCapture: ImageCapture? = null
@@ -62,8 +63,13 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentCameraBinding.inflate(inflater, container, false)
+        _binding = FragmentCameraBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -113,15 +119,6 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
                 }
 
             imageCapture = ImageCapture.Builder().build()
-
-//            val imageAnalyzer = ImageAnalysis.Builder()
-//                .build()
-//                .also {
-//                    it.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
-////                        Log.d(TAG, "Average luminosity: $luma")
-//                    })
-//                }
-
 
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -193,27 +190,6 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
             requireContext(), it) == PackageManager.PERMISSION_GRANTED
     }
 
-    private class LuminosityAnalyzer(private val listener: LumaListener) : ImageAnalysis.Analyzer {
-
-        private fun ByteBuffer.toByteArray(): ByteArray {
-            rewind()    // Rewind the buffer to zero
-            val data = ByteArray(remaining())
-            get(data)   // Copy the buffer into a byte array
-            return data // Return the byte array
-        }
-
-        override fun analyze(image: ImageProxy) {
-
-            val buffer = image.planes[0].buffer
-            val data = buffer.toByteArray()
-            val pixels = data.map { it.toInt() and 0xFF }
-            val luma = pixels.average()
-
-            listener(luma)
-
-            image.close()
-        }
-    }
 
 
     override fun deleteImage(uri: Uri) {
