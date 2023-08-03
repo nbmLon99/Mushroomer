@@ -18,7 +18,7 @@ data class Mushroom (
         val dogamNo : Int,
         val name : String,
         val feature : String,
-        val type : Int,
+        val type : MushType,
         val rarity : Long,
         val myPicPath : ArrayList<String>
         )
