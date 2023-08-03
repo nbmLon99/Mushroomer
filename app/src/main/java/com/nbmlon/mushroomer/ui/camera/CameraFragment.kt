@@ -23,6 +23,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCameraBinding
 import java.nio.ByteBuffer
@@ -44,7 +45,6 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             ).apply {
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-                    add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 }
             }.toTypedArray()
     }
@@ -70,6 +70,8 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
         super.onViewCreated(view, savedInstanceState)
         picturesAdapter = PicturesAdapter(this@CameraFragment as ImageListner)
         binding.pictureRV.adapter = picturesAdapter
+
+
         binding.shootBtn.setOnClickListener { takePhoto() }
         binding.startCheckBtn.setOnClickListener {
             if(picturesAdapter.itemCount < 5) { showAlertMessage() }
@@ -110,14 +112,13 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
                     it.setSurfaceProvider(binding.cameraPreview.surfaceProvider)
                 }
 
-            imageCapture = ImageCapture.Builder()
-                .build()
+            imageCapture = ImageCapture.Builder().build()
 
 //            val imageAnalyzer = ImageAnalysis.Builder()
 //                .build()
 //                .also {
 //                    it.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
-//                        Log.d(TAG, "Average luminosity: $luma")
+////                        Log.d(TAG, "Average luminosity: $luma")
 //                    })
 //                }
 
@@ -141,51 +142,50 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
     }
 
     private fun takePhoto() {
-        Log.d(TAG,"촬영됨")
-        // Get a stable reference of the modifiable image capture use case
-        val imageCapture =  imageCapture ?: return
+        if(picturesAdapter.itemCount < 5){
+            // Get a stable reference of the modifiable image capture use case
+            val imageCapture =  imageCapture ?: return
 
-        // Create time stamped name and MediaStore entry.
-        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
-            .format(System.currentTimeMillis())
-        val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image")
-            }
-        }
-
-        // Create output options object which contains file + metadata
-        val outputOptions = ImageCapture.OutputFileOptions
-            .Builder(
-                requireActivity().contentResolver,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                contentValues)
-            .build()
-
-        // Set up image capture listener, which is triggered after photo has
-        // been taken
-        imageCapture.takePicture(
-            outputOptions,
-            ContextCompat.getMainExecutor(requireContext()),
-            object : ImageCapture.OnImageSavedCallback {
-                override fun onError(exc: ImageCaptureException) {
-                    Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
+            // Create time stamped name and MediaStore entry.
+            val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
+                .format(System.currentTimeMillis())
+            val contentValues = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+                    put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image")
                 }
+            }
 
-                override fun onImageSaved(output: ImageCapture.OutputFileResults){
-                    if(picturesAdapter.itemCount <= 5){
+            // Create output options object which contains file + metadata
+            val outputOptions = ImageCapture.OutputFileOptions
+                .Builder(
+                    requireActivity().contentResolver,
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    contentValues)
+                .build()
+
+            // Set up image capture listener, which is triggered after photo has
+            // been taken
+            imageCapture.takePicture(
+                outputOptions,
+                ContextCompat.getMainExecutor(requireContext()),
+                object : ImageCapture.OnImageSavedCallback {
+                    override fun onError(exc: ImageCaptureException) {
+                        Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
+                    }
+
+                    override fun onImageSaved(output: ImageCapture.OutputFileResults){
                         val msg = "Photo capture succeeded: ${output.savedUri}"
-                        picturesAdapter.addPicture(output.savedUri!!)
-                        binding.pictureRV.smoothScrollToPosition(picturesAdapter.itemCount-1)
                         Log.d(TAG, msg)
-                    }else{
-                        Toast.makeText(requireActivity(),resources.getText(R.string.TOAST_pictureMaximum),Toast.LENGTH_SHORT).show()
+                        picturesAdapter.addPicture(output.savedUri!!)
+                        binding.pictureRV.smoothScrollToPosition(0)
                     }
                 }
-            }
-        )
+            )
+        }else{
+            Toast.makeText(requireActivity(),resources.getText(R.string.TOAST_pictureMaximum),Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
