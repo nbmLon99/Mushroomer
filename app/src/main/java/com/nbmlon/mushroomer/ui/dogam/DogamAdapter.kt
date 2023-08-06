@@ -31,7 +31,7 @@ class DogamAdapter : ListAdapter<Mushroom, RecyclerView.ViewHolder>(PlantDiffCal
         fun bind(item: Mushroom) {
             binding.apply {
                 mushroom = item
-                //executePendingBindings()
+                executePendingBindings()
             }
         }
     }
