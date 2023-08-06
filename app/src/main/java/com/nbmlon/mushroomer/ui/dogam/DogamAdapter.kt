@@ -15,7 +15,7 @@ class DogamAdapter : ListAdapter<Mushroom, RecyclerView.ViewHolder>(PlantDiffCal
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val plant = getItem(position)
-        (holder as PlantViewHolder).bind(plant)
+        (holder as DogamViewHolder).bind(plant)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -25,13 +25,13 @@ class DogamAdapter : ListAdapter<Mushroom, RecyclerView.ViewHolder>(PlantDiffCal
     }
 
     class DogamViewHolder(
-        private val binding: ListItemPlantBinding
+        private val binding: ItemDogamBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Mushroom) {
             binding.apply {
                 mushroom = item
-                executePendingBindings()
+                //executePendingBindings()
             }
         }
     }
