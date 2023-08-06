@@ -26,5 +26,14 @@ data class Mushroom (
         val rarity : Long,
         val myPicPath : ArrayList<String>
         ){
+    companion object {
+        /** n(도감넘버), gotcha(발견 여부) 지정하여 더미데이터 생성 **/
+        fun getDummy(n :Int, gotcha : Boolean) : Mushroom{
+            val mush = Mushroom(n,"","짱버섯","설명입니다.", MushType.EDIBLE,20L,ArrayList())
+            if(gotcha){ mush.myPicPath.add("example") }
+            return mush
+        }
+    }
     val gotcha : Boolean get() =  myPicPath.size > 0
 }
+
