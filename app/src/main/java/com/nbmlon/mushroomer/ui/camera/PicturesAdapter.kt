@@ -9,7 +9,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.nbmlon.mushroomer.GlideApp
+import com.nbmlon.mushroomer.utils.GlideApp
 import com.nbmlon.mushroomer.databinding.ItemPhotoCheckingBinding
 import com.nbmlon.mushroomer.ui.camera.PicturesAdapter.PictureViewHolder
 
