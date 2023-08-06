@@ -26,13 +26,14 @@
                 android:layout_weight="1"
                 android:src="@drawable/example_mushroom"
                 android:scaleType="fitXY"
+                app:imageFromUrl="@{mushroom.imageUrl}"
                 />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
 
-                android:text="송이버섯"
+                android:text="@{mushroom.name}"
                 android:textSize="14sp"
                 android:gravity="center"
                 />
@@ -44,7 +45,7 @@
             android:layout_height="match_parent"
 
             android:background="@color/bgDark"
-            android:visibility="gone"
+            app:isDiscovered="@{mushroom.gotcha}"
             />
 
 
