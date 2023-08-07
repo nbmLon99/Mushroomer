@@ -2,28 +2,17 @@ package com.nbmlon.mushroomer.ui.dogam
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.nbmlon.mushroomer.databinding.ItemDogamBinding
 import com.nbmlon.mushroomer.model.Mushroom
 
-/**
- * Adapter for the [RecyclerView] in [PlantListFragment].
- */
-class DogamAdapter : ListAdapter<Mushroom, RecyclerView.ViewHolder>(PlantDiffCallback()) {
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val plant = getItem(position)
-        (holder as DogamViewHolder).bind(plant)
-    }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return DogamViewHolder(
-            ItemDogamBinding.inflate(
-                LayoutInflater.from(parent.context), parent, false))
-    }
 
+class DogamAdapter() :
+    PagingDataAdapter<Mushroom, DogamAdapter.DogamViewHolder>(MushDiffCallback()) {
     class DogamViewHolder(
         private val binding: ItemDogamBinding
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -35,14 +24,25 @@ class DogamAdapter : ListAdapter<Mushroom, RecyclerView.ViewHolder>(PlantDiffCal
             }
         }
     }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DogamViewHolder {
+        return DogamViewHolder(
+            ItemDogamBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            )
+        )
+    }
+    override fun onBindViewHolder(holder: DogamViewHolder, position: Int) {
+        val item = getItem(position)
+        // Note that item may be null. ViewHolder must support binding a
+        // null item as a placeholder.
+        holder.bind(item!!)
+    }
 }
 
-private class PlantDiffCallback : DiffUtil.ItemCallback<Mushroom>() {
-
+private class MushDiffCallback : DiffUtil.ItemCallback<Mushroom>() {
     override fun areItemsTheSame(oldItem: Mushroom, newItem: Mushroom): Boolean {
         return oldItem.dogamNo == newItem.dogamNo
     }
-
     override fun areContentsTheSame(oldItem: Mushroom, newItem: Mushroom): Boolean {
         return oldItem == newItem
     }

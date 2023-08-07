@@ -121,4 +121,7 @@ dependencies {
     // Saved state module for ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version"
 
+
+    //Paging3
+    implementation "androidx.paging:paging-runtime:3.1.1"
 }

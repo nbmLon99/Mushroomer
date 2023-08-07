@@ -4,7 +4,8 @@ package com.nbmlon.mushroomer.model
  * @param pageNo 도감 페이지 넘버
  */
 data class Dogam(
-    val pageNo : Int
+    val pageNo : Int,
+    val progress : Int
 ){
     companion object{
         fun getDummy(pagNo : Int) : ArrayList<Mushroom>{
