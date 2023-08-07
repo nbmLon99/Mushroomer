@@ -5,14 +5,14 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.ItemDogamBinding
 import com.nbmlon.mushroomer.model.Mushroom
 
 
 
 
-class DogamAdapter() :
-    PagingDataAdapter<Mushroom, DogamAdapter.DogamViewHolder>(MushDiffCallback()) {
+class DogamAdapter : PagingDataAdapter<UiModel, DogamAdapter.DogamViewHolder>(UIMODEL_COMPARATOR) {
     class DogamViewHolder(
         private val binding: ItemDogamBinding
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -32,18 +32,23 @@ class DogamAdapter() :
         )
     }
     override fun onBindViewHolder(holder: DogamViewHolder, position: Int) {
-        val item = getItem(position)
-        // Note that item may be null. ViewHolder must support binding a
-        // null item as a placeholder.
-        holder.bind(item!!)
+        val uiModel = getItem(position)
+        uiModel.let {
+            when (uiModel) {
+                is UiModel.MushItem -> (holder as DogamViewHolder).bind(uiModel.mush)
+                null -> throw UnsupportedOperationException("Unknown view")
+            }
+        }
     }
-}
+    companion object {
+        private val UIMODEL_COMPARATOR = object : DiffUtil.ItemCallback<UiModel>() {
+            override fun areItemsTheSame(oldItem: UiModel, newItem: UiModel): Boolean {
+                return (oldItem is UiModel.MushItem && newItem is UiModel.MushItem &&
+                        oldItem.mush.dogamNo == newItem.mush.dogamNo)
+            }
 
-private class MushDiffCallback : DiffUtil.ItemCallback<Mushroom>() {
-    override fun areItemsTheSame(oldItem: Mushroom, newItem: Mushroom): Boolean {
-        return oldItem.dogamNo == newItem.dogamNo
-    }
-    override fun areContentsTheSame(oldItem: Mushroom, newItem: Mushroom): Boolean {
-        return oldItem == newItem
+            override fun areContentsTheSame(oldItem: UiModel, newItem: UiModel): Boolean =
+                oldItem == newItem
+        }
     }
 }

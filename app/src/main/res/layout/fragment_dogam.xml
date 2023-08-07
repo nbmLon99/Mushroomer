@@ -107,6 +107,27 @@
         android:orientation="vertical"
         tools:listitem="@layout/item_dogam"
         />
+    <TextView android:id="@+id/emptyList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/no_results"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        android:background="@color/bgGray"
+        android:visibility="gone"
+
+    />
+    <ProgressBar
+        android:id="@+id/progress_spinner"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        />
     <!-- 프로그래스 바 영역 -->
     <LinearLayout
         android:id="@+id/progressFrame"

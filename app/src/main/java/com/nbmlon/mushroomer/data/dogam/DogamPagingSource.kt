@@ -17,11 +17,11 @@ class DogamPagingSource(
         try {
             // Start refresh at page 1 if undefined.
             val nextPageNumber = params.key ?: 1
-            val response = backend.getMushes(query, nextPageNumber)
+            val response = backend.getDogam(query, nextPageNumber)
             return LoadResult.Page(
-                data = response.users,
+                data = response.items,
                 prevKey = null, // Only paging forward.
-                nextKey = response.nextPageNumber
+                nextKey = response.nextPage
             )
         } catch (e: IOException) {
             // IOException for network failures.

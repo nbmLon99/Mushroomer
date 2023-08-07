@@ -95,6 +95,8 @@
 
 
     <string name="sort_like">추천순</string>
+    <string name="no_results">현재 발견한 버섯이 없습니다.\n사진을 찍어 버섯을 발견해보세요!</string>
+    <string name="retry">재시도</string>
     <string-array name="sorting_item">
         <item>도감넘버</item>
         <item>희귀도</item>
