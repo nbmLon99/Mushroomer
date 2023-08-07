@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.nbmlon.mushroomer.data.dogam.DogamPagingSource
 import com.nbmlon.mushroomer.data.dogam.DogamRepository
+import com.nbmlon.mushroomer.data.dogam.DogamService
 import com.nbmlon.mushroomer.model.Mushroom
 import kotlinx.coroutines.flow.Flow
 
@@ -16,7 +17,7 @@ class DogamRepositoryImpl : DogamRepository {
                 pageSize = NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { DogamPagingSource(service, query) }
+            pagingSourceFactory = { DogamPagingSource(DogamService.create(), query) }
         ).flow
     }
 

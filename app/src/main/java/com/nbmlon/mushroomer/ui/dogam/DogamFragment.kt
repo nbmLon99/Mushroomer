@@ -68,16 +68,6 @@ class DogamFragment : Fragment() {
         arguments?.let {
             dogamNo = it.getInt(ARG_PARAM1)
         }
-        dogamViewModel.apply {
-//            this.dogam.observe(this@DogamFragment, { dogam ->
-//                // Dogam 데이터가 변경될 때마다 이 블록이 실행됩니다.
-//                // 변경된 Dogam 객체를 사용하여 UI를 업데이트할 수 있습니다.
-//                binding.progressBar.setProgress(dogam.progress)
-//                }
-//            )
-        }
-
-
     }
 
     override fun onCreateView(
@@ -91,15 +81,6 @@ class DogamFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.dogamRV.adapter = DogamAdapter()
-        // Activities can use lifecycleScope directly, but Fragments should instead use
-        // viewLifecycleOwner.lifecycleScope.
-//        lifecycleScope.launch {
-//            dogamViewModel.flow.collectLatest { pagingData ->
-//                (binding.dogamRV.adapter as DogamAdapter).submitData(pagingData)
-//            }
-//        }
     }
 
 
@@ -139,7 +120,10 @@ class DogamFragment : Fragment() {
         )
     }
 
+    private fun FragmentDogamBinding.bindSort(
+    ){
 
+    }
 
     private fun FragmentDogamBinding.bindList(
         header: DogamLoadStateAdapter,
