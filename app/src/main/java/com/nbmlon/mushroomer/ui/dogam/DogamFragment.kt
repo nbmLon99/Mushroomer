@@ -9,10 +9,15 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
+import com.nbmlon.mushroomer.data.dogam.DogamRepository
+import com.nbmlon.mushroomer.data.dogam.DogamService
+import com.nbmlon.mushroomer.data.dogam.impl.DogamRepositoryImpl
 import com.nbmlon.mushroomer.databinding.FragmentDogamBinding
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -76,6 +81,19 @@ class DogamFragment : Fragment() {
     ): View? {
 
         _binding = FragmentDogamBinding.inflate(inflater, container, false)
+
+        val viewModelFactory = DogamViewModelFactory(
+            owner = this,
+            repository = DogamRepositoryImpl()
+        )
+
+        val viewModel: DogamViewModel by viewModels { viewModelFactory }
+
+        binding.bindState(
+            uiState = viewModel.state,
+            pagingData = viewModel.pagingDataFlow,
+            uiActions = viewModel.accept
+        )
         return binding.root
     }
 
@@ -175,12 +193,13 @@ class DogamFragment : Fragment() {
                 // show empty list
                 emptyList.isVisible = isListEmpty
                 // Only show the list if refresh succeeds, either from the the local db or the remote.
-                dogamRV.isVisible =  loadState.source.refresh is LoadState.NotLoading || loadState.mediator?.refresh is LoadState.NotLoading
+                //dogamRV.isVisible =  loadState.source.refresh is LoadState.NotLoading || loadState.mediator?.refresh is LoadState.NotLoading
                 // Show loading spinner during initial load or refresh.
+
                 // 상태 나타낼 스피너로 대체
-                progressSpinner.isVisible = loadState.mediator?.refresh is LoadState.Loading
+                //progressSpinner.isVisible = loadState.mediator?.refresh is LoadState.Loading
                 // Show the retry state if initial load or refresh fails.
-                dogamRV.isVisible = loadState.mediator?.refresh is LoadState.Error && dogamAdapter.itemCount == 0
+                //dogamRV.isVisible = loadState.mediator?.refresh is LoadState.Error && dogamAdapter.itemCount == 0
                 // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
                 val errorState = loadState.source.append as? LoadState.Error
                     ?: loadState.source.prepend as? LoadState.Error

@@ -39,7 +39,7 @@
                 />
         </LinearLayout>
 
-        <FrameLayout
+        <ImageView
             android:id="@+id/undiscoveredCover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -1,5 +1,6 @@
 package com.nbmlon.mushroomer.ui.dogam
 
+import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
@@ -18,10 +19,11 @@ fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
 }
 
 @BindingAdapter("isDiscovered")
-fun bindIsGone(view: FloatingActionButton, gotcha: Boolean) {
+fun bindIsGone(view: ImageView, gotcha: Boolean) {
     if (gotcha) {
-        view.hide()
+        view.visibility = View.GONE
     } else {
-        view.show()
+        view.visibility = View.VISIBLE
+
     }
 }
