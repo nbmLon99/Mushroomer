@@ -11,6 +11,11 @@ import kotlinx.coroutines.flow.Flow
 
 
 class DogamRepositoryImpl : DogamRepository {
+    companion object {
+        const val NETWORK_PAGE_SIZE = 50
+    }
+
+
     override fun getDogamstream(query: String): Flow<PagingData<Mushroom>> {
         return Pager(
             config = PagingConfig(
@@ -21,8 +26,6 @@ class DogamRepositoryImpl : DogamRepository {
         ).flow
     }
 
-    companion object {
-        const val NETWORK_PAGE_SIZE = 50
-    }
+
 
 }

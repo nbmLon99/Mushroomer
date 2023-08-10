@@ -8,9 +8,9 @@ data class Dogam(
     val progress : Int
 ){
     companion object{
-        fun getDummy(pagNo : Int) : ArrayList<Mushroom>{
+        fun getDummy(totalCount : Int) : ArrayList<Mushroom>{
             val array = ArrayList<Mushroom>()
-            for(i in 1..20){
+            for(i in 1..totalCount){
                 array.add(Mushroom.getDummy(i,i%3 == 0))
             }
             return array
