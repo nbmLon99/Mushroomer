@@ -64,19 +64,21 @@
             app:layout_constraintRight_toRightOf="parent"
             >
             <Button
-                android:id="@+id/startCheckBtn"
+                android:id="@+id/startBtn"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
-
+                android:layout_height="40dp"
                 android:text="@string/startCheck"
+                android:textSize="@dimen/text_sub"
+                style="@style/Button_no_insets"
                 />
 
             <Button
-                android:id="@+id/closeCheckBtn"
+                android:id="@+id/closeBtn"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="40dp"
 
                 android:text="@string/closeCheck"
+                android:textSize="@dimen/text_sub"
                 />
         </LinearLayout>
 
