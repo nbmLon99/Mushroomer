@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -123,7 +124,11 @@ class DogamFragment : Fragment() {
         )
 
         bindSort(
-
+        )
+        bindFilter(
+            pagingData = pagingData,
+            uiState = uiState,
+            dogamAdapter = dogamAdapter
         )
         bindList(
             header = header,
@@ -132,14 +137,12 @@ class DogamFragment : Fragment() {
             pagingData = pagingData,
             onScrollChanged = uiActions
         )
-        bindFilter(
-            pagingData = pagingData,
-            dogamAdapter = dogamAdapter
-        )
+
     }
 
     private fun FragmentDogamBinding.bindFilter(
         pagingData: Flow<PagingData<UiModel>>,
+        uiState: StateFlow<UiState>,
         dogamAdapter: DogamAdapter
         ) {
         // 체크 박스의 체크 상태에 따라 데이터 필터링
@@ -162,87 +165,125 @@ class DogamFragment : Fragment() {
     }
 
 
+    //정렬하여 다시 페이징 로드
     private fun FragmentDogamBinding.bindSort(
 
-    ){
+    ) {
+        binding.sortingWay.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedSorting =
+                    parent?.getItemAtPosition(position) as? SortingOption ?: return
 
+                lifecycleScope.launch {
+                    val sortedData = when (selectedSorting) {
+                        // 도감넘버
+                        SortingOption.MUSH_NO -> {
+                        }
+                        //희귀도로 정렬
+                        SortingOption.MUSH_RARE -> {
+                        }
+                        //버섯이름으로 정렬
+                        SortingOption.MUSH_NAME -> {
+                        }
+                    }
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Do nothing
+            }
+        }
     }
 
-    private fun FragmentDogamBinding.bindList(
-        header: DogamLoadStateAdapter,
-        dogamAdapter: DogamAdapter,
-        uiState: StateFlow<UiState>,
-        pagingData: Flow<PagingData<UiModel>>,
-        onScrollChanged: (UiAction.Scroll) -> Unit
-    ) {
-        dogamRV.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy != 0) onScrollChanged(UiAction.Scroll(currentQuery = uiState.value.query))
+        private fun FragmentDogamBinding.bindList(
+            header: DogamLoadStateAdapter,
+            dogamAdapter: DogamAdapter,
+            uiState: StateFlow<UiState>,
+            pagingData: Flow<PagingData<UiModel>>,
+            onScrollChanged: (UiAction.Scroll) -> Unit
+        ) {
+            dogamRV.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (dy != 0) onScrollChanged(UiAction.Scroll(currentQuery = uiState.value.query))
+                }
+            })
+            val notLoading = dogamAdapter.loadStateFlow
+                .asRemotePresentationState()
+                .map { it == RemotePresentationState.PRESENTED }
+
+            val hasNotScrolledForCurrentSearch = uiState
+                .map { it.hasNotScrolledForCurrentSearch }
+                .distinctUntilChanged()
+
+            val shouldScrollToTop = combine(
+                notLoading,
+                hasNotScrolledForCurrentSearch,
+                Boolean::and
+            )
+                .distinctUntilChanged()
+
+            lifecycleScope.launch {
+                pagingData.collectLatest(dogamAdapter::submitData)
             }
-        })
-        val notLoading = dogamAdapter.loadStateFlow
-            .asRemotePresentationState()
-            .map { it == RemotePresentationState.PRESENTED }
 
-        val hasNotScrolledForCurrentSearch = uiState
-            .map { it.hasNotScrolledForCurrentSearch }
-            .distinctUntilChanged()
-
-        val shouldScrollToTop = combine(
-            notLoading,
-            hasNotScrolledForCurrentSearch,
-            Boolean::and
-        )
-            .distinctUntilChanged()
-
-        lifecycleScope.launch {
-            pagingData.collectLatest(dogamAdapter::submitData)
-        }
-
-        lifecycleScope.launch {
-            shouldScrollToTop.collect { shouldScroll ->
-                if (shouldScroll) dogamRV.scrollToPosition(0)
+            lifecycleScope.launch {
+                shouldScrollToTop.collect { shouldScroll ->
+                    if (shouldScroll) dogamRV.scrollToPosition(0)
+                }
             }
-        }
 
-        lifecycleScope.launch {
-            dogamAdapter.loadStateFlow.collect { loadState ->
-                // Show a retry header if there was an error refreshing, and items were previously
-                // cached OR default to the default prepend state
-                header.loadState = loadState.mediator
-                    ?.refresh
-                    ?.takeIf { it is LoadState.Error && dogamAdapter.itemCount > 0 }
-                    ?: loadState.prepend
+            lifecycleScope.launch {
+                dogamAdapter.loadStateFlow.collect { loadState ->
+                    // Show a retry header if there was an error refreshing, and items were previously
+                    // cached OR default to the default prepend state
+                    header.loadState = loadState.mediator
+                        ?.refresh
+                        ?.takeIf { it is LoadState.Error && dogamAdapter.itemCount > 0 }
+                        ?: loadState.prepend
 
-                val isListEmpty = loadState.refresh is LoadState.NotLoading && dogamAdapter.itemCount == 0
-                // show empty list
-                emptyList.isVisible = isListEmpty
-                // Only show the list if refresh succeeds, either from the the local db or the remote.
-                //dogamRV.isVisible =  loadState.source.refresh is LoadState.NotLoading || loadState.mediator?.refresh is LoadState.NotLoading
-                // Show loading spinner during initial load or refresh.
+                    val isListEmpty =
+                        loadState.refresh is LoadState.NotLoading && dogamAdapter.itemCount == 0
+                    // show empty list
+                    emptyList.isVisible = isListEmpty
+                    // Only show the list if refresh succeeds, either from the the local db or the remote.
+                    //dogamRV.isVisible =  loadState.source.refresh is LoadState.NotLoading || loadState.mediator?.refresh is LoadState.NotLoading
+                    // Show loading spinner during initial load or refresh.
 
-                // 상태 나타낼 스피너로 대체
-                //progressSpinner.isVisible = loadState.mediator?.refresh is LoadState.Loading
-                // Show the retry state if initial load or refresh fails.
-                //dogamRV.isVisible = loadState.mediator?.refresh is LoadState.Error && dogamAdapter.itemCount == 0
-                // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
-                val errorState = loadState.source.append as? LoadState.Error
-                    ?: loadState.source.prepend as? LoadState.Error
-                    ?: loadState.append as? LoadState.Error
-                    ?: loadState.prepend as? LoadState.Error
-                errorState?.let {
-                    Toast.makeText(
-                        requireActivity(),
-                        "\uD83D\uDE28 Wooops ${it.error}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    // 상태 나타낼 스피너로 대체
+                    //progressSpinner.isVisible = loadState.mediator?.refresh is LoadState.Loading
+                    // Show the retry state if initial load or refresh fails.
+                    //dogamRV.isVisible = loadState.mediator?.refresh is LoadState.Error && dogamAdapter.itemCount == 0
+                    // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
+                    val errorState = loadState.source.append as? LoadState.Error
+                        ?: loadState.source.prepend as? LoadState.Error
+                        ?: loadState.append as? LoadState.Error
+                        ?: loadState.prepend as? LoadState.Error
+                    errorState?.let {
+                        Toast.makeText(
+                            requireActivity(),
+                            "\uD83D\uDE28 Wooops ${it.error}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
             }
         }
-    }
 
     /** 도감 상세보기 화면 넘기기 **/
-    fun openDetail(dogamNo : Int){
+    fun openDetail(dogamNo: Int) {
 
     }
+
+}
+
+
+enum class SortingOption {
+    MUSH_NO,
+    MUSH_RARE,
+    MUSH_NAME
 }
