@@ -11,6 +11,7 @@ class DogamPagingSource(
     val backend: DogamService,
     val query: String
 ) : PagingSource<Int, Mushroom>() {
+    var tmpPageNum = 1
     override suspend fun load(
         params: LoadParams<Int>
     ): LoadResult<Int, Mushroom> {
@@ -18,7 +19,7 @@ class DogamPagingSource(
             // Start refresh at page 1 if undefined.
             val nextPageNumber = params.key ?: 1
             //val response = backend.getDogam(query, nextPageNumber)
-            val response = DogamResponse(0,Dogam.getDummy(30))
+            val response = DogamResponse(0,Dogam.getDummy(3),tmpPageNum++)
             return LoadResult.Page(
                 data = response.items,
                 prevKey = null, // Only paging forward.

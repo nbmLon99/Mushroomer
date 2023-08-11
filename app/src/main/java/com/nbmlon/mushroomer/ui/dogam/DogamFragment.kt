@@ -8,15 +8,11 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.paging.filter
 import androidx.recyclerview.widget.RecyclerView
-import com.nbmlon.mushroomer.data.dogam.DogamRepository
-import com.nbmlon.mushroomer.data.dogam.DogamService
 import com.nbmlon.mushroomer.data.dogam.impl.DogamRepositoryImpl
 import com.nbmlon.mushroomer.databinding.FragmentDogamBinding
 import kotlinx.coroutines.flow.Flow
@@ -136,9 +132,38 @@ class DogamFragment : Fragment() {
             pagingData = pagingData,
             onScrollChanged = uiActions
         )
+        bindFilter(
+            pagingData = pagingData,
+            dogamAdapter = dogamAdapter
+        )
     }
 
+    private fun FragmentDogamBinding.bindFilter(
+        pagingData: Flow<PagingData<UiModel>>,
+        dogamAdapter: DogamAdapter
+        ) {
+        // 체크 박스의 체크 상태에 따라 데이터 필터링
+        binding.undiscoverDisplayCkbox.setOnCheckedChangeListener { _, isChecked ->
+            // 체크 상태에 따라 데이터 필터링
+            val filteredPagingData = if (isChecked) {
+                pagingData // 원본 데이터 유지
+            } else {
+                pagingData.map { pagingData ->
+                    pagingData.filter { item -> (item as UiModel.MushItem).mush.gotcha }
+                }
+            }
+
+            lifecycleScope.launch {
+                filteredPagingData.collectLatest { filteredData ->
+                    dogamAdapter.submitData(filteredData)
+                }
+            }
+        }
+    }
+
+
     private fun FragmentDogamBinding.bindSort(
+
     ){
 
     }

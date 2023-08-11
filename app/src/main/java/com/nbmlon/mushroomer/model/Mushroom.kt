@@ -29,7 +29,7 @@ data class Mushroom (
     companion object {
         /** n(도감넘버), gotcha(발견 여부) 지정하여 더미데이터 생성 **/
         fun getDummy(n :Int, gotcha : Boolean) : Mushroom{
-            val mush = Mushroom(n,"","짱버섯","설명입니다.", MushType.EDIBLE,20L,ArrayList())
+            val mush = Mushroom(n,"","${n}번쨰 버섯","설명입니다.", MushType.EDIBLE,20L,ArrayList())
             if(gotcha){ mush.myPicPath.add("example") }
             return mush
         }
