@@ -108,9 +108,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
 
+            android:paddingHorizontal="10dp"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="2"
             android:orientation="vertical"
+            android:scrollbars="vertical"
+
             tools:listitem="@layout/item_dogam"
             />
         <TextView android:id="@+id/emptyList"

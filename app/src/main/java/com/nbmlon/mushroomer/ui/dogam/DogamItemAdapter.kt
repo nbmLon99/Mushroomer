@@ -5,15 +5,16 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.ItemDogamBinding
 import com.nbmlon.mushroomer.model.Mushroom
 
 
 
 
-class DogamAdapter : PagingDataAdapter<UiModel, DogamAdapter.DogamViewHolder>(UIMODEL_COMPARATOR) {
-    class DogamViewHolder(
+class DogamItemAdapter(
+    val dogamItemClickListner: DogamItemClickListner
+) : PagingDataAdapter<UiModel, DogamItemAdapter.DogamViewHolder>(UIMODEL_COMPARATOR) {
+    inner class DogamViewHolder(
         private val binding: ItemDogamBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -21,6 +22,11 @@ class DogamAdapter : PagingDataAdapter<UiModel, DogamAdapter.DogamViewHolder>(UI
             binding.apply {
                 mushroom = item
                 executePendingBindings()
+                if (item.gotcha){
+                    root.setOnClickListener {
+                        dogamItemClickListner.onDogamItemClicked(item)
+                    }
+                }
             }
         }
     }

@@ -27,7 +27,7 @@
     <string name="myMushPictures">나의 발견</string>
 
 
-    <!-- 도감 다이얼로그 -->
+    <!-- 도감 디테일 -->
     <string name="typeEat">식용 버섯</string>
     <string name="typePoison">독버섯</string>
     <string name="startCheck">검사시작!</string>

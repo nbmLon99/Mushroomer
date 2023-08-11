@@ -1,18 +1,18 @@
 package com.nbmlon.mushroomer.ui.dogam
 
+import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.nbmlon.mushroomer.R
-import com.nbmlon.mushroomer.databinding.FragmentDogamBinding
+import androidx.fragment.app.Fragment
 import com.nbmlon.mushroomer.databinding.FragmentDogamDetailBinding
+import com.nbmlon.mushroomer.model.Mushroom
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val ARG_PARAM1 = "mush"
 
 /**
  * A simple [Fragment] subclass.
@@ -21,8 +21,7 @@ private const val ARG_PARAM2 = "param2"
  */
 class DogamFragment_detail : Fragment() {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var mMush : Mushroom? = null
 
     private var _binding: FragmentDogamDetailBinding? = null
     private val binding get() = _binding!!
@@ -32,8 +31,11 @@ class DogamFragment_detail : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                mMush = it.getSerializable(ARG_PARAM1, Mushroom::class.java)
+            } else {
+                mMush = it.getSerializable(ARG_PARAM1) as Mushroom
+            }
         }
     }
 
@@ -43,6 +45,12 @@ class DogamFragment_detail : Fragment() {
     ): View? {
         _binding = FragmentDogamDetailBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.mushroom = mMush
+        binding.btnClose.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
     }
 
     companion object {
@@ -56,11 +64,10 @@ class DogamFragment_detail : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(mush: Mushroom) =
             DogamFragment_detail().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putSerializable(ARG_PARAM1, mush)
                 }
             }
     }

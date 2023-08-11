@@ -14,8 +14,10 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.filter
 import androidx.recyclerview.widget.RecyclerView
+import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.data.dogam.impl.DogamRepositoryImpl
 import com.nbmlon.mushroomer.databinding.FragmentDogamBinding
+import com.nbmlon.mushroomer.model.Mushroom
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -33,7 +35,7 @@ private const val ARG_PARAM1 = "dogamNo"
  * Use the [DogamFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class DogamFragment : Fragment() {
+class DogamFragment : Fragment(), DogamItemClickListner {
 
     companion object {
         private const val TAG = "DogamFragment"
@@ -50,10 +52,9 @@ class DogamFragment : Fragment() {
 
         //도감 번호 입력해서 넘어갈떄 이렇게 넘어가면될듯?
         @JvmStatic
-        fun getInfoFromDogamNo(dogamNo : Int) =
+        fun newInstance() =
             DogamFragment().apply {
                 arguments = Bundle().apply {
-                    putInt(ARG_PARAM1, dogamNo)
                 }
             }
     }
@@ -115,12 +116,12 @@ class DogamFragment : Fragment() {
         pagingData: Flow<PagingData<UiModel>>,
         uiActions: (UiAction) -> Unit
     ) {
-        val dogamAdapter = DogamAdapter()
-        val header = DogamLoadStateAdapter { dogamAdapter.retry() }
+        val dogamItemAdapter = DogamItemAdapter(this@DogamFragment::onDogamItemClicked)
+        val header = DogamLoadStateAdapter { dogamItemAdapter.retry() }
 
-        dogamRV.adapter = dogamAdapter.withLoadStateHeaderAndFooter(
+        dogamRV.adapter = dogamItemAdapter.withLoadStateHeaderAndFooter(
             header = header,
-            footer = DogamLoadStateAdapter { dogamAdapter.retry() }
+            footer = DogamLoadStateAdapter { dogamItemAdapter.retry() }
         )
 
         bindSort(
@@ -128,11 +129,11 @@ class DogamFragment : Fragment() {
         bindFilter(
             pagingData = pagingData,
             uiState = uiState,
-            dogamAdapter = dogamAdapter
+            dogamItemAdapter = dogamItemAdapter
         )
         bindList(
             header = header,
-            dogamAdapter = dogamAdapter,
+            dogamItemAdapter = dogamItemAdapter,
             uiState = uiState,
             pagingData = pagingData,
             onScrollChanged = uiActions
@@ -143,7 +144,7 @@ class DogamFragment : Fragment() {
     private fun FragmentDogamBinding.bindFilter(
         pagingData: Flow<PagingData<UiModel>>,
         uiState: StateFlow<UiState>,
-        dogamAdapter: DogamAdapter
+        dogamItemAdapter: DogamItemAdapter
         ) {
         // 체크 박스의 체크 상태에 따라 데이터 필터링
         binding.undiscoverDisplayCkbox.setOnCheckedChangeListener { _, isChecked ->
@@ -158,7 +159,7 @@ class DogamFragment : Fragment() {
 
             lifecycleScope.launch {
                 filteredPagingData.collectLatest { filteredData ->
-                    dogamAdapter.submitData(filteredData)
+                    dogamItemAdapter.submitData(filteredData)
                 }
             }
         }
@@ -202,7 +203,7 @@ class DogamFragment : Fragment() {
 
         private fun FragmentDogamBinding.bindList(
             header: DogamLoadStateAdapter,
-            dogamAdapter: DogamAdapter,
+            dogamItemAdapter: DogamItemAdapter,
             uiState: StateFlow<UiState>,
             pagingData: Flow<PagingData<UiModel>>,
             onScrollChanged: (UiAction.Scroll) -> Unit
@@ -212,7 +213,7 @@ class DogamFragment : Fragment() {
                     if (dy != 0) onScrollChanged(UiAction.Scroll(currentQuery = uiState.value.query))
                 }
             })
-            val notLoading = dogamAdapter.loadStateFlow
+            val notLoading = dogamItemAdapter.loadStateFlow
                 .asRemotePresentationState()
                 .map { it == RemotePresentationState.PRESENTED }
 
@@ -228,7 +229,7 @@ class DogamFragment : Fragment() {
                 .distinctUntilChanged()
 
             lifecycleScope.launch {
-                pagingData.collectLatest(dogamAdapter::submitData)
+                pagingData.collectLatest(dogamItemAdapter::submitData)
             }
 
             lifecycleScope.launch {
@@ -238,16 +239,16 @@ class DogamFragment : Fragment() {
             }
 
             lifecycleScope.launch {
-                dogamAdapter.loadStateFlow.collect { loadState ->
+                dogamItemAdapter.loadStateFlow.collect { loadState ->
                     // Show a retry header if there was an error refreshing, and items were previously
                     // cached OR default to the default prepend state
                     header.loadState = loadState.mediator
                         ?.refresh
-                        ?.takeIf { it is LoadState.Error && dogamAdapter.itemCount > 0 }
+                        ?.takeIf { it is LoadState.Error && dogamItemAdapter.itemCount > 0 }
                         ?: loadState.prepend
 
                     val isListEmpty =
-                        loadState.refresh is LoadState.NotLoading && dogamAdapter.itemCount == 0
+                        loadState.refresh is LoadState.NotLoading && dogamItemAdapter.itemCount == 0
                     // show empty list
                     emptyList.isVisible = isListEmpty
                     // Only show the list if refresh succeeds, either from the the local db or the remote.
@@ -274,9 +275,12 @@ class DogamFragment : Fragment() {
             }
         }
 
-    /** 도감 상세보기 화면 넘기기 **/
-    fun openDetail(dogamNo: Int) {
-
+    override fun onDogamItemClicked(clickedMushroom: Mushroom) {
+        /** 도감 상세보기 화면 넘기기 **/
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.FragmentContainer, DogamFragment_detail.newInstance(clickedMushroom))
+            .addToBackStack(null) // 백 스택에 Fragment 트랜잭션 추가
+            .commit()
     }
 
 }
