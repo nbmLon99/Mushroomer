@@ -2,6 +2,10 @@ package com.nbmlon.mushroomer.model
 
 import java.util.Date
 
+enum class PostType{
+    POST_PICTURE,
+    POST_TEXT
+}
 
 
 /**
