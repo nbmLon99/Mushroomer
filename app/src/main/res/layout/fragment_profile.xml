@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
 
                 android:text="myLoginID"
-                android:textSize="15sp"
+                android:textSize="@dimen/text_main"
                 android:textStyle="bold"
             />
             <TextView
@@ -64,7 +64,7 @@
 
                 android:layout_marginTop="5dp"
                 android:text="myNickName"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_sub"
                 />
         </LinearLayout>
     </LinearLayout>
@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
 
             android:text="@string/subtitle_id"
-            android:textSize="15sp"
+            android:textSize="@dimen/text_main"
             android:textStyle="bold"
 
             android:paddingVertical="5dp"
@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
 
                 android:text="@string/chg_id_email"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_sub"
                 android:paddingVertical="5dp"
                 />
 
@@ -111,7 +111,7 @@
                 android:layout_height="wrap_content"
 
                 android:text="@string/chg_id_pwd"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_sub"
                 android:paddingVertical="5dp"
                 />
 
@@ -121,7 +121,7 @@
                 android:layout_height="wrap_content"
 
                 android:text="@string/chg_id_nickname"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_sub"
                 android:paddingVertical="5dp"
                 />
 
@@ -130,7 +130,7 @@
                 android:layout_height="wrap_content"
 
                 android:text="@string/chg_id_exit"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_sub"
                 android:paddingVertical="5dp"
                 />
 
@@ -144,7 +144,7 @@
             android:layout_height="wrap_content"
 
             android:text="@string/subtitle_app"
-            android:textSize="15sp"
+            android:textSize="@dimen/text_main"
             android:textStyle="bold"
 
             android:paddingVertical="5dp"
@@ -162,7 +162,7 @@
                 android:layout_height="wrap_content"
 
                 android:text="@string/chg_app_login"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_sub"
                 android:paddingVertical="5dp"
                 />
         </LinearLayout>
@@ -174,7 +174,7 @@
             android:layout_height="wrap_content"
 
             android:text="@string/subtitle_other"
-            android:textSize="15sp"
+            android:textSize="@dimen/text_main"
             android:textStyle="bold"
 
             android:paddingVertical="5dp"
@@ -192,7 +192,7 @@
                 android:layout_height="wrap_content"
 
                 android:text="@string/chg_oth_logout"
-                android:textSize="12sp"
+                android:textSize="@dimen/text_sub"
                 android:paddingVertical="5dp"
                 />
         </LinearLayout>
