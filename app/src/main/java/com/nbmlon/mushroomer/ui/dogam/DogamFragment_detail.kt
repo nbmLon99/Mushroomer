@@ -51,6 +51,9 @@ class DogamFragment_detail : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.mushroom = mMush
         binding.btnClose.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+        val adapter = HistoryPicturesAdapter()
+        adapter.submitList(mMush!!.myHistory)
+        binding.myMushHistory.adapter = adapter
     }
 
     companion object {

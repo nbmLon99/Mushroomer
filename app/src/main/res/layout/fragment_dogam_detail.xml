@@ -138,18 +138,14 @@
                         android:textStyle="bold"
                         />
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/myMushPictures"
+                        android:id="@+id/myMushHistory"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
 
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         android:orientation="horizontal"
-
-                        tools:listitem="@layout/item_mushpictures"
-                        android:paddingVertical="10dp"
-                        android:paddingHorizontal="8dp"
+                        tools:listitem="@layout/item_history_pictures"
                         >
-
                     </androidx.recyclerview.widget.RecyclerView>
 
                 </LinearLayout>
