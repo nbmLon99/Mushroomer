@@ -79,7 +79,7 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
 
 
         binding.shootBtn.setOnClickListener { takePhoto() }
-        binding.startCheckBtn.setOnClickListener {
+        binding.startBtn.setOnClickListener {
             if(picturesAdapter.itemCount < 5) { showAlertMessage() }
             else{ startAnalyze() }
         }
