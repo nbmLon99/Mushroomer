@@ -2,13 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.profile.ProfileFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.profile.ProfileFragment"
     android:orientation="vertical"
     >
-
-
     <!-- 제목 -->
     <TextView
         android:layout_width="match_parent"
@@ -31,14 +29,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-
         android:padding="20dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginVertical="10dp"
         >
         <ImageView
             android:id="@+id/profileIcon"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:background="@drawable/bg_circlebtn"
+            android:src="@drawable/icons_avatar"
+            android:padding="10dp"
+            android:layout_marginRight="15dp"
             />
 
         <LinearLayout
@@ -56,7 +57,7 @@
                 android:text="myLoginID"
                 android:textSize="@dimen/text_main"
                 android:textStyle="bold"
-            />
+                />
             <TextView
                 android:id="@+id/nickname"
                 android:layout_width="wrap_content"
@@ -69,137 +70,141 @@
         </LinearLayout>
     </LinearLayout>
 
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="horizontal"
-        android:orientation="vertical"
-
-        android:paddingHorizontal="20dp"
-
-        >
-        <!-- 계정 -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:text="@string/subtitle_id"
-            android:textSize="@dimen/text_main"
-            android:textStyle="bold"
-
-            android:paddingVertical="5dp"
-            />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-
-            android:padding="20dp"
-            >
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:text="@string/chg_id_email"
-                android:textSize="@dimen/text_sub"
-                android:paddingVertical="5dp"
-                />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:text="@string/chg_id_pwd"
-                android:textSize="@dimen/text_sub"
-                android:paddingVertical="5dp"
-                />
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:text="@string/chg_id_nickname"
-                android:textSize="@dimen/text_sub"
-                android:paddingVertical="5dp"
-                />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:text="@string/chg_id_exit"
-                android:textSize="@dimen/text_sub"
-                android:paddingVertical="5dp"
-                />
-
-        </LinearLayout>
-
-
-        <!-- 앱 설정 -->
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:text="@string/subtitle_app"
-            android:textSize="@dimen/text_main"
-            android:textStyle="bold"
-
-            android:paddingVertical="5dp"
-
-            />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-
-            android:padding="20dp"
-            >
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:text="@string/chg_app_login"
-                android:textSize="@dimen/text_sub"
-                android:paddingVertical="5dp"
-                />
-        </LinearLayout>
-
-
-        <!-- 기타 -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:text="@string/subtitle_other"
-            android:textSize="@dimen/text_main"
-            android:textStyle="bold"
-
-            android:paddingVertical="5dp"
-            />
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-
-            android:padding="20dp"
             >
-            <TextView
+
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:scrollbars="horizontal"
+                android:orientation="vertical"
 
-                android:text="@string/chg_oth_logout"
-                android:textSize="@dimen/text_sub"
-                android:paddingVertical="5dp"
-                />
+                android:paddingHorizontal="20dp"
+
+                >
+                <!-- 계정 -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:text="@string/subtitle_id"
+                    android:textSize="@dimen/text_main"
+                    android:textStyle="bold"
+
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+
+                    android:padding="20dp"
+                    >
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:text="@string/chg_id_email"
+                        android:textSize="@dimen/text_sub"
+                        android:paddingVertical="5dp"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:text="@string/chg_id_pwd"
+                        android:textSize="@dimen/text_sub"
+                        android:paddingVertical="5dp"
+                        />
+
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:text="@string/chg_id_nickname"
+                        android:textSize="@dimen/text_sub"
+                        android:paddingVertical="5dp"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:text="@string/chg_id_exit"
+                        android:textSize="@dimen/text_sub"
+                        android:paddingVertical="5dp"
+                        />
+
+                </LinearLayout>
+
+
+                <!-- 앱 설정 -->
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:text="@string/subtitle_app"
+                    android:textSize="@dimen/text_main"
+                    android:textStyle="bold"
+
+
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+
+                    android:padding="20dp"
+                    >
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:text="@string/chg_app_login"
+                        android:textSize="@dimen/text_sub"
+                        android:paddingVertical="5dp"
+                        />
+                </LinearLayout>
+
+
+                <!-- 기타 -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:text="@string/subtitle_other"
+                    android:textSize="@dimen/text_main"
+                    android:textStyle="bold"
+
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+
+                    android:padding="20dp"
+                    >
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:text="@string/chg_oth_logout"
+                        android:textSize="@dimen/text_sub"
+                        android:paddingVertical="5dp"
+                        />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
-
-
-
-
-    </LinearLayout>
-
+    </ScrollView>
 </LinearLayout>
