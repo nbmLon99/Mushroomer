@@ -73,11 +73,14 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
 
         cameraViewModel.capturedImages.observe(viewLifecycleOwner) { itemList ->
             picturesAdapter.submitList(itemList)
+            binding.pictureRV.adapter = picturesAdapter
+
+            Log.d("CAMERA_TEST", itemList.toString())
         }
 
         binding.shootBtn.setOnClickListener { takePhoto() }
         binding.startBtn.setOnClickListener {
-            if(picturesAdapter.itemCount < 5) { showAlertMessage() }
+            if(cameraViewModel.capturedImages.value!!.size < 5) { showAlertMessage() }
             else{ startAnalyze() }
         }
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -147,6 +150,8 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
                 object : ImageCapture.OnImageCapturedCallback() {
                     override fun onCaptureSuccess(image: ImageProxy) {
                         cameraViewModel.saveProxyPicture(image)
+                        //image.close()
+                        Log.d("CAMERA_TEST",cameraViewModel.capturedImages.value!!.size.toString())
                     }
 
                     override fun onError(exception: ImageCaptureException) {

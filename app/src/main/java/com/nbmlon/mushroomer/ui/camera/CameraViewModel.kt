@@ -34,10 +34,14 @@ class CameraViewModel : ViewModel() {
     }
 
     fun saveProxyPicture(image : ImageProxy){
-        _capturedImages.value?.add(image)
+        val currentList = _capturedImages.value ?: arrayListOf()
+        currentList.add(image)
+        _capturedImages.value = currentList
     }
     fun delProxyPicture(idx : Int){
-        _capturedImages.value?.removeAt(idx)
+        val currentList = _capturedImages.value ?: arrayListOf()
+        currentList.removeAt(idx)
+        _capturedImages.value = currentList
     }
 
 
@@ -46,6 +50,19 @@ class CameraViewModel : ViewModel() {
             val buffer: ByteBuffer = image.planes[0].buffer
             val bytes = ByteArray(buffer.capacity())
             buffer.get(bytes)
+            image.close()
+
+            // Here you can save the bytes to your storage, or do whatever you want with them.
+            // Save them to your PicturesAdapter when you're ready.
+        }
+
+        // Clear the capturedImages list after processing
+        _capturedImages.value = arrayListOf()
+    }
+
+    private fun clearImages(images: List<ImageProxy>) {
+        for (image in images) {
+
             image.close()
 
             // Here you can save the bytes to your storage, or do whatever you want with them.
