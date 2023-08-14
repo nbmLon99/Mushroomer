@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.model
+package com.nbmlon.mushroomer.utils
 
 import com.google.gson.*
 import java.lang.reflect.Type
