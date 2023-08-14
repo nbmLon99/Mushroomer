@@ -1,19 +1,15 @@
 package com.nbmlon.mushroomer.ui.camera
 
 import android.Manifest
-import android.content.ContentValues
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
@@ -23,12 +19,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCameraBinding
-import java.nio.ByteBuffer
-import java.text.SimpleDateFormat
-import java.util.Locale
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -55,7 +50,7 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
     private var imageCapture: ImageCapture? = null
 
 
-    private val analyzingViewModel: AnalyzingViewModel by viewModels()
+    private val cameraViewModel: CameraViewModel by viewModels()
 
 
     override fun onCreateView(
@@ -75,15 +70,38 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         picturesAdapter = PicturesAdapter(this@CameraFragment as ImageListner)
-        binding.pictureRV.adapter = picturesAdapter
-
-
-        binding.shootBtn.setOnClickListener { takePhoto() }
-        binding.startBtn.setOnClickListener {
-            if(picturesAdapter.itemCount < 5) { showAlertMessage() }
-            else{ startAnalyze() }
-        }
         cameraExecutor = Executors.newSingleThreadExecutor()
+
+        cameraViewModel.capturedImages.observe(viewLifecycleOwner) { itemList ->
+            picturesAdapter.submitList(itemList.toList())
+            binding.pictureRV.smoothScrollToPosition(0)
+        }
+
+        binding.apply {
+            pictureRV.adapter = picturesAdapter
+            shootBtn.setOnClickListener { takePhoto() }
+            startBtn.setOnClickListener {
+                cameraViewModel.capturedImages.value?.let {
+                    if(it.size <= 0) { showMinimumToast() }
+                    if(it.size < resources.getInteger(R.integer.recommended_pic_count)) { showAlertMessage() }
+                    else{
+                        savePictures()
+                        startAnalyze()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun savePictures() {
+        CoroutineScope(Dispatchers.Main).launch {
+            val success = cameraViewModel.savePictureFromBitmaps(requireActivity())
+            if (success) {
+                Log.d(TAG, "SUCCESS_TO_SAVE")
+            } else {
+                Toast.makeText(context,resources.getText(R.string.TOAST_FAIL_TO_SAVE),Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onResume() {
@@ -138,52 +156,32 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
         }, ContextCompat.getMainExecutor(requireContext()))
     }
 
+
+
     private fun takePhoto() {
-        if(picturesAdapter.itemCount < 5){
+        if (cameraViewModel.capturedImages.value!!.size < 5) {
             // Get a stable reference of the modifiable image capture use case
-            val imageCapture =  imageCapture ?: return
+            val imageCapture = imageCapture ?: return
 
-            // Create time stamped name and MediaStore entry.
-            val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
-                .format(System.currentTimeMillis())
-            val contentValues = ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-                    put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image")
-                }
-            }
-
-            // Create output options object which contains file + metadata
-            val outputOptions = ImageCapture.OutputFileOptions
-                .Builder(
-                    requireActivity().contentResolver,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    contentValues)
-                .build()
-
-            // Set up image capture listener, which is triggered after photo has
-            // been taken
             imageCapture.takePicture(
-                outputOptions,
                 ContextCompat.getMainExecutor(requireContext()),
-                object : ImageCapture.OnImageSavedCallback {
-                    override fun onError(exc: ImageCaptureException) {
-                        Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
+                object : ImageCapture.OnImageCapturedCallback() {
+                    override fun onCaptureSuccess(image: ImageProxy) {
+                        cameraViewModel.addPicture(image)
+                        image.close()
+                        Log.d("CAMERA_TEST",cameraViewModel.capturedImages.value!!.size.toString())
                     }
 
-                    override fun onImageSaved(output: ImageCapture.OutputFileResults){
-                        val msg = "Photo capture succeeded: ${output.savedUri}"
-                        Log.d(TAG, msg)
-                        picturesAdapter.addPicture(output.savedUri!!)
-                        binding.pictureRV.smoothScrollToPosition(0)
+                    override fun onError(exception: ImageCaptureException) {
+                        Log.e(CameraFragment.TAG, "Photo capture failed: ${exception.message}", exception)
                     }
                 }
             )
-        }else{
-            Toast.makeText(requireActivity(),resources.getText(R.string.TOAST_pictureMaximum),Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(requireActivity(), resources.getText(R.string.TOAST_pictureMaximum), Toast.LENGTH_SHORT).show()
         }
     }
+
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
@@ -192,32 +190,28 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
 
 
 
-    override fun deleteImage(uri: Uri) {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-
-            requireActivity().contentResolver.delete(uri, null, null)
-        }else{
-            Toast.makeText(requireActivity(),"권한이없음",Toast.LENGTH_LONG).show()
-        }
-
+    override fun deleteImage(idx : Int) {
+        cameraViewModel.delPicture(idx)
     }
 
 
     private fun showAlertMessage(){
-        val dialogFragment = CameraFragment_alert().apply {
-            arguments = Bundle().apply {
-                putInt(CameraFragment_alert.ITEM_COUNT, picturesAdapter.itemCount)
+        cameraViewModel.capturedImages.value?.let {
+            val dialogFragment = CameraFragment_alert().apply {
+                arguments = Bundle().apply {
+                    putInt(CameraFragment_alert.ITEM_COUNT, cameraViewModel.capturedImages.value!!.size)
+                }
             }
+            dialogFragment.show(parentFragmentManager, CameraFragment_alert.TAG)
         }
-        dialogFragment.show(parentFragmentManager, CameraFragment_alert.TAG)
+    }
+
+    private fun showMinimumToast(){
+        Toast.makeText(requireActivity(),getString(R.string.TOAST_pictureMinimum),Toast.LENGTH_SHORT).show()
     }
 
 
     override fun startAnalyze() {
-        analyzingViewModel.performAnalysis(picturesAdapter.getPictures())
+        cameraViewModel.startAnalysis()
     }
 }

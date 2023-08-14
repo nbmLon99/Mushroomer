@@ -27,11 +27,13 @@ class CameraFragment_alert : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         binding = FragmentCameraAlertBinding.inflate(layoutInflater)
-        binding.btnCancel.setOnClickListener { this@CameraFragment_alert.dismiss() }
-        binding.btnAnalyze.setOnClickListener { (parentFragment as AnalyzeStartListener).startAnalyze() }
-
-        val builder = AlertDialog.Builder(requireActivity())
-        builder.setView(binding.root)
-        return builder.create()
+        binding.apply {
+            picSize = itemCount
+            btnCancel.setOnClickListener { this@CameraFragment_alert.dismiss() }
+            btnAnalyze.setOnClickListener { (parentFragment as AnalyzeStartListener).startAnalyze() }
+            val builder = AlertDialog.Builder(requireActivity())
+            builder.setView(root)
+            return builder.create()
+        }
     }
 }

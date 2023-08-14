@@ -5,5 +5,5 @@ import android.net.Uri
 
 /** PicturesAdapter에서 아이템 삭제 요구 **/
 interface ImageListner {
-    fun deleteImage(uri : Uri)
+    fun deleteImage(idx : Int)
 }

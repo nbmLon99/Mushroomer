@@ -69,7 +69,6 @@
                 android:layout_height="40dp"
                 android:text="@string/startCheck"
                 android:textSize="@dimen/text_sub"
-                style="@style/Button_no_insets"
                 />
 
             <Button

@@ -47,7 +47,12 @@
     <string name="subtitle_id">계정</string>
     <string name="new_mush">NEW!!</string>
     <string name="TOAST_pictureMaximum">검사할 수 있는 최대 사진은 5장입니다!</string>
+    <string name="TOAST_pictureMinimum">촬영버튼을 통해 검사할 사진을 등록하세요!</string>
 
+    <string name="TOAST_FAIL_TO_SAVE">사진 저장이 실패했습니다. 권한을 확인해주세요</string>
+
+
+    <string name="alert_pictureSize">현재 %1$d장의 사진이 촬영되었습니다!\n 정확한 검사를 위해 %2$d장 이상의 촬영이 권장됩니다.\n 이대로 검사를 진행하시겠습니까?</string>
 
 
     <!-- 프로필 프래그먼트 -->

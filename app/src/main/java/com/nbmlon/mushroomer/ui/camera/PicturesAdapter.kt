@@ -1,34 +1,32 @@
 package com.nbmlon.mushroomer.ui.camera
 
-import android.net.Uri
-import android.util.Log
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.media.Image
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.camera.core.ImageProxy
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.nbmlon.mushroomer.utils.GlideApp
 import com.nbmlon.mushroomer.databinding.ItemPhotoCheckingBinding
 import com.nbmlon.mushroomer.ui.camera.PicturesAdapter.PictureViewHolder
+import com.nbmlon.mushroomer.utils.GlideApp
+import kotlin.coroutines.coroutineContext
 
 
-class PicturesAdapter(im: ImageListner) : RecyclerView.Adapter<PictureViewHolder>() {
+class PicturesAdapter(im: ImageListner) : ListAdapter<Bitmap,PictureViewHolder>(MyDiffCallback){
     private lateinit var itemBinding: ItemPhotoCheckingBinding
     private var imageManager: ImageListner = im
-    private val pictures : ArrayList<Uri> = ArrayList()
 
     inner class PictureViewHolder(private val itemBinding: ItemPhotoCheckingBinding) : RecyclerView.ViewHolder(itemBinding.root){
-        fun bind(pos : Int){
-            val targetUri = pictures[pos]
-            GlideApp.with(itemView.context)
-                .load(targetUri)
-                    .into(itemBinding.photo)
-            itemBinding.clearBtn.setOnClickListener {
-                imageManager.deleteImage(targetUri)
-                removeItem(targetUri)
-            }
+        fun bind(pos : Int) {
+            val targetBitmap = getItem(pos)
+            GlideApp
+                .with(itemView.context)
+                .load(targetBitmap)
+                .into(itemBinding.photo)
+            itemBinding.clearBtn.setOnClickListener { imageManager.deleteImage(pos) }
         }
     }
 
@@ -37,28 +35,19 @@ class PicturesAdapter(im: ImageListner) : RecyclerView.Adapter<PictureViewHolder
         return PictureViewHolder(itemBinding)
     }
 
-    override fun getItemCount(): Int {
-        return pictures.size
-    }
 
     override fun onBindViewHolder(holder: PictureViewHolder, position: Int) {
         holder.bind(position)
     }
+}
 
 
-    private fun removeItem(targetUri :Uri){
-        val pos = pictures.indexOf(targetUri)
-        pictures.removeAt(pos)
-        notifyItemRemoved(pos)
-        notifyItemRangeChanged(pos,itemCount)
+object MyDiffCallback : DiffUtil.ItemCallback<Bitmap>() {
+    override fun areItemsTheSame(oldItem: Bitmap, newItem: Bitmap): Boolean {
+        return oldItem == newItem
     }
 
-    fun addPicture(uri : Uri){
-        pictures.add(0,uri)
-        notifyItemInserted(0)
-    }
-
-    fun getPictures() : ArrayList<Uri>{
-        return pictures
+    override fun areContentsTheSame(oldItem: Bitmap, newItem: Bitmap): Boolean {
+        return oldItem == newItem
     }
 }

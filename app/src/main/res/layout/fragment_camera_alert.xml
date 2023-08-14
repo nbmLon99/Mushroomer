@@ -1,51 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     tools:context=".ui.camera.CameraFragment_alert"
     >
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center"
+    <data>
+        <variable
+            name="picSize"
+            type="int" />
+
+    </data>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         >
-        <TextView
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="30dp"
-            android:layout_marginVertical="10dp"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:paddingVertical="40dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="30dp"
+                android:layout_marginVertical="10dp"
 
-            android:lineSpacingExtra="10dp"
-            android:gravity="center"
-            android:text="현재 2장의 사진이 촬영되었습니다!\n 정확한 검사를 위해 N장 이상의 촬영이 권장됩니다.\n 이대로 검사를 진행하시겠습니까?"
-            android:textStyle="bold"
+                android:lineSpacingExtra="10dp"
+                android:gravity="center"
+                android:text="@{@string/alert_pictureSize(picSize,@integer/recommended_pic_count)}"
+                android:textStyle="bold"
 
-            />
-        <Button
-            android:id="@+id/btnAnalyze"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginVertical="5dp"
+                />
+            <Button
+                android:id="@+id/btnAnalyze"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginVertical="5dp"
 
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:background="@color/mainGreen"
-            android:text="@string/positiveBtn"
-            />
-        <Button
-            android:id="@+id/btnCancel"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginVertical="5dp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@color/mainGreen"
+                android:text="@string/positiveBtn"
+                />
+            <Button
+                android:id="@+id/btnCancel"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginVertical="5dp"
 
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:background="@color/negativeRed"
-            android:text="@string/negativeBtn"
-            />
-    </LinearLayout>
-</FrameLayout>
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@color/negativeRed"
+                android:text="@string/negativeBtn"
+                />
+        </LinearLayout>
+    </FrameLayout>
+
+
+
+</layout>
