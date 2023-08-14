@@ -1,27 +1,35 @@
 package com.nbmlon.mushroomer.ui.camera
 
-import android.net.Uri
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.media.Image
+import android.os.Environment
 import android.util.Log
-import android.widget.Toast
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.nbmlon.mushroomer.R
-import java.nio.ByteBuffer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class CameraViewModel : ViewModel() {
     // MutableLiveData를 사용하여 분석 결과를 저장할 변수를 선언합니다.
+//    private val _analysisRequest = MutableLiveData<>
     private val _analysisResult = MutableLiveData<String>()
-    private val _capturedImages: MutableLiveData<ArrayList<ImageProxy>> = MutableLiveData(arrayListOf())
+    private val _capturedImages: MutableLiveData<ArrayList<Bitmap>> = MutableLiveData(arrayListOf())
+
 
     val analysisResult: LiveData<String>
         get() = _analysisResult
 
-    val capturedImages : LiveData<ArrayList<ImageProxy>>
+    val capturedImages : LiveData<ArrayList<Bitmap>>
         get() = _capturedImages
 
 
@@ -33,43 +41,64 @@ class CameraViewModel : ViewModel() {
         _analysisResult.value = "분석 결과: $data"
     }
 
-    fun saveProxyPicture(image : ImageProxy){
+    @SuppressLint("UnsafeOptInUsageError")
+    fun addPicture(image : ImageProxy){
+        val bitmap = image.image?.toBitmap()
         val currentList = _capturedImages.value ?: arrayListOf()
-        currentList.add(image)
+        bitmap?.let { currentList.add(0, it) }
         _capturedImages.value = currentList
     }
-    fun delProxyPicture(idx : Int){
+    fun delPicture(idx : Int){
         val currentList = _capturedImages.value ?: arrayListOf()
         currentList.removeAt(idx)
         _capturedImages.value = currentList
     }
 
 
-    private fun saveImages(images: List<ImageProxy>) {
-        for (image in images) {
-            val buffer: ByteBuffer = image.planes[0].buffer
-            val bytes = ByteArray(buffer.capacity())
-            buffer.get(bytes)
-            image.close()
-
-            // Here you can save the bytes to your storage, or do whatever you want with them.
-            // Save them to your PicturesAdapter when you're ready.
+    suspend fun savePictureFromBitmaps(context: Context) : Boolean{
+        val timestampFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
+        val timestamp = timestampFormat.format(Date())
+        var success = true
+        capturedImages.value?.let {
+            for ((idx, bitmap) in it.withIndex()){
+                val filename = "${timestamp}_${idx}"
+                val result = savePictureFromBitmap(context, bitmap, filename)
+                if(!result){
+                    success = false
+                }
+            }
         }
-
-        // Clear the capturedImages list after processing
-        _capturedImages.value = arrayListOf()
+        return success
     }
 
-    private fun clearImages(images: List<ImageProxy>) {
-        for (image in images) {
+    suspend fun savePictureFromBitmap(context: Context, bitmap: Bitmap, filename: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            val directory = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            val file = File(directory, filename)
 
-            image.close()
-
-            // Here you can save the bytes to your storage, or do whatever you want with them.
-            // Save them to your PicturesAdapter when you're ready.
+            var success = false
+            var fos: FileOutputStream? = null
+            try {
+                fos = FileOutputStream(file)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                fos.flush()
+                Log.d("성공",file.path)
+                success = true
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                fos?.close()
+            }
+            success
         }
+    }
 
-        // Clear the capturedImages list after processing
-        _capturedImages.value = arrayListOf()
+
+    private fun Image.toBitmap(): Bitmap {
+        val buffer = planes[0].buffer
+        buffer.rewind()
+        val bytes = ByteArray(buffer.capacity())
+        buffer.get(bytes)
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
     }
 }

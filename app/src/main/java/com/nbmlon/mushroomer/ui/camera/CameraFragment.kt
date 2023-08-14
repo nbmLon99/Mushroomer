@@ -2,7 +2,6 @@ package com.nbmlon.mushroomer.ui.camera
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -20,9 +19,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCameraBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -69,21 +70,37 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         picturesAdapter = PicturesAdapter(this@CameraFragment as ImageListner)
-        binding.pictureRV.adapter = picturesAdapter
+        cameraExecutor = Executors.newSingleThreadExecutor()
 
         cameraViewModel.capturedImages.observe(viewLifecycleOwner) { itemList ->
-            picturesAdapter.submitList(itemList)
-            binding.pictureRV.adapter = picturesAdapter
-
-            Log.d("CAMERA_TEST", itemList.toString())
+            picturesAdapter.submitList(itemList.toList())
         }
 
-        binding.shootBtn.setOnClickListener { takePhoto() }
-        binding.startBtn.setOnClickListener {
-            if(cameraViewModel.capturedImages.value!!.size < 5) { showAlertMessage() }
-            else{ startAnalyze() }
+        binding.apply {
+            pictureRV.adapter = picturesAdapter
+            shootBtn.setOnClickListener { takePhoto() }
+            startBtn.setOnClickListener {
+                cameraViewModel.capturedImages.value?.let {
+                    if(it.size <= 0) { showMinimumToast() }
+                    if(it.size < resources.getInteger(R.integer.recommended_pic_count)) { showAlertMessage() }
+                    else{
+                        savePictures()
+                        startAnalyze()
+                    }
+                }
+            }
         }
-        cameraExecutor = Executors.newSingleThreadExecutor()
+    }
+
+    private fun savePictures() {
+        CoroutineScope(Dispatchers.Main).launch {
+            val success = cameraViewModel.savePictureFromBitmaps(requireActivity())
+            if (success) {
+                Log.d(TAG, "SUCCESS_TO_SAVE")
+            } else {
+                Toast.makeText(context,resources.getText(R.string.TOAST_FAIL_TO_SAVE),Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onResume() {
@@ -149,8 +166,8 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
                 ContextCompat.getMainExecutor(requireContext()),
                 object : ImageCapture.OnImageCapturedCallback() {
                     override fun onCaptureSuccess(image: ImageProxy) {
-                        cameraViewModel.saveProxyPicture(image)
-                        //image.close()
+                        cameraViewModel.addPicture(image)
+                        image.close()
                         Log.d("CAMERA_TEST",cameraViewModel.capturedImages.value!!.size.toString())
                     }
 
@@ -165,54 +182,6 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
     }
 
 
-//
-//    private fun takePhoto() {
-//        if(picturesAdapter.itemCount < 5){
-//            // Get a stable reference of the modifiable image capture use case
-//            val imageCapture =  imageCapture ?: return
-//
-//            // Create time stamped name and MediaStore entry.
-//            val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
-//                .format(System.currentTimeMillis())
-//            val contentValues = ContentValues().apply {
-//                put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-//                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-//                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-//                    put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image")
-//                }
-//            }
-//
-//            // Create output options object which contains file + metadata
-//            val outputOptions = ImageCapture.OutputFileOptions
-//                .Builder(
-//                    requireActivity().contentResolver,
-//                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-//                    contentValues)
-//                .build()
-//
-//            // Set up image capture listener, which is triggered after photo has
-//            // been taken
-//            imageCapture.takePicture(
-//                outputOptions,
-//                ContextCompat.getMainExecutor(requireContext()),
-//                object : ImageCapture.OnImageSavedCallback {
-//                    override fun onError(exc: ImageCaptureException) {
-//                        Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
-//                    }
-//
-//                    override fun onImageSaved(output: ImageCapture.OutputFileResults){
-//                        val msg = "Photo capture succeeded: ${output.savedUri}"
-//                        Log.d(TAG, msg)
-//                        picturesAdapter.addPicture(output.savedUri!!)
-//                        binding.pictureRV.smoothScrollToPosition(0)
-//                    }
-//                }
-//            )
-//        }else{
-//            Toast.makeText(requireActivity(),resources.getText(R.string.TOAST_pictureMaximum),Toast.LENGTH_SHORT).show()
-//        }
-//    }
-
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
             requireContext(), it) == PackageManager.PERMISSION_GRANTED
@@ -221,17 +190,23 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
 
 
     override fun deleteImage(idx : Int) {
-        cameraViewModel.delProxyPicture(idx)
+        cameraViewModel.delPicture(idx)
     }
 
 
     private fun showAlertMessage(){
-        val dialogFragment = CameraFragment_alert().apply {
-            arguments = Bundle().apply {
-                putInt(CameraFragment_alert.ITEM_COUNT, picturesAdapter.itemCount)
+        cameraViewModel.capturedImages.value?.let {
+            val dialogFragment = CameraFragment_alert().apply {
+                arguments = Bundle().apply {
+                    putInt(CameraFragment_alert.ITEM_COUNT, cameraViewModel.capturedImages.value!!.size)
+                }
             }
+            dialogFragment.show(parentFragmentManager, CameraFragment_alert.TAG)
         }
-        dialogFragment.show(parentFragmentManager, CameraFragment_alert.TAG)
+    }
+
+    private fun showMinimumToast(){
+        Toast.makeText(requireActivity(),getString(R.string.TOAST_pictureMinimum),Toast.LENGTH_SHORT).show()
     }
 
 
