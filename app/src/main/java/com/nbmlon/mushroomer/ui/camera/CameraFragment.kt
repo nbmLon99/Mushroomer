@@ -74,6 +74,7 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
 
         cameraViewModel.capturedImages.observe(viewLifecycleOwner) { itemList ->
             picturesAdapter.submitList(itemList.toList())
+            binding.pictureRV.smoothScrollToPosition(0)
         }
 
         binding.apply {
