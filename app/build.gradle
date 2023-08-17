@@ -130,4 +130,8 @@ dependencies {
     //Paging3
     implementation "androidx.paging:paging-runtime:3.1.1"
 
+
+    //sweetalert2
+    implementation 'com.github.taimoorsultani:android-sweetalert2:2.0.2'
+
 }

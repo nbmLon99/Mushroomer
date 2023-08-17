@@ -70,6 +70,9 @@ class CameraViewModel : ViewModel() {
         }
         return success
     }
+    fun clearImages() {
+        _capturedImages.value = arrayListOf()
+    }
 
     suspend fun savePictureFromBitmap(context: Context, bitmap: Bitmap, filename: String): Boolean {
         return withContext(Dispatchers.IO) {
@@ -101,4 +104,6 @@ class CameraViewModel : ViewModel() {
         buffer.get(bytes)
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
     }
+
+
 }
