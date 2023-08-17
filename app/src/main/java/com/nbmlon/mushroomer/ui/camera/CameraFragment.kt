@@ -24,9 +24,9 @@ import com.nbmlon.mushroomer.databinding.FragmentCameraBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import taimoor.sultani.sweetalert2.Sweetalert
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-
 
 class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
     companion object {
@@ -89,6 +89,33 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
                         startAnalyze()
                     }
                 }
+            }
+            closeBtn.setOnClickListener{
+                cameraViewModel.capturedImages.value?.let{
+                    if (it.size > 0){
+                        //Positive가 안떠서 negative를 positive로함
+                        Sweetalert(requireActivity(),Sweetalert.NORMAL_TYPE)
+                            .setTitleText(resources.getString(R.string.ALERT_CANCEL_TITLE))
+                            .setContentText(resources.getString(R.string.ALERT_CANCEL_CONTENT))
+                            .setCancelButton(resources.getString(R.string.YES)) { dialog ->
+                                cameraViewModel.clearImages()
+                                dialog.dismissWithAnimation()
+                            }
+                            .setNeutralButton(resources.getString(R.string.NO)) { dialog ->
+                                dialog.dismissWithAnimation()
+                            }
+                            .show()
+                    }
+                    else{
+                        Sweetalert(requireActivity(),Sweetalert.NORMAL_TYPE)
+                            .setTitleText(resources.getString(R.string.TOAST_CANCEL_IMPOSSIBLE))
+                            .setContentText(resources.getString(R.string.TOAST_CANCEL_IMPOSSIBLE_SUB))
+                            .setNeutralButton(resources.getString(R.string.CONFIRM)) { dialog ->
+                                dialog.dismissWithAnimation()
+                            }
+                            .show()}
+                }
+
             }
         }
     }
