@@ -15,7 +15,7 @@ import androidx.paging.PagingData
 import androidx.paging.filter
 import androidx.recyclerview.widget.RecyclerView
 import com.nbmlon.mushroomer.R
-import com.nbmlon.mushroomer.data.dogam.impl.DogamRepositoryImpl
+import com.nbmlon.mushroomer.data.dogam.DogamRepository
 import com.nbmlon.mushroomer.databinding.FragmentDogamBinding
 import com.nbmlon.mushroomer.model.Mushroom
 import kotlinx.coroutines.flow.Flow
@@ -82,7 +82,7 @@ class DogamFragment : Fragment(), DogamItemClickListner {
 
         val viewModelFactory = DogamViewModelFactory(
             owner = this,
-            repository = DogamRepositoryImpl()
+            repository = DogamRepository()
         )
 
         val viewModel: DogamViewModel by viewModels { viewModelFactory }
