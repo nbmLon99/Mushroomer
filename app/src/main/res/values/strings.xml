@@ -51,6 +51,7 @@
     <string name="TOAST_FAIL_TO_SAVE">사진 저장이 실패했습니다. 권한을 확인해주세요</string>
     <string name="TOAST_CANCEL_IMPOSSIBLE">진행중인 검사가 없습니다!</string>
     <string name="TOAST_CANCEL_IMPOSSIBLE_SUB">촬영버튼을 통해 검사를 진행합니다.</string>
+    <string name="ANLAYZE_IN_PROGRESS">검사 진행중..</string>
 
 
     <string name="ALERT_CANCEL_TITLE">검사를 종료하시겠습니까?</string>

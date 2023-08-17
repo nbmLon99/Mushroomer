@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -82,8 +81,8 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
             shootBtn.setOnClickListener { takePhoto() }
             startBtn.setOnClickListener {
                 cameraViewModel.capturedImages.value?.let {
-                    if(it.size <= 0) { showMinimumToast() }
-                    if(it.size < resources.getInteger(R.integer.recommended_pic_count)) { showAlertMessage() }
+                    if(it.size <= 0) { showAlertMessage(R.string.TOAST_pictureMinimum, null) }
+                    else if(it.size < resources.getInteger(R.integer.recommended_pic_count)) { showAlertForAdditionalPicture() }
                     else{
                         savePictures()
                         startAnalyze()
@@ -126,7 +125,7 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
             if (success) {
                 Log.d(TAG, "SUCCESS_TO_SAVE")
             } else {
-                Toast.makeText(context,resources.getText(R.string.TOAST_FAIL_TO_SAVE),Toast.LENGTH_SHORT).show()
+                showAlertMessage(R.string.TOAST_FAIL_TO_SAVE,null)
             }
         }
     }
@@ -205,7 +204,7 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
                 }
             )
         } else {
-            Toast.makeText(requireActivity(), resources.getText(R.string.TOAST_pictureMaximum), Toast.LENGTH_SHORT).show()
+            showAlertMessage(R.string.TOAST_pictureMaximum,null)
         }
     }
 
@@ -222,23 +221,36 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
     }
 
 
-    private fun showAlertMessage(){
+    private fun showAlertForAdditionalPicture(){
         cameraViewModel.capturedImages.value?.let {
             val dialogFragment = CameraFragment_alert().apply {
                 arguments = Bundle().apply {
                     putInt(CameraFragment_alert.ITEM_COUNT, cameraViewModel.capturedImages.value!!.size)
+                    putSerializable(CameraFragment_alert.START_ANALYZE_LISTENER, this@CameraFragment as AnalyzeStartListener )
                 }
             }
             dialogFragment.show(parentFragmentManager, CameraFragment_alert.TAG)
         }
     }
 
-    private fun showMinimumToast(){
-        Toast.makeText(requireActivity(),getString(R.string.TOAST_pictureMinimum),Toast.LENGTH_SHORT).show()
+    private fun showAlertMessage(titleId : Int, subid : Int?){
+        Sweetalert(requireActivity(),Sweetalert.NORMAL_TYPE).apply {
+            titleText = resources.getString(titleId)
+            subid?.let { contentText = resources.getString(it) }
+            setNeutralButton(resources.getString(R.string.CONFIRM)) { dialog ->
+                    dialog.dismissWithAnimation()
+            }
+            show()
+        }
     }
 
 
     override fun startAnalyze() {
         cameraViewModel.startAnalysis()
+        Sweetalert(requireActivity(),Sweetalert.PROGRESS_TYPE).apply {
+            titleText = resources.getString(R.string.ANLAYZE_IN_PROGRESS)
+            setCancelable(false)
+            show()
+        }
     }
 }
