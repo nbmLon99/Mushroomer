@@ -1,168 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.camera.CameraFragment_result"
-
-    android:padding="15dp"
     >
+    <data>
+        <variable
+            name="result"
+            type="com.nbmlon.mushroomer.model.Analyze.AnalyzeResult" />
+    </data>
 
-
-    <!-- 도감 타이틀 -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/titleFrame"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="match_parent"
+        app:cardCornerRadius="10dp"
+        android:layout_margin="10dp"
         >
-        <TextView
-            android:id="@+id/mushName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-
-            android:textAlignment="center"
-            android:text="송이 버섯"
-            android:textSize="25sp"
-            android:textStyle="bold"
-
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            />
-        <TextView
-            android:id="@+id/mushNo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:text="No.11"
-            android:textSize="16sp"
-            android:textStyle="italic|bold"
-
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            />
-        <TextView
-            android:id="@+id/isNew"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:text="@string/new_mush"
-            android:textSize="16sp"
-            android:textColor="@color/likeRed"
-            android:textStyle="bold|italic"
-
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-
-        app:layout_constraintTop_toBottomOf="@id/titleFrame"
-        app:layout_constraintBottom_toTopOf="@id/btn_close"
-        android:padding="10dp"
-        >
-        <!-- 정확도 / 버섯타입 -->
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/accuracyFrame"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingVertical="20dp"
+            android:layout_height="match_parent"
+            android:padding="15dp"
             >
-
-            <TextView
-                android:id="@+id/accuracy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:text="정확도 : 93%"
-                android:textSize="25sp"
-                android:textStyle="italic|bold"
-
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                />
-            <TextView
-                android:id="@+id/mushType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:text="식용버섯"
-                android:textSize="20sp"
-                android:textColor="@color/textGreen"
-                android:textStyle="bold"
-
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-        <!-- 특징 -->
-        <LinearLayout
-            android:id="@+id/contentFrame"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginVertical="10dp"
-            android:background="@color/bgGray"
-            android:orientation="vertical"
-            >
-            <TextView
+            <!-- 도감 타이틀 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/titleFrame"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:padding="16dp"
-                android:text="@string/content"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                />
+                app:layout_constraintTop_toTopOf="parent"
+                >
+                <TextView
+                    android:id="@+id/mushName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
 
-            <TextView
-                android:id="@+id/content"
-                android:padding="16dp"
-                android:text="특징이 들어갈 곳 입니다."
-                android:textSize="13sp"
-                android:scrollbars="vertical"
+                    android:textAlignment="center"
+                    android:text="@{result.mushroom.name}"
+                    android:textSize="@dimen/text_big"
+                    android:textStyle="bold"
 
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    />
+                <TextView
+                    android:id="@+id/mushNo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text='@{"No." + String.valueOf(result.mushroom.dogamNo)}'
+                    android:textSize="@dimen/text_sub"
+                    android:textStyle="italic|bold"
+                    android:layout_marginLeft="10dp"
+
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    />
+                <TextView
+                    android:id="@+id/isNew"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="@string/new_mush"
+                    android:textSize="@dimen/text_sub"
+                    android:textColor="@color/likeRed"
+                    android:textStyle="bold|italic"
+                    android:layout_marginRight="10dp"
+
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    setNew="@{result.isNew}"
+                    />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+
+                app:layout_constraintTop_toBottomOf="@id/titleFrame"
+                app:layout_constraintBottom_toTopOf="@id/btn_close"
+                android:padding="10dp"
+                >
+                <!-- 정확도 / 버섯타입 -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/accuracyFrame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="20dp"
+                    >
+
+                    <TextView
+                        android:id="@+id/accuracy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:text="정확도 : 93%"
+                        android:textSize="@dimen/text_big"
+                        android:textStyle="italic|bold"
+
+                        android:layout_marginLeft="10dp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+                    <TextView
+                        android:id="@+id/mushType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:textSize="@dimen/text_main"
+                        android:textColor="@color/textGreen"
+                        android:textStyle="bold"
+
+                        android:layout_marginRight="10dp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        setMushType="@{result.mushroom.type}"
+                        />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+                <!-- 특징 -->
+                <LinearLayout
+                    android:id="@+id/contentFrame"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginVertical="10dp"
+                    android:background="@color/bgGray"
+                    android:orientation="vertical"
+                    >
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:padding="10dp"
+                        android:text="@string/content"
+                        android:textSize="@dimen/text_main"
+                        android:textStyle="bold"
+                        />
+
+                    <TextView
+                        android:id="@+id/content"
+                        android:padding="16dp"
+                        android:text="@{result.mushroom.feature}"
+                        android:textSize="@dimen/text_sub"
+                        android:scrollbars="vertical"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        />
+                </LinearLayout>
+
+
+                <TextView
+                    android:id="@+id/rarity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="5dp"
+
+                    android:text='@{"전체 사용자 중" + String.valueOf(result.mushroom.rarity) + "%만이 이 버섯을 발견하였습니다!" }'
+                    android:textAlignment="center"
+                    />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_close"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="@string/close"
+                android:textSize="@dimen/text_sub"
+                android:background="@color/mainGreen"
                 />
-        </LinearLayout>
 
-
-        <TextView
-            android:id="@+id/rarity"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingVertical="5dp"
-
-            android:text="전체 사용자 중 20%만이 이 버섯을 발견하였습니다!"
-            android:textAlignment="center" />
-
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/btn_close"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:text="@string/close"
-        android:background="@color/mainGreen"
-        />
-</androidx.constraintlayout.widget.ConstraintLayout>
+         </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

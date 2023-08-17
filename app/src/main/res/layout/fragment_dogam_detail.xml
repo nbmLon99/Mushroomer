@@ -113,7 +113,7 @@
                     <TextView
                         android:id="@+id/content"
                         android:padding="16dp"
-                        android:text="특징이 들어갈 곳 입니다."
+                        android:text="@{mushroom.feature}"
                         android:textSize="@dimen/text_sub"
                         android:scrollbars="vertical"
 
