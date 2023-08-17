@@ -134,4 +134,6 @@ dependencies {
     //sweetalert2
     implementation 'com.github.taimoorsultani:android-sweetalert2:2.0.2'
 
+    //지문인식 - https://developer.android.com/codelabs/biometric-login#1
+    implementation "androidx.biometric:biometric:1.0.1"
 }
