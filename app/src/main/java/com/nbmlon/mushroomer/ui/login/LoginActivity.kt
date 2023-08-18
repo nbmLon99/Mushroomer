@@ -1,16 +1,20 @@
 package com.nbmlon.mushroomer.ui.login
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.inputmethod.EditorInfo
 import androidx.activity.viewModels
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Observer
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.databinding.ActivityLoginBinding
 import com.nbmlon.mushroomer.ui.MainActivity
+import com.nbmlon.mushroomer.utils.CryptographyManager
 
 class LoginActivity : AppCompatActivity() {
    companion object{
@@ -18,6 +22,7 @@ class LoginActivity : AppCompatActivity() {
    }
 
     private lateinit var binding: ActivityLoginBinding
+    private lateinit var cryptographyManager: CryptographyManager
     private val loginViewModel by viewModels<LoginViewModel>()
 
 
@@ -86,4 +91,39 @@ class LoginActivity : AppCompatActivity() {
     private fun updateApp() {
         startActivity(Intent(this,MainActivity::class.java))
     }
+
+
+
+
+
+    private fun showBiometricPromptForEncryption() {
+        val canAuthenticate = BiometricManager.from(applicationContext).canAuthenticate()
+        if (canAuthenticate == BiometricManager.BIOMETRIC_SUCCESS) {
+            val secretKeyName = getString(R.string.secret_key_name)
+            cryptographyManager = CryptographyManager()
+            val cipher = cryptographyManager.getInitializedCipherForEncryption(secretKeyName)
+            val biometricPrompt =
+                BiometricPromptUtils.createBiometricPrompt(this, ::encryptAndStoreServerToken)
+            val promptInfo = BiometricPromptUtils.createPromptInfo(this)
+            biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
+        }
+    }
+
+    private fun encryptAndStoreServerToken(authResult: BiometricPrompt.AuthenticationResult) {
+        authResult.cryptoObject?.cipher?.apply {
+            AppUser.token?.let { token ->
+                Log.d(TAG, "The token from server is $token")
+                val encryptedServerTokenWrapper = cryptographyManager.encryptData(token, this)
+                cryptographyManager.persistCiphertextWrapperToSharedPrefs(
+                    encryptedServerTokenWrapper,
+                    applicationContext,
+                    SHARED_PREFS_FILENAME,
+                    Context.MODE_PRIVATE,
+                    CIPHERTEXT_WRAPPER
+                )
+            }
+        }
+        finish()
+    }
+
 }
