@@ -2,16 +2,15 @@ package com.nbmlon.mushroomer.ui.login
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.inputmethod.EditorInfo
 import androidx.activity.viewModels
-import androidx.biometric.BiometricManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Observer
 import com.nbmlon.mushroomer.AppUser
+import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.ActivityLoginBinding
 import com.nbmlon.mushroomer.ui.MainActivity
 import com.nbmlon.mushroomer.utils.CryptographyManager
@@ -22,9 +21,17 @@ class LoginActivity : AppCompatActivity() {
    }
 
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var cryptographyManager: CryptographyManager
     private val loginViewModel by viewModels<LoginViewModel>()
 
+    private lateinit var biometricPrompt: BiometricPrompt
+    private val cryptographyManager = CryptographyManager()
+    private val ciphertextWrapper
+        get() = cryptographyManager.getCiphertextWrapperFromSharedPrefs(
+            applicationContext,
+            SHARED_PREFS_FILENAME,
+            Context.MODE_PRIVATE,
+            CIPHERTEXT_WRAPPER
+        )
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +40,26 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         setupForLoginWithPassword()
     }
+
+    /**
+     * The logic is kept inside onResume instead of onCreate so that authorizing biometrics takes
+     * immediate effect.
+     */
+    override fun onResume() {
+        super.onResume()
+
+        if (ciphertextWrapper != null) {
+            if (AppUser.token == null) {
+                showBiometricPromptForDecryption()
+            } else {
+                // The user has already logged in, so proceed to the rest of the app
+                // this is a todo for you, the developer
+                updateApp()
+            }
+        }
+    }
+
+// USERNAME + PASSWORD SECTION
 
 
 
@@ -95,35 +122,42 @@ class LoginActivity : AppCompatActivity() {
 
 
 
+    // BIOMETRICS SECTION
 
-    private fun showBiometricPromptForEncryption() {
-        val canAuthenticate = BiometricManager.from(applicationContext).canAuthenticate()
-        if (canAuthenticate == BiometricManager.BIOMETRIC_SUCCESS) {
+    /**지문 복호화 프롬포트 **/
+    private fun showBiometricPromptForDecryption() {
+        ciphertextWrapper?.let { textWrapper ->
             val secretKeyName = getString(R.string.secret_key_name)
-            cryptographyManager = CryptographyManager()
-            val cipher = cryptographyManager.getInitializedCipherForEncryption(secretKeyName)
+            val cipher = cryptographyManager.getInitializedCipherForDecryption(
+                secretKeyName, textWrapper.initializationVector
+            )
             val biometricPrompt =
-                BiometricPromptUtils.createBiometricPrompt(this, ::encryptAndStoreServerToken)
+                BiometricPromptUtils.createBiometricPrompt(
+                    this,
+                    ::decryptServerTokenFromStorage
+                )
             val promptInfo = BiometricPromptUtils.createPromptInfo(this)
             biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
         }
     }
 
-    private fun encryptAndStoreServerToken(authResult: BiometricPrompt.AuthenticationResult) {
-        authResult.cryptoObject?.cipher?.apply {
-            AppUser.token?.let { token ->
-                Log.d(TAG, "The token from server is $token")
-                val encryptedServerTokenWrapper = cryptographyManager.encryptData(token, this)
-                cryptographyManager.persistCiphertextWrapperToSharedPrefs(
-                    encryptedServerTokenWrapper,
-                    applicationContext,
-                    SHARED_PREFS_FILENAME,
-                    Context.MODE_PRIVATE,
-                    CIPHERTEXT_WRAPPER
-                )
+    private fun decryptServerTokenFromStorage(authResult: BiometricPrompt.AuthenticationResult) {
+        ciphertextWrapper?.let { textWrapper ->
+            authResult.cryptoObject?.cipher?.let {
+                val plaintext =
+                    cryptographyManager.decryptData(textWrapper.ciphertext, it)
+                AppUser.token = plaintext
+                // Now that you have the token, you can query server for everything else
+                // the only reason we call this fakeToken is because we didn't really get it from
+                // the server. In your case, you will have gotten it from the server the first time
+                // and therefore, it's a real token.
+
+                updateApp()
             }
         }
-        finish()
     }
+
+
+
 
 }
