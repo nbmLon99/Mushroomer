@@ -10,10 +10,9 @@ class CommuViewModel : ViewModel() {
     private val _recentPosts = MutableLiveData<Commu>()
     val recentPostsForDisplay: LiveData<Commu> = _recentPosts
 
+    fun loadRecentPosts(){
 
-
-
-
+    }
 
 
 

@@ -3,6 +3,7 @@ package com.nbmlon.mushroomer.data.posts
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.nbmlon.mushroomer.model.Post
+import com.nbmlon.mushroomer.model.PostType
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -19,7 +20,7 @@ class PostPagingSource(
             val nextPageNumber = params.key ?: 1
             //val response = backend.getDogam(query, nextPageNumber)
 
-            val response = PostsResponse(0, Post.getDummys())
+            val response = PostsResponse(0, Post.getDummys(PostType.POST_TEXT))
             return PagingSource.LoadResult.Page(
                 data = response.items,
                 prevKey = null, // Only paging forward.

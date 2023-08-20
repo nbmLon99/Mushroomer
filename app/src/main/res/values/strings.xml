@@ -1,5 +1,6 @@
 <resources>
     <!-- 공통 -->
+    <string name="loading">로드 중</string>
 
 
 

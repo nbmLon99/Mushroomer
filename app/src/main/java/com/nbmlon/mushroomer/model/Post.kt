@@ -35,7 +35,7 @@ data class Post(
     val updated: Boolean
     ) {
     companion object {
-        fun getDummy(): Post {
+        fun getDummy(type : PostType): Post {
             return Post(
                 title = "제목",
                 images = null,
@@ -45,15 +45,15 @@ data class Post(
                 comments = arrayListOf(),
                 ThumbsUpCount = 0,
                 myThumbsUp = false,
-                type = PostType.POST_TEXT,
+                type = type,
                 updated = false
             )
         }
 
-        fun getDummys() : ArrayList<Post>{
+        fun getDummys(type : PostType) : ArrayList<Post>{
             val items = arrayListOf<Post>()
             for ( i in 1..10) {
-                items.add(Post.getDummy())
+                items.add(Post.getDummy(type))
             }
             return items
         }

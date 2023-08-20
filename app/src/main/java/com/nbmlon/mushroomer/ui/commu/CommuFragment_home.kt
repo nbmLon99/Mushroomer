@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCommuHomeBinding
+import taimoor.sultani.sweetalert2.Sweetalert
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -49,10 +51,18 @@ class CommuFragment_home : Fragment() {
         adapterPic =  AdapterHomePost()
         adapterQnA =  AdapterHomePost()
 
+        val loading = Sweetalert(requireActivity(),Sweetalert.PROGRESS_TYPE)
+        loading.apply {
+            setTitleText(R.string.loading)
+            setCancelable(false)
+            show()
+        }
+
         viewModel.recentPostsForDisplay.observe(viewLifecycleOwner){item ->
             adapterFree.submitList(item.newFreePosts)
             adapterPic.submitList(item.newPicturePosts)
             adapterQnA.submitList(item.newQnAPosts)
+            loading.dismissWithAnimation()
         }
 
         return binding.root
@@ -66,6 +76,8 @@ class CommuFragment_home : Fragment() {
             freeBoardRV.adapter = adapterFree
             picBoardRV.adapter = adapterPic
         }
+
+        viewModel.loadRecentPosts()
     }
 
     override fun onDestroyView() {
