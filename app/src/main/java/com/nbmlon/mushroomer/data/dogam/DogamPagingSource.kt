@@ -19,7 +19,7 @@ class DogamPagingSource(
             // Start refresh at page 1 if undefined.
             val nextPageNumber = params.key ?: 1
             //val response = backend.getDogam(query, nextPageNumber)
-            val response = DogamResponse(0,Dogam.getDummy(3),tmpPageNum++)
+            val response = DogamResponse(Dogam.getDummy(3),tmpPageNum++)
             return LoadResult.Page(
                 data = response.items,
                 prevKey = null, // Only paging forward.
