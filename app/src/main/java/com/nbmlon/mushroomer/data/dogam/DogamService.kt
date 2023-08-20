@@ -1,6 +1,6 @@
 package com.nbmlon.mushroomer.data.dogam
 
-import com.nbmlon.mushroomer.model.Dogam
+import okhttp3.Call
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -25,9 +25,11 @@ interface DogamService {
             val client = OkHttpClient.Builder()
                 .addInterceptor(logger)
                 .build()
+            val callFactory: Call.Factory = client
+
             return Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .client(client)
+                .callFactory(callFactory) // callFactory를 사용하여 OkHttpClient 인스턴스를 지정합니다.
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(DogamService::class.java)
