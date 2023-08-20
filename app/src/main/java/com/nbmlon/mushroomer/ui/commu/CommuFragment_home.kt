@@ -5,7 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.nbmlon.mushroomer.R
+import androidx.fragment.app.viewModels
+import com.nbmlon.mushroomer.databinding.FragmentCommuHomeBinding
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -21,6 +22,15 @@ class CommuFragment_home : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private var _binding: FragmentCommuHomeBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var adapterQnA : AdapterHomePost.AdapterTextPosts
+    private lateinit var adapterFree : AdapterHomePost.AdapterTextPosts
+    private lateinit var adapterPic : AdapterHomePost.AdapterPhotoPosts
+
+    private val viewModel : CommuViewModel by viewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,8 +44,33 @@ class CommuFragment_home : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_commu_home, container, false)
+        _binding = FragmentCommuHomeBinding.inflate(layoutInflater, container, false)
+        adapterFree =  AdapterHomePost.AdapterTextPosts()
+        adapterPic =  AdapterHomePost.AdapterPhotoPosts()
+        adapterQnA =  AdapterHomePost.AdapterTextPosts()
+
+        viewModel.recentPostsForDisplay.observe(viewLifecycleOwner){item ->
+            adapterFree.submitList(item.newFreePosts)
+            adapterPic.submitList(item.newPicturePosts)
+            adapterQnA.submitList(item.newQnAPosts)
+        }
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.apply {
+            QnABoardRV.adapter = adapterQnA
+            freeBoardRV.adapter = adapterFree
+            picBoardRV.adapter = adapterPic
+        }
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 
     companion object {
