@@ -110,11 +110,12 @@
                     </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/QnABoardRV"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         android:orientation="vertical"
-                        tools:listitem="@layout/item_commu_text"
+                        tools:listitem="@layout/item_commu_home_text"
                         tools:itemCount="5"
                         android:nestedScrollingEnabled="false"
                         />
@@ -161,18 +162,19 @@
                     </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/picBoardRV"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         android:orientation="horizontal"
-                        tools:listitem="@layout/item_commu_iamge"
+                        tools:listitem="@layout/item_commu_home_iamge"
                         tools:itemCount="6"
                         />
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
 
-            <!-- 버섯 자랑 -->
+            <!-- 자유게시판 -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
@@ -212,11 +214,12 @@
                     </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/freeBoardRV"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         android:orientation="vertical"
-                        tools:listitem="@layout/item_commu_text"
+                        tools:listitem="@layout/item_commu_home_text"
                         tools:itemCount="5"
                         android:nestedScrollingEnabled="false"
                         />
