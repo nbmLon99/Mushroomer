@@ -71,14 +71,19 @@ class DogamFragment : Fragment(), DogamItemClickListner {
         arguments?.let {
             dogamNo = it.getInt(ARG_PARAM1)
         }
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         _binding = FragmentDogamBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val viewModelFactory = DogamViewModelFactory(
             owner = this,
@@ -92,11 +97,6 @@ class DogamFragment : Fragment(), DogamItemClickListner {
             pagingData = viewModel.pagingDataFlow,
             uiActions = viewModel.accept
         )
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
     }
 
 
