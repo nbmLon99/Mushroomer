@@ -61,7 +61,7 @@ ext {
     camerax_version = "1.1.0-beta01"
     lifecycleVersion = "2.5.1"
     okhttpLoggingInterceptorVersion = '4.9.0'
-
+    retrofitVersion = '2.9.0'
 }
 
 dependencies {
@@ -87,16 +87,8 @@ dependencies {
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
 
-    //Retrofit2
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation "com.squareup.okhttp3:logging-interceptor:$okhttpLoggingInterceptorVersion"
-
-
     //Gson
     implementation 'com.google.code.gson:gson:2.10.1'
-
-    // Gson Converter Factory
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.15.1'
@@ -137,4 +129,11 @@ dependencies {
     //지문인식 - https://developer.android.com/codelabs/biometric-login#1
     implementation "androidx.biometric:biometric:1.0.1"
     implementation "androidx.security:security-crypto:1.1.0-alpha03"
+
+
+    // retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "com.squareup.retrofit2:retrofit-mock:$retrofitVersion"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttpLoggingInterceptorVersion"
 }
