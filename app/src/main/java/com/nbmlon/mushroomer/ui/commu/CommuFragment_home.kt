@@ -25,9 +25,9 @@ class CommuFragment_home : Fragment() {
     private var _binding: FragmentCommuHomeBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var adapterQnA : AdapterHomePost.AdapterTextPosts
-    private lateinit var adapterFree : AdapterHomePost.AdapterTextPosts
-    private lateinit var adapterPic : AdapterHomePost.AdapterPhotoPosts
+    private lateinit var adapterQnA : AdapterHomePost
+    private lateinit var adapterFree : AdapterHomePost
+    private lateinit var adapterPic : AdapterHomePost
 
     private val viewModel : CommuViewModel by viewModels()
 
@@ -45,9 +45,9 @@ class CommuFragment_home : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCommuHomeBinding.inflate(layoutInflater, container, false)
-        adapterFree =  AdapterHomePost.AdapterTextPosts()
-        adapterPic =  AdapterHomePost.AdapterPhotoPosts()
-        adapterQnA =  AdapterHomePost.AdapterTextPosts()
+        adapterFree =  AdapterHomePost()
+        adapterPic =  AdapterHomePost()
+        adapterQnA =  AdapterHomePost()
 
         viewModel.recentPostsForDisplay.observe(viewLifecycleOwner){item ->
             adapterFree.submitList(item.newFreePosts)

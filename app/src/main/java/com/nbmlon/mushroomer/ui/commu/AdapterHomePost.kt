@@ -8,48 +8,51 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nbmlon.mushroomer.databinding.ItemCommuHomeIamgeBinding
 import com.nbmlon.mushroomer.databinding.ItemCommuHomeTextBinding
 import com.nbmlon.mushroomer.model.Post
+import com.nbmlon.mushroomer.model.PostType
 
-sealed class AdapterHomePost {
-    /** 글자 어댑터 ( Free , QnA ) **/
-    class AdapterTextPosts : ListAdapter<Post, AdapterTextPosts.TextPostViewHolder>(PostDiffCallback()) {
-        lateinit var itemBinding : ItemCommuHomeTextBinding
-        inner class TextPostViewHolder(itemBinding: ItemCommuHomeTextBinding) : RecyclerView.ViewHolder(itemBinding.root) {
-            fun bind(pos : Int){
+class AdapterHomePost : ListAdapter<Post, RecyclerView.ViewHolder>(PostDiffCallback()) {
+    private enum class ItemViewType {
+        PHOTO_POST, TEXT_POST
+    }
 
+    inner class TextPostViewHolder(private val itemBinding: ItemCommuHomeTextBinding) : RecyclerView.ViewHolder(itemBinding.root), HomeAdapterHolder {
+        override fun bind(pos : Int){
+            itemBinding.apply {
+                post = getItem(pos)
+                executePendingBindings()
             }
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TextPostViewHolder {
-            itemBinding = ItemCommuHomeTextBinding.inflate(LayoutInflater.from(parent.context))
-            return TextPostViewHolder(itemBinding)
-        }
-
-        override fun onBindViewHolder(holder: TextPostViewHolder, position: Int) {
-            holder.bind(position)
         }
     }
 
-    /** 그림 어댑터 ( 자랑 ) **/
-    class AdapterPhotoPosts : ListAdapter<Post, AdapterPhotoPosts.PhotoPostViewHolder>(PostDiffCallback()) {
-        private lateinit var itemBinding: ItemCommuHomeIamgeBinding
-
-        inner class PhotoPostViewHolder(itemBinding: ItemCommuHomeIamgeBinding) : RecyclerView.ViewHolder(itemBinding.root){
-            fun bind(pos : Int){
-
+    inner class PhotoPostViewHolder(private val itemBinding: ItemCommuHomeIamgeBinding) : RecyclerView.ViewHolder(itemBinding.root), HomeAdapterHolder{
+        override fun bind(pos : Int){
+            itemBinding.apply {
+                post = getItem(pos)
+                executePendingBindings()
             }
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoPostViewHolder {
-            itemBinding = ItemCommuHomeIamgeBinding.inflate(LayoutInflater.from(parent.context))
-            return PhotoPostViewHolder(itemBinding)
-        }
-
-        override fun onBindViewHolder(holder: PhotoPostViewHolder, position: Int) {
-            holder.bind(position)
         }
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return if(getItem(position).type == PostType.POST_PHOTO)
+            ItemViewType.PHOTO_POST.ordinal
+        else
+            ItemViewType.TEXT_POST.ordinal
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if(viewType == ItemViewType.TEXT_POST.ordinal){
+            TextPostViewHolder( ItemCommuHomeTextBinding.inflate(LayoutInflater.from(parent.context)) )
+        } else{
+            PhotoPostViewHolder( ItemCommuHomeIamgeBinding.inflate(LayoutInflater.from(parent.context)) )
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        (holder as HomeAdapterHolder).bind(position)
+    }
 }
+
 
 class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
     override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {

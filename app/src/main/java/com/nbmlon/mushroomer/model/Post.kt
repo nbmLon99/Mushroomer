@@ -3,7 +3,7 @@ package com.nbmlon.mushroomer.model
 import org.joda.time.DateTime
 
 enum class PostType{
-    POST_PICTURE,
+    POST_PHOTO,
     POST_TEXT
 }
 
@@ -16,7 +16,8 @@ enum class PostType{
  * @param writer        작성자
  * @param comments      댓글
  * @param ThumbsUpCount 좋아요 수
- * 
+ *
+ * @param type         포스팅 타입
  * @param myThumbsUp    내 좋아요 유무
  * @param updated       수정 유무 ( 수정됨 )
  */
@@ -29,6 +30,7 @@ data class Post(
     val comments: ArrayList<Comment>,
     val ThumbsUpCount: Int,
 
+    val type : PostType,
     val myThumbsUp: Boolean,
     val updated: Boolean
     ) {
@@ -43,6 +45,7 @@ data class Post(
                 comments = arrayListOf(),
                 ThumbsUpCount = 0,
                 myThumbsUp = false,
+                type = PostType.POST_TEXT,
                 updated = false
             )
         }
