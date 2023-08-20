@@ -27,7 +27,7 @@ import taimoor.sultani.sweetalert2.Sweetalert
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
+class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
     companion object {
         private const val TAG = "CameraFragment"
         private const val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
@@ -68,7 +68,7 @@ class CameraFragment : Fragment(), ImageListner, AnalyzeStartListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        picturesAdapter = PicturesAdapter(this@CameraFragment as ImageListner)
+        picturesAdapter = PicturesAdapter(this@CameraFragment as ImageDeleteListner)
         cameraExecutor = Executors.newSingleThreadExecutor()
 
         cameraViewModel.capturedImages.observe(viewLifecycleOwner) { itemList ->
