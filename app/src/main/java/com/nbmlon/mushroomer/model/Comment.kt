@@ -1,5 +1,6 @@
 package com.nbmlon.mushroomer.model
 
+import org.joda.time.DateTime
 import java.util.Date
 
 
@@ -13,6 +14,6 @@ import java.util.Date
 data class Comment(
     val writer : User,
     val content : String,
-    val time : Date,
+    val time : DateTime,
     val replies : ArrayList<Comment>?
 )
