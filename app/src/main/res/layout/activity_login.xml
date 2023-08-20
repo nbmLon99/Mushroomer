@@ -103,7 +103,7 @@
                 android:labelFor="@id/ckbox_autoLogin"
 
                 android:text="@string/auto_login"
-                android:textSize="10sp"
+                android:textSize="@dimen/text_sub"
                 />
         </LinearLayout>
 
@@ -114,7 +114,7 @@
             android:layout_gravity="center_vertical|right"
             android:text="@string/otherLogin"
             android:textStyle="bold"
-            android:textSize="10sp"
+            android:textSize="@dimen/text_sub"
             />
     </FrameLayout>
 
@@ -143,7 +143,8 @@
             android:layout_height="wrap_content"
 
             android:text="@string/lost_id"
-            android:textSize="12sp"
+            android:textSize="@dimen/text_sub"
+
 
             />
 
@@ -153,7 +154,8 @@
             android:layout_height="wrap_content"
 
             android:text="  |  "
-            android:textSize="10sp"
+            android:textSize="@dimen/text_sub"
+
 
             />
 
@@ -162,7 +164,7 @@
             android:layout_height="wrap_content"
 
             android:text="@string/lost_pwd"
-            android:textSize="12sp"
+            android:textSize="@dimen/text_sub"
 
             />
 
@@ -172,7 +174,7 @@
             android:layout_height="wrap_content"
 
             android:text="  |  "
-            android:textSize="10sp"
+            android:textSize="@dimen/text_sub"
 
             />
         <TextView
@@ -180,7 +182,7 @@
             android:layout_height="wrap_content"
 
             android:text="@string/sign_up"
-            android:textSize="12sp"
+            android:textSize="@dimen/text_sub"
             />
     </LinearLayout>
 
@@ -189,7 +191,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/or"
-        android:textSize="10sp"
+        android:textSize="@dimen/text_sub"
         />
 
 
@@ -199,7 +201,7 @@
         android:layout_marginHorizontal="70dp"
         android:background="@color/textGreen"
         android:gravity="center"
-        android:text="@string/login"
+        android:text="카카오톡 로그인"
         android:textColor="@color/white"
         android:letterSpacing="0.2"
         />
