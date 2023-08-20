@@ -1,23 +1,19 @@
 package com.nbmlon.mushroomer.ui.camera
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.media.Image
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.camera.core.ImageProxy
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.nbmlon.mushroomer.databinding.ItemPhotoCheckingBinding
 import com.nbmlon.mushroomer.ui.camera.PicturesAdapter.PictureViewHolder
 import com.nbmlon.mushroomer.utils.GlideApp
-import kotlin.coroutines.coroutineContext
 
 
-class PicturesAdapter(im: ImageListner) : ListAdapter<Bitmap,PictureViewHolder>(MyDiffCallback){
+class PicturesAdapter(im: ImageDeleteListner) : ListAdapter<Bitmap,PictureViewHolder>(MyDiffCallback){
     private lateinit var itemBinding: ItemPhotoCheckingBinding
-    private var imageManager: ImageListner = im
+    private var imageManager: ImageDeleteListner = im
 
     inner class PictureViewHolder(private val itemBinding: ItemPhotoCheckingBinding) : RecyclerView.ViewHolder(itemBinding.root){
         fun bind(pos : Int) {
