@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.databinding.FragmentCommuHomeBinding
+import com.nbmlon.mushroomer.databinding.FragmentCommuHotBinding
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -21,6 +23,9 @@ class CommuFragment_hot : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    private var _binding: FragmentCommuHotBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,4 +62,38 @@ class CommuFragment_hot : Fragment() {
                 }
             }
     }
+
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
+
 }
+
+
+/**
+ *
+ * val radioGroup = findViewById<RadioGroup>(R.id.radio_group)
+val radioButton1 = findViewById<RadioButton>(R.id.radio_button_1)
+val radioButton2 = findViewById<RadioButton>(R.id.radio_button_2)
+
+radioGroup.setOnCheckedChangeListener { _, checkedId ->
+when (checkedId) {
+R.id.radio_button_1 -> {
+radioButton1.setTypeface(null, Typeface.BOLD)
+radioButton1.paintFlags = radioButton1.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+
+radioButton2.setTypeface(null, Typeface.NORMAL)
+radioButton2.paintFlags = radioButton2.paintFlags and Paint.UNDERLINE_TEXT_FLAG.inv()
+}
+R.id.radio_button_2 -> {
+radioButton2.setTypeface(null, Typeface.BOLD)
+radioButton2.paintFlags = radioButton2.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+
+radioButton1.setTypeface(null, Typeface.NORMAL)
+radioButton1.paintFlags = radioButton1.paintFlags and Paint.UNDERLINE_TEXT_FLAG.inv()
+}
+}
+}
+ */

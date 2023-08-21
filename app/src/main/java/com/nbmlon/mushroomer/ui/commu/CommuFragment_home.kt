@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCommuHomeBinding
+import com.nbmlon.mushroomer.ui.camera.CameraFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -78,6 +79,51 @@ class CommuFragment_home : Fragment() {
             QnABoardRV.adapter = adapterQnA
             freeBoardRV.adapter = adapterFree
             picBoardRV.adapter = adapterPic
+
+            //QnA 게시판 열기
+            openQnABoard.setOnClickListener {
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.FragmentContainer, CommuFragment_text.getInstance(BoardType.QnABoard.ordinal))
+                    .addToBackStack(null)
+                    .commit()
+            }
+            //자유 게시판 열기
+            openFreeBoard.setOnClickListener {
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.FragmentContainer, CommuFragment_text.getInstance(BoardType.FreeBoard.ordinal))
+                    .addToBackStack(null)
+                    .commit()
+            }
+            //사진 게시판 열기
+            openPicBoard.setOnClickListener {
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.FragmentContainer, CommuFragment_image())
+                    .addToBackStack(null)
+                    .commit()
+            }
+
+
+            //인기게시판 열기
+            openHotBoard.setOnClickListener {
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.FragmentContainer, CommuFragment_hot())
+                    .addToBackStack(null)
+                    .commit()
+            }
+            //내 댓글 열기
+            openMyComment.setOnClickListener {
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.FragmentContainer, CommuFragment_history())
+                    .addToBackStack(null)
+                    .commit()
+            }
+            //내 포스트 열기
+            openMyPost.setOnClickListener {
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.FragmentContainer, CommuFragment_history())
+                    .addToBackStack(null)
+                    .commit()
+            }
         }
 
         CoroutineScope(Dispatchers.Main).launch {
