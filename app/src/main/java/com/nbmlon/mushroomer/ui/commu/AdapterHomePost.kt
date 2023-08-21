@@ -10,6 +10,8 @@ import com.nbmlon.mushroomer.databinding.ItemCommuHomeTextBinding
 import com.nbmlon.mushroomer.model.Post
 import com.nbmlon.mushroomer.model.PostType
 
+
+/** CommuHome에서 표시할 최신글 들 Adapter **/
 class AdapterHomePost : ListAdapter<Post, RecyclerView.ViewHolder>(PostDiffCallback()) {
     private enum class ItemViewType {
         PHOTO_POST, TEXT_POST
