@@ -13,7 +13,7 @@ private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
 /**
-내 댓글, 내 포스트 띄워주는 창
+     내 댓글, 내 포스트 띄워주는 창
  */
 class CommuFragment_history : Fragment() {
     // TODO: Rename and change types of parameters
