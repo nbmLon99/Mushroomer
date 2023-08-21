@@ -9,7 +9,10 @@ import com.nbmlon.mushroomer.databinding.ItemPostTextBinding
 import com.nbmlon.mushroomer.model.Post
 
 
-/** CommuBoard에서 표시할 글들 Adapter **/
+/** CommuBoard에서 표시할 글들 Adapter
+ * 페이징으로 구현해야함
+ *
+ * **/
 
 class AdapterBoardPost(val boardType: BoardType) : ListAdapter<Post, RecyclerView.ViewHolder>(PostDiffCallback()) {
 
