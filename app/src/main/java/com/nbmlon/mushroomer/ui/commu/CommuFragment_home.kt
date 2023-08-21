@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCommuHomeBinding
-import com.nbmlon.mushroomer.ui.camera.CameraFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -81,35 +80,14 @@ class CommuFragment_home : Fragment() {
             picBoardRV.adapter = adapterPic
 
             //QnA 게시판 열기
-            openQnABoard.setOnClickListener {
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_text.getInstance(BoardType.QnABoard.ordinal))
-                    .addToBackStack(null)
-                    .commit()
-            }
+            openQnABoard.setOnClickListener     { openBoard(BoardType.QnABoard) }
             //자유 게시판 열기
-            openFreeBoard.setOnClickListener {
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_text.getInstance(BoardType.FreeBoard.ordinal))
-                    .addToBackStack(null)
-                    .commit()
-            }
+            openFreeBoard.setOnClickListener    { openBoard(BoardType.FreeBoard) }
             //사진 게시판 열기
-            openPicBoard.setOnClickListener {
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_image())
-                    .addToBackStack(null)
-                    .commit()
-            }
-
-
+            openPicBoard.setOnClickListener     { openBoard(BoardType.PicBoard) }
             //인기게시판 열기
-            openHotBoard.setOnClickListener {
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_hot())
-                    .addToBackStack(null)
-                    .commit()
-            }
+            openHotBoard.setOnClickListener     { openBoard(BoardType.HotBoard) }
+
             //내 댓글 열기
             openMyComment.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
@@ -137,14 +115,6 @@ class CommuFragment_home : Fragment() {
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CommunityFragment.
-         */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
@@ -154,5 +124,13 @@ class CommuFragment_home : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    private fun openBoard(boardType: BoardType) {
+        val boardTypeOrdinal = boardType.ordinal
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.FragmentContainer, CommuFragmentBoard.getInstance(boardTypeOrdinal))
+            .addToBackStack(null)
+            .commit()
     }
 }
