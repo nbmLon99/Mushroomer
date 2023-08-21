@@ -1,111 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="180dp"
-    android:layout_height="220dp"
-
-
     >
+    <data>
+        <variable
+            name="post"
+            type="com.nbmlon.mushroomer.model.Post" />
+    </data>
+
+
     <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="180dp"
+        android:layout_height="220dp"
         app:cardCornerRadius="10dp"
         android:layout_margin="5dp"
-
         >
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             >
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:src="@drawable/example_mushroom"
-                android:scaleType="fitXY"
-                />
+
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:background="@color/bgGray"
                 >
-                <TextView
-                    android:id="@+id/post_title"
+                <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-
-                    android:padding="5dp"
-                    android:text="글 제목입니다."
-                    android:textSize="14sp"
-                    android:textStyle="bold"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/example_mushroom"
+                    android:scaleType="fitXY"
+                    imageFromUrlArray="@{post.images}"
                     />
 
-                <FrameLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@color/bgGray"
                     >
                     <TextView
-                        android:id="@+id/post_nickname"
+                        android:id="@+id/post_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
 
-                        android:textStyle="normal"
-                        android:textColor="@color/bgDark"
                         android:padding="5dp"
-                        android:text="닉네임"
-                        android:textSize="10sp"
+                        android:text="@{post.title}"
+                        android:textSize="@dimen/text_sub"
+                        android:textStyle="bold"
                         />
-                    <!-- 좋아요 박스 -->
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_gravity="center_vertical|right"
-                        android:gravity="center"
-                        android:padding="3dp"
                         >
-                        <ImageView
-                            android:layout_width="8dp"
-                            android:layout_height="8dp"
-                            android:src="@drawable/icons_like"
-                            />
                         <TextView
+                            android:id="@+id/post_nickname"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+
+                            android:textStyle="normal"
+                            android:textColor="@color/bgDark"
+                            android:padding="5dp"
+                            android:text="@{post.writer.nickname}"
+                            android:textSize="10sp"
+                            />
+                        <!-- 좋아요 박스 -->
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="8sp"
-                            android:text="3"
-                            android:textColor="@color/likeRed"
-                            android:layout_marginRight="3dp"
-                            />
-                        <ImageView
-                            android:layout_width="8dp"
-                            android:layout_height="8dp"
-                            android:src="@drawable/icons_chat"
-                            />
+                            android:orientation="horizontal"
+                            android:layout_gravity="center_vertical|right"
+                            android:gravity="center"
+                            android:padding="3dp"
+                            >
+                            <ImageView
+                                android:layout_width="8dp"
+                                android:layout_height="8dp"
+                                android:src="@drawable/icons_like"
+                                checkMyLike="@{post.myThumbsUp}"
+                                />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="8sp"
+                                android:text="@{post.thumbsUpCount}"
+                                android:textColor="@color/likeRed"
+                                android:layout_marginRight="3dp"
+                                />
+                            <ImageView
+                                android:layout_width="8dp"
+                                android:layout_height="8dp"
+                                android:src="@drawable/icons_chat"
+                                />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="8sp"
-                            android:text="1"
-                            android:textColor="@color/chatPurple"
-                            android:layout_marginRight="3dp"
-                            />
-                    </LinearLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="8sp"
+                                android:text="@{String.valueOf(post.comments.size())}"
+                                android:textColor="@color/chatPurple"
+                                android:layout_marginRight="3dp"
+                                />
+                        </LinearLayout>
 
 
-                </FrameLayout>
+                    </FrameLayout>
+
+                </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/openPost"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/click_effect_background"
+                />
+        </FrameLayout>
 
     </androidx.cardview.widget.CardView>
 
 
-</FrameLayout>
+</layout>
