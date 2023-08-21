@@ -25,7 +25,6 @@
             android:src="@drawable/icons_reply"
             android:layout_gravity="bottom"
             android:layout_marginLeft="10dp"
-            checkIsReply="@{comment.isReply}"
             />
 
 
@@ -42,6 +41,8 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="10dp"
+                android:background="@color/CommentBg"
+                checkMyComment = "@{comment.isMine}"
                 >
                 <LinearLayout
                     android:layout_width="match_parent"
