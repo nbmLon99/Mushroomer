@@ -1,7 +1,17 @@
 package com.nbmlon.mushroomer.model
 
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.databinding.BindingAdapter
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.nbmlon.mushroomer.R
+import org.joda.time.DateTime
 import java.io.Serializable
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 enum class MushType{
     EDIBLE,
@@ -31,10 +41,46 @@ data class Mushroom (
         /** n(도감넘버), gotcha(발견 여부) 지정하여 더미데이터 생성 **/
         fun getDummy(n :Int, gotcha : Boolean) : Mushroom{
             val mush = Mushroom(n,"","${n}번쨰 버섯","설명입니다.", MushType.EDIBLE,20L,ArrayList())
-            if(gotcha){ mush.myHistory.add(MushHistory(ArrayList(), Date())) }
+            if(gotcha){ mush.myHistory.add(MushHistory(ArrayList(), DateTime())) }
             return mush
         }
     }
     val gotcha : Boolean get() =  myHistory.size > 0
 }
 
+class MushDataBindingAdapter{
+    @BindingAdapter("imageFromUrl")
+    fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
+        if (!imageUrl.isNullOrEmpty()) {
+            Glide.with(view.context)
+                .load(imageUrl)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(view)
+        }
+    }
+
+    @BindingAdapter("isDiscovered")
+    fun bindIsGone(view: ImageView, gotcha: Boolean) {
+        if (gotcha) {
+            view.visibility = View.GONE
+        } else {
+            view.visibility = View.VISIBLE
+        }
+    }
+
+
+
+    @BindingAdapter("setMushType")
+    fun bindMushType(view: TextView, type: MushType) {
+        when(type){
+            MushType.EDIBLE-> view.setText(R.string.typeEat)
+            MushType.POISON-> view.setText(R.string.typePoison)
+        }
+    }
+
+    @BindingAdapter("picturedAt")
+    fun bindDate(view : TextView, date : DateTime){
+        val format = SimpleDateFormat("yyyy년\nM월 d일", Locale.getDefault())
+        view.text = format.format(date)
+    }
+}
