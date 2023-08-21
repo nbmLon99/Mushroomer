@@ -36,28 +36,34 @@
                     android:orientation="vertical"
                     >
                     <TextView
+                        android:id="@+id/openMyPost"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
 
                         android:text="@string/myPosts"
                         android:textSize="@dimen/text_main"
                         android:textStyle="bold"
+                        android:background="@drawable/click_effect_background"
 
                         android:paddingVertical="10dp"
                         />
                     <TextView
+                        android:id="@+id/openMyComment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
 
                         android:text="@string/myComment"
                         android:textSize="@dimen/text_main"
                         android:textStyle="bold"
+                        android:background="@drawable/click_effect_background"
 
                         android:paddingVertical="10dp"
                         />
                     <TextView
+                        android:id="@+id/openHotBoard"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@drawable/click_effect_background"
 
                         android:text="@string/HotBoard"
                         android:textSize="@dimen/text_main"
@@ -99,6 +105,7 @@
                             />
 
                         <TextView
+                            android:id="@+id/openQnABoard"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
 
@@ -151,6 +158,7 @@
                             />
 
                         <TextView
+                            android:id="@+id/openPicBoard"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
 
@@ -203,6 +211,7 @@
                             />
 
                         <TextView
+                            android:id="@+id/openFreeBoard"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
 
