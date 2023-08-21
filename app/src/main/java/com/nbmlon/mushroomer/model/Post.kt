@@ -1,6 +1,16 @@
 package com.nbmlon.mushroomer.model
 
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.databinding.BindingAdapter
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.nbmlon.mushroomer.R
 import org.joda.time.DateTime
+import org.joda.time.Duration
+import java.text.SimpleDateFormat
 
 enum class PostType{
     POST_PHOTO,
@@ -24,7 +34,7 @@ enum class PostType{
 data class Post(
     val title: String,
     val images: ArrayList<String>?,
-    val content: String,
+    val content: ArrayList<String>,
     val time: DateTime,
     val writer: User,
     val comments: ArrayList<Comment>,
@@ -39,7 +49,7 @@ data class Post(
             return Post(
                 title = "제목",
                 images = null,
-                content = "내용",
+                content = arrayListOf("내용"),
                 time = DateTime(),
                 writer = User.getDummy(),
                 comments = arrayListOf(),
@@ -56,6 +66,89 @@ data class Post(
                 items.add(Post.getDummy(type))
             }
             return items
+        }
+    }
+}
+
+class PostDataBindingAdapter{
+    @BindingAdapter("imageFromUrlArray")
+    fun bindImageFromUrlArray(view: ImageView, imageUrl: ArrayList<String>?) {
+        if (!imageUrl.isNullOrEmpty()) {
+            Glide.with(view.context)
+                .load(imageUrl[0])
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(view)
+        }
+    }
+
+    @BindingAdapter("setImageIntoTextPost")
+    fun bindImageIntoTextPost(view: ImageView, imageUrl: ArrayList<String>?) {
+        if (!imageUrl.isNullOrEmpty()) {
+            Glide.with(view.context)
+                .load(imageUrl[0])
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(view)
+        }
+        else{
+            view.visibility = View.GONE
+        }
+    }
+    @BindingAdapter("checkMyLove")
+    fun checkMyLoveFromPost(view: ImageView, myLove : Boolean) {
+        if( myLove ){
+            view.setImageDrawable(ContextCompat.getDrawable(view.context, R.drawable.icons_love))
+        }else{
+            view.setImageDrawable(
+                ContextCompat.getDrawable(
+                    view.context,
+                    R.drawable.icons_emp_love
+                )
+            )
+        }
+    }
+    @BindingAdapter("checkMyLike")
+    fun checkMyLikeFromPost(view: ImageView, myLike : Boolean) {
+        if( myLike ){
+            view.setImageDrawable(ContextCompat.getDrawable(view.context, R.drawable.icons_like))
+        }else{
+            view.setImageDrawable(
+                ContextCompat.getDrawable(
+                    view.context,
+                    R.drawable.icons_like_emp
+                )
+            )
+        }
+    }
+
+
+    @BindingAdapter("setTimeRelatively")
+    fun setTimeRelatively(view: TextView, dateAt : DateTime) {
+        val currentTime = DateTime()
+        val duration = Duration(dateAt, currentTime)
+
+        val minutesDifference = duration.standardMinutes
+        val equalDay = (
+                currentTime.year == dateAt.year &&
+                        currentTime.dayOfYear == dateAt.dayOfYear
+                )
+        if( minutesDifference < 60){
+            view.text = "${minutesDifference}분 전"
+
+        }else if( !equalDay ){
+            view.text = SimpleDateFormat("yy.MM.dd").format(dateAt)
+
+        }else{
+            view.text = SimpleDateFormat("HH:mm").format(dateAt)
+
+        }
+    }
+
+
+
+    @BindingAdapter("checkIsReply")
+    fun bindReply(view: ImageView, isReply: Boolean) {
+        if (!isReply) {
+            view.visibility = View.GONE
         }
     }
 }

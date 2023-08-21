@@ -1,16 +1,20 @@
 package com.nbmlon.mushroomer.model
 
+import android.widget.ImageView
+import androidx.databinding.BindingAdapter
+import com.nbmlon.mushroomer.utils.GlideApp
+
 
 /**
  * @param userIdx           user 구분자
- * @param profileImage      프로필 이미지
+ * @param icon      프로필 이미지
  * @param name              이름
  * @param nickname          닉네임
  * @param email             이메일
  */
 data class User(
     val userIdx : Long,
-    val profileImage : String,
+    val icon : String,
     val name : String,
     val nickname : String,
     val email : String,
@@ -18,6 +22,21 @@ data class User(
     companion object {
         fun getDummy() : User {
             return User(-1L,"","김진우","nbmlon99","rhfwleowkd77@naver.com")
+        }
+    }
+}
+
+
+
+class UserDataBindingAdapter{
+    @BindingAdapter("setUserIcon")
+    fun bindReply(view: ImageView, url: String) {
+        if (url.isNotBlank()) {
+            GlideApp
+                .with(view.context)
+                .load(url)
+                .circleCrop()
+                .into(view)
         }
     }
 }
