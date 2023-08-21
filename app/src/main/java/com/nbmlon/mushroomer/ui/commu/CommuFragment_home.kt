@@ -8,6 +8,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCommuHomeBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import taimoor.sultani.sweetalert2.Sweetalert
 
 // TODO: Rename parameter arguments, choose names that match
@@ -60,7 +63,7 @@ class CommuFragment_home : Fragment() {
 
         viewModel.recentPostsForDisplay.observe(viewLifecycleOwner){item ->
             adapterFree.submitList(item.newFreePosts)
-            adapterPic.submitList(item.newPicturePosts)
+            adapterPic.submitList(item.newPicPosts)
             adapterQnA.submitList(item.newQnAPosts)
             loading.dismissWithAnimation()
         }
@@ -77,7 +80,9 @@ class CommuFragment_home : Fragment() {
             picBoardRV.adapter = adapterPic
         }
 
-        viewModel.loadRecentPosts()
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.loadRecentPosts()
+        }
     }
 
     override fun onDestroyView() {
