@@ -142,13 +142,4 @@ class PostDataBindingAdapter{
 
         }
     }
-
-
-
-    @BindingAdapter("checkIsReply")
-    fun bindReply(view: ImageView, isReply: Boolean) {
-        if (!isReply) {
-            view.visibility = View.GONE
-        }
-    }
 }

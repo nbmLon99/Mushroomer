@@ -1,5 +1,11 @@
 package com.nbmlon.mushroomer.model
 
+import android.graphics.Color
+import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
+import androidx.databinding.BindingAdapter
+import com.nbmlon.mushroomer.AppUser
+import com.nbmlon.mushroomer.R
 import org.joda.time.DateTime
 import java.util.Date
 
@@ -18,4 +24,18 @@ data class Comment(
     val time : DateTime,
     val replies : ArrayList<Comment>?,
     val isReply : Boolean
-)
+){
+    val isMine = writer == AppUser.user
+}
+
+class CommentDataBindingAdapter(){
+    @BindingAdapter("checkMyComment")
+    fun bindCommentBackground(linearLayout: LinearLayout, isMine : Boolean){
+        if (isMine)
+            linearLayout.setBackgroundColor(ContextCompat.getColor(linearLayout.context, R.color.CommentBg))
+        else
+            linearLayout.setBackgroundColor(ContextCompat.getColor(linearLayout.context, R.color.myCommentBg))
+
+    }
+
+}
