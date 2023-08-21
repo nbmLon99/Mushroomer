@@ -14,6 +14,7 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.filter
 import androidx.recyclerview.widget.RecyclerView
+import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.data.dogam.DogamRepository
 import com.nbmlon.mushroomer.databinding.FragmentDogamBinding
@@ -97,6 +98,10 @@ class DogamFragment : Fragment(), DogamItemClickListner {
             pagingData = viewModel.pagingDataFlow,
             uiActions = viewModel.accept
         )
+
+        AppUser.percent?.let {
+            binding.progressBar.progress = it
+        }
     }
 
 
