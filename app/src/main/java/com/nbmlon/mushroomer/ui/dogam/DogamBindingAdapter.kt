@@ -3,16 +3,13 @@ package com.nbmlon.mushroomer.ui.dogam
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.compose.ui.res.stringResource
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.model.MushType
-import com.nbmlon.mushroomer.model.Mushroom
+import org.joda.time.DateTime
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 
@@ -46,7 +43,7 @@ fun bindMushType(view: TextView, type: MushType) {
 }
 
 @BindingAdapter("picturedAt")
-fun bindDate(view : TextView, date : Date){
+fun bindDate(view : TextView, date : DateTime){
     val format = SimpleDateFormat("yyyy년\nM월 d일", Locale.getDefault())
     view.text = format.format(date)
 }

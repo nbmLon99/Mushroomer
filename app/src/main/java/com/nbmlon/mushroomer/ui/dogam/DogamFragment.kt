@@ -14,6 +14,7 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.filter
 import androidx.recyclerview.widget.RecyclerView
+import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.data.dogam.DogamRepository
 import com.nbmlon.mushroomer.databinding.FragmentDogamBinding
@@ -71,14 +72,19 @@ class DogamFragment : Fragment(), DogamItemClickListner {
         arguments?.let {
             dogamNo = it.getInt(ARG_PARAM1)
         }
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         _binding = FragmentDogamBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val viewModelFactory = DogamViewModelFactory(
             owner = this,
@@ -92,11 +98,10 @@ class DogamFragment : Fragment(), DogamItemClickListner {
             pagingData = viewModel.pagingDataFlow,
             uiActions = viewModel.accept
         )
-        return binding.root
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        AppUser.percent?.let {
+            binding.progressBar.progress = it
+        }
     }
 
 
