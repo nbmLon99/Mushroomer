@@ -17,7 +17,7 @@ class AdapterHomePost(val cl : PostClickListener) : ListAdapter<Post, RecyclerVi
             itemBinding.apply {
                 post = getItem(pos)
                 executePendingBindings()
-                frame.setOnClickListener { cl.openPost(post) }
+                frame.setOnClickListener { cl.openPost(getItem(pos)) }
             }
         }
     }
@@ -27,7 +27,7 @@ class AdapterHomePost(val cl : PostClickListener) : ListAdapter<Post, RecyclerVi
             itemBinding.apply {
                 post = getItem(pos)
                 executePendingBindings()
-                frame.setOnClickListener { cl.openPost(post) }
+                frame.setOnClickListener { cl.openPost(getItem(pos)) }
             }
         }
     }
@@ -38,9 +38,9 @@ class AdapterHomePost(val cl : PostClickListener) : ListAdapter<Post, RecyclerVi
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if(viewType == BoardType.PicBoard.ordinal){
-            PhotoPostViewHolder( ItemCommuHomeIamgeBinding.inflate(LayoutInflater.from(parent.context)) )
+            PhotoPostViewHolder( ItemCommuHomeIamgeBinding.inflate(LayoutInflater.from(parent.context),parent,false) )
         } else{
-            TextPostViewHolder( ItemCommuHomeTextBinding.inflate(LayoutInflater.from(parent.context)) )
+            TextPostViewHolder( ItemCommuHomeTextBinding.inflate(LayoutInflater.from(parent.context),parent,false) )
         }
     }
 

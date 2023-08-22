@@ -29,7 +29,7 @@ import java.util.concurrent.Executors
 
 class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
     companion object {
-        private const val TAG = "CameraFragment"
+        const val TAG = "CameraFragment"
         private const val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
         private const val CAMERA_PERMISSION_REQUEST_CODE = 100
         private val REQUIRED_PERMISSIONS =

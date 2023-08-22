@@ -59,7 +59,7 @@ class CommuFragmentBoard_text : Fragment() {
             //검색버튼
             btnSearch.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_search())
+                    .replace(R.id.FragmentContainer, CommuFragment_search(),CommuFragment_search.TAG)
                     .addToBackStack(null)
                     .commit()
             }
@@ -67,7 +67,7 @@ class CommuFragmentBoard_text : Fragment() {
             //글쓰기 버튼
             btnWrite.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_write.getInstance(boardType ?: 1))
+                    .replace(R.id.FragmentContainer, CommuFragment_write.getInstance(boardType ?: 1) , CommuFragment_write.TAG)
                     .addToBackStack(null)
                     .commit()
             }

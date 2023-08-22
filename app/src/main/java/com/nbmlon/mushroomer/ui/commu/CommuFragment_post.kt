@@ -43,14 +43,16 @@ class CommuFragment_post : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             post = targetPost
-            boardType.text = resources.getString(post.boardType.boardNameResId)
-            post.comments?.let{comments ->
+            boardType.text = resources.getString(post?.boardType!!.boardNameResId)
+            targetPost?.comments?.let{comments ->
                 commentRV.adapter = AdapterPostComment().apply { submitList(comments) }
             }
+            btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
         }
     }
 
     companion object {
+        const val TAG= "CommuFragment_post"
         @JvmStatic
         fun getInstance(param1: Post) =
             CommuFragment_post().apply {

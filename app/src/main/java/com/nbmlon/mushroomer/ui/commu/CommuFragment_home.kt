@@ -55,6 +55,9 @@ class CommuFragment_home : Fragment(), PostClickListener {
             adapterQnA.submitList(item.newQnAPosts)
             loading.dismissWithAnimation()
         }
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.loadRecentPosts()
+        }
 
         return binding.root
     }
@@ -79,22 +82,19 @@ class CommuFragment_home : Fragment(), PostClickListener {
             //내 댓글 열기
             openMyComment.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_history())
+                    .replace(R.id.FragmentContainer, CommuFragment_history(),CommuFragment_history.TAG)
                     .addToBackStack(null)
                     .commit()
             }
             //내 포스트 열기
             openMyPost.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_history())
+                    .replace(R.id.FragmentContainer, CommuFragment_history(),CommuFragment_history.TAG)
                     .addToBackStack(null)
                     .commit()
             }
         }
 
-        CoroutineScope(Dispatchers.Main).launch {
-            viewModel.loadRecentPosts()
-        }
     }
 
     override fun onDestroyView() {
@@ -107,14 +107,14 @@ class CommuFragment_home : Fragment(), PostClickListener {
     private fun openBoard(boardType: BoardType) {
         val boardTypeOrdinal = boardType.ordinal
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.FragmentContainer, CommuFragmentBoard.getInstance(boardTypeOrdinal))
+            .replace(R.id.FragmentContainer, CommuFragmentBoard.getInstance(boardTypeOrdinal),CommuFragmentBoard.TAG)
             .addToBackStack(null)
             .commit()
     }
 
     override fun openPost(post: Post) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.FragmentContainer, CommuFragment_post.getInstance(post))
+            .replace(R.id.FragmentContainer, CommuFragment_post.getInstance(post),CommuFragment_post.TAG)
             .addToBackStack(null)
             .commit()
     }

@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.ActivityMainBinding
 import com.nbmlon.mushroomer.ui.camera.CameraFragment
 import com.nbmlon.mushroomer.ui.commu.CommuFragment_home
+import com.nbmlon.mushroomer.ui.commu.CommuFragment_search
 import com.nbmlon.mushroomer.ui.dogam.DogamFragment
 import com.nbmlon.mushroomer.ui.map.MapFragment
 import com.nbmlon.mushroomer.ui.profile.ProfileFragment
@@ -27,63 +29,59 @@ class MainActivity : AppCompatActivity() {
         val bottomNavigationView = binding.bottomNavigationView
         bottomNavigationView.selectedItemId = R.id.camera
 
-//        try {
-//            val information =
-//                packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES)
-//            val signatures = information.signingInfo.apkContentsSigners
-//            val md = MessageDigest.getInstance("SHA")
-//            for (signature in signatures) {
-//                val md: MessageDigest
-//                md = MessageDigest.getInstance("SHA")
-//                md.update(signature.toByteArray())
-//                var hashcode = String(Base64.encode(md.digest(), 0))
-//                Log.d("hashcode", "" + hashcode)
-//            }
-//        } catch (e: Exception) {
-//            Log.d("hashcode", "에러::" + e.toString())
-//
-//        }
-
         bottomNavigationView.setOnItemSelectedListener  { menuItem ->
+            clearBackStack()
             when (menuItem.itemId) {
                 R.id.dogam -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.FragmentContainer, DogamFragment())
+                        .replace(R.id.FragmentContainer, DogamFragment(), DogamFragment.TAG)
                         .commit()
                     true
                 }
                 R.id.map -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.FragmentContainer, MapFragment())
+                        .replace(R.id.FragmentContainer, MapFragment(), MapFragment.TAG)
                         .commit()
                     true
                 }
                 R.id.camera -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.FragmentContainer, CameraFragment())
+                        .replace(R.id.FragmentContainer, CameraFragment(), CameraFragment.TAG)
                         .commit()
                     true
                 }
 
                 R.id.community -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.FragmentContainer, CommuFragment_home())
+                        .replace(R.id.FragmentContainer, CommuFragment_home(), CommuFragment_home.TAG)
                         .commit()
                     true
                 }
                 R.id.profile -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.FragmentContainer, ProfileFragment())
+                        .replace(R.id.FragmentContainer, ProfileFragment(), ProfileFragment.TAG)
                         .commit()
                     true
                 }
                 else -> false
             }
+
         }
 
         // 초기 프래그먼트를 설정
         supportFragmentManager.beginTransaction()
-            .replace(R.id.FragmentContainer, CameraFragment())
+            .replace(R.id.FragmentContainer, CameraFragment(),CameraFragment.TAG)
             .commit()
+    }
+    private fun clearBackStack(){
+        val fragmentManager = supportFragmentManager
+        for (i in 0 until fragmentManager.backStackEntryCount) {
+            val fragment = fragmentManager.findFragmentByTag(fragmentManager.getBackStackEntryAt(i).name)
+            fragment?.let {
+                val transaction = fragmentManager.beginTransaction()
+                transaction.remove(it)
+                transaction.commitNow() // 또는 commit()
+            }
+        }
     }
 }

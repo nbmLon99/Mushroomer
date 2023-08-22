@@ -15,9 +15,10 @@ class AdapterPostComment : ListAdapter<Comment, CommentViewHolder>(CommentDiffCa
     inner class CommentViewHolder(private val itemBinding : ItemPostCommentBinding) : RecyclerView.ViewHolder(itemBinding.root){
         fun bind(pos : Int) {
             itemBinding.apply {
-                comment = getItem(pos)
+                val target = getItem(pos)
+                comment = target
                 executePendingBindings()
-                comment.replies?.let{ replies ->
+                target.replies?.let{ replies ->
                     repliesRV.adapter = CommentReplyAdapter().apply { submitList(replies) }
                 }
             }

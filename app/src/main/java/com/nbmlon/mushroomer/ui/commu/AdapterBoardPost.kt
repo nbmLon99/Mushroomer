@@ -39,9 +39,9 @@ class AdapterBoardPost(val boardType: BoardType) : ListAdapter<Post, RecyclerVie
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if(viewType == BoardType.PicBoard.ordinal){
-            PhotoPostViewHolder( ItemPostImageBinding.inflate(LayoutInflater.from(parent.context)) )
+            PhotoPostViewHolder( ItemPostImageBinding.inflate(LayoutInflater.from(parent.context),parent,false) )
         } else{
-            TextPostViewHolder( ItemPostTextBinding.inflate(LayoutInflater.from(parent.context)) )
+            TextPostViewHolder( ItemPostTextBinding.inflate(LayoutInflater.from(parent.context),parent,false) )
         }
     }
 

@@ -37,9 +37,13 @@ class CommuFragment_write : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.apply {
+            btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+        }
     }
 
     companion object {
+        const val TAG = "CommuFragment_write"
         @JvmStatic
         fun getInstance(param1: Int) =
             CommuFragment_write().apply {

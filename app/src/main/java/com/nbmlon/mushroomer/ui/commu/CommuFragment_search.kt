@@ -16,6 +16,17 @@ import com.nbmlon.mushroomer.databinding.FragmentCommuSearchBinding
  * 게시글 검색
  */
 class CommuFragment_search : Fragment() {
+    companion object {
+        const val TAG = "CommuFragment_search"
+
+        @JvmStatic
+        fun getInstance(param1: Int) =
+            CommuFragment_search().apply {
+                arguments = Bundle().apply {
+                    putInt(BOARD_TYPE, param1)
+                }
+            }
+    }
     // TODO: Rename and change types of parameters
     private var search_board_type: Int? = null
     private var _binding: FragmentCommuSearchBinding? = null
@@ -38,17 +49,12 @@ class CommuFragment_search : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.apply {
+            btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+        }
     }
 
-    companion object {
-        @JvmStatic
-        fun getInstance(param1: Int) =
-            CommuFragment_search().apply {
-                arguments = Bundle().apply {
-                    putInt(BOARD_TYPE, param1)
-                }
-            }
-    }
+
 
     override fun onDestroyView() {
         _binding = null

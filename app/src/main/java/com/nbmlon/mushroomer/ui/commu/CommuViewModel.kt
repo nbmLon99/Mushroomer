@@ -15,12 +15,17 @@ class CommuViewModel : ViewModel() {
 
     suspend fun loadRecentPosts(){
         return withContext(Dispatchers.IO){
-            delay(50000)
-            _recentPosts.value = Commu(
+            delay(3000)
+
+            val updatedValue = Commu(
                 newQnAPosts = Post.getDummys(BoardType.QnABoard),
                 newFreePosts =  Post.getDummys(BoardType.FreeBoard),
                 newPicPosts = Post.getDummys(BoardType.PicBoard)
             )
+
+            withContext(Dispatchers.Main) {
+                _recentPosts.value = updatedValue
+            }
         }
     }
 
