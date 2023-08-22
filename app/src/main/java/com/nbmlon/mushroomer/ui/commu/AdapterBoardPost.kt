@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nbmlon.mushroomer.databinding.ItemPostImageBinding
 import com.nbmlon.mushroomer.databinding.ItemPostTextBinding
 import com.nbmlon.mushroomer.model.Post
+import com.nbmlon.mushroomer.model.PostDiffCallback
 
 
 /** CommuBoard에서 표시할 글들 Adapter

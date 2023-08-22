@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.DiffUtil
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
 import org.joda.time.DateTime
@@ -21,7 +22,7 @@ data class Comment(
     val writer : User,
     val content : String,
     val time : DateTime,
-    val replies : ArrayList<Comment>?,
+    val replies : ArrayList<Comment>?
 ){
     val isMine = writer == AppUser.user
 }
@@ -36,4 +37,13 @@ class CommentDataBindingAdapter(){
 
     }
 
+}
+class CommentDiffCallback : DiffUtil.ItemCallback<Comment>() {
+    override fun areItemsTheSame(oldItem: Comment, newItem: Comment): Boolean {
+        return oldItem == newItem
+    }
+
+    override fun areContentsTheSame(oldItem: Comment, newItem: Comment): Boolean {
+        return oldItem == newItem
+    }
 }

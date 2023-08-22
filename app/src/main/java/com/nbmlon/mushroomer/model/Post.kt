@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.DiffUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.target.CustomTarget
@@ -42,7 +43,7 @@ data class Post(
     val content: ArrayList<String>,
     val time: DateTime,
     val writer: User,
-    val comments: ArrayList<Comment>,
+    val comments: ArrayList<Comment>?,
     val ThumbsUpCount: Int,
 
     val boardType : BoardType,
@@ -57,7 +58,7 @@ data class Post(
                 content = arrayListOf("내용"),
                 time = DateTime(),
                 writer = User.getDummy(),
-                comments = arrayListOf(),
+                comments = null,
                 ThumbsUpCount = 0,
                 myThumbsUp = false,
                 boardType = type,
@@ -188,3 +189,15 @@ class PostDataBindingAdapter{
         return spannable
     }
 }
+
+
+class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
+    override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
+        return oldItem == newItem
+    }
+
+    override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
+        return oldItem == newItem
+    }
+}
+

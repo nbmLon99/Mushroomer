@@ -43,7 +43,10 @@ class CommuFragment_post : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             post = targetPost
-            boardType.text = resources.getString(post.boardType.boardNameResId) 
+            boardType.text = resources.getString(post.boardType.boardNameResId)
+            post.comments?.let{comments ->
+                commentRV.adapter = AdapterPostComment().apply { submitList(comments) }
+            }
         }
     }
 

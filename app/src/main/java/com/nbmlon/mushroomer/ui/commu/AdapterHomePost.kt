@@ -2,12 +2,12 @@ package com.nbmlon.mushroomer.ui.commu
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.nbmlon.mushroomer.databinding.ItemCommuHomeIamgeBinding
 import com.nbmlon.mushroomer.databinding.ItemCommuHomeTextBinding
 import com.nbmlon.mushroomer.model.Post
+import com.nbmlon.mushroomer.model.PostDiffCallback
 
 
 /** CommuHome에서 표시할 최신글 들 Adapter **/
@@ -46,17 +46,6 @@ class AdapterHomePost(val cl : PostClickListener) : ListAdapter<Post, RecyclerVi
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         (holder as HomeAdapterHolder).bind(position)
-    }
-}
-
-
-class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
-    override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
-        return oldItem == newItem
-    }
-
-    override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean {
-        return oldItem == newItem
     }
 }
 
