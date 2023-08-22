@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.data.dogam.DogamRepository
+import com.nbmlon.mushroomer.databinding.DialogEdittextBinding
 import com.nbmlon.mushroomer.databinding.FragmentDogamBinding
 import com.nbmlon.mushroomer.model.Mushroom
 import kotlinx.coroutines.flow.Flow
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import taimoor.sultani.sweetalert2.Sweetalert
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -94,9 +96,10 @@ class DogamFragment : Fragment(), DogamItemClickListner {
                 progressBar.progress = it
                 progressText.text = "$it%"
             }
+
+            btnSearch.setOnClickListener { showSearchDialog() }
         }
     }
-
 
 
     override fun onDestroyView() {
@@ -105,8 +108,25 @@ class DogamFragment : Fragment(), DogamItemClickListner {
     }
 
 
-
-
+    private fun showSearchDialog(){
+        val title = "버섯 검색"
+        val content = "검색할 버섯명을 입력해주세요"
+        Sweetalert(context, Sweetalert.NORMAL_TYPE).apply {
+            val dialogBinding = DialogEdittextBinding.inflate(layoutInflater).apply {
+                tvContent.text = content
+            }
+            val editText = dialogBinding.editText
+            titleText = title
+            setCustomView(dialogBinding.root)
+            setCancelButton("확인"){
+                it.dismissWithAnimation()
+            }
+            setNeutralButton(resources.getString(R.string.cancel)){
+                it.dismissWithAnimation()
+            }
+            show()
+        }
+    }
 
 
     private fun FragmentDogamBinding.bindState(
