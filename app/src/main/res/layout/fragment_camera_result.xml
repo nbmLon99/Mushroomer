@@ -7,7 +7,7 @@
     <data>
         <variable
             name="result"
-            type="com.nbmlon.mushroomer.model.Analyze.AnalyzeResult" />
+            type="com.nbmlon.mushroomer.model.Analyze.AnalyzeResponse" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -98,7 +98,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
 
-                        android:text="정확도 : 93%"
+                        android:text='@{"정확도 : " + String.valueOf(result.accuracy)}%'
                         android:textSize="@dimen/text_big"
                         android:textStyle="italic|bold"
 
