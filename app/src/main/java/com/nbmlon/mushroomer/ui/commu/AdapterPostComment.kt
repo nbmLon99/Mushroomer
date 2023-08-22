@@ -26,7 +26,7 @@ class AdapterPostComment : ListAdapter<Comment, CommentViewHolder>(CommentDiffCa
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
-        val itemBinding = ItemPostCommentBinding.inflate(LayoutInflater.from(parent.context))
+        val itemBinding = ItemPostCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return CommentViewHolder(itemBinding)
     }
 
@@ -49,7 +49,7 @@ class AdapterPostComment : ListAdapter<Comment, CommentViewHolder>(CommentDiffCa
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReplyViewHolder {
-            val itemBinding = ItemPostReplyBinding.inflate(LayoutInflater.from(parent.context))
+            val itemBinding = ItemPostReplyBinding.inflate(LayoutInflater.from(parent.context),parent,false)
             return ReplyViewHolder(itemBinding)
         }
 

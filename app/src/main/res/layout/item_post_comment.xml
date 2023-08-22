@@ -75,6 +75,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:layout_marginLeft="10dp"
+
                 >
                 <ImageView
                     android:id="@+id/iv_user"
@@ -88,6 +90,8 @@
                     android:layout_width="50dp"
                     android:layout_height="wrap_content"
                     android:text="@{comment.writer.nickname}"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:textAlignment="center"
                     android:textSize="@dimen/text_small"
                     />

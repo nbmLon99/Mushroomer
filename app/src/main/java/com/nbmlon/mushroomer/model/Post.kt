@@ -58,7 +58,7 @@ data class Post(
                 content = arrayListOf("내용"),
                 time = DateTime(),
                 writer = User.getDummy(),
-                comments = null,
+                comments = Comment.getDummyswithReplies(),
                 ThumbsUpCount = 0,
                 myThumbsUp = false,
                 boardType = type,

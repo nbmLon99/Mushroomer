@@ -24,6 +24,21 @@ data class Comment(
     val time : DateTime,
     val replies : ArrayList<Comment>?
 ){
+    companion object{
+        fun getDummyswithReplies() : ArrayList<Comment> {
+            val replies = arrayListOf<Comment>()
+            for (i in 1..2)
+                replies.add(getDummy())
+
+            val comments = arrayListOf<Comment>()
+            for (i in 1..3)
+                comments.add(Comment(User.getDummy(),"댓글 예시",DateTime(),replies))
+            return comments
+        }
+        fun getDummy() : Comment {
+            return Comment(User.getDummy(),"댓글 예시",DateTime(),null)
+        }
+    }
     val isMine = (writer == AppUser.user)
 }
 
