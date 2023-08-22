@@ -1,5 +1,11 @@
 package com.nbmlon.mushroomer.model
 
+import android.graphics.drawable.Drawable
+import android.text.Html
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.style.ImageSpan
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -7,6 +13,8 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.nbmlon.mushroomer.R
 import org.joda.time.DateTime
 import org.joda.time.Duration
@@ -141,5 +149,44 @@ class PostDataBindingAdapter{
             view.text = SimpleDateFormat("HH:mm").format(dateAt)
 
         }
+    }
+
+    @BindingAdapter("setPostContent")
+    fun bindPostContent(view: TextView, post: Post) {
+        val content =  SpannableStringBuilder()
+        if(post.content.isNotEmpty()){
+            for ( (idx, str) in post.content.withIndex()){
+                content.append(str)
+                content.append(getImageSpannableStringFromUrl(view, post.images?.getOrNull(idx)))
+            }
+        }
+        view.text = content
+    }
+
+
+    private fun getImageSpannableStringFromUrl(textView: TextView, url: String?) : SpannableString {
+        val spannable = SpannableString("")
+        url?.let{
+            val imageGetter = object : Html.ImageGetter {
+                override fun getDrawable(source: String?): Drawable {
+                    val imageSpan = ImageSpan(textView.context, R.drawable.drawable_error) // 이미지 로딩 전에 표시할 placeholder 이미지 리소스
+                    spannable.setSpan(imageSpan, spannable.length, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+                    Glide.with(textView.context)
+                        .load(url)
+                        .into(object : CustomTarget<Drawable>() {
+                            override fun onLoadCleared(placeholder: Drawable?) {}
+                            override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                                val finalImageSpan = ImageSpan(resource)
+                                spannable.removeSpan(imageSpan) // 이전의 placeholder 이미지 삭제
+                                spannable.setSpan(finalImageSpan, spannable.length - 1, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                            }
+                        })
+                    return imageSpan.drawable
+                }
+            }
+            imageGetter.getDrawable(url)
+        }
+        return spannable
     }
 }
