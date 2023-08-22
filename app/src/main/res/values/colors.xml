@@ -26,4 +26,10 @@
     <color name="negativeRed">#B85050</color>
 
     <color name="progressBar">#CCC077</color>
+
+
+    <color name="CommentBg">#3CD9D9D9</color>
+    <color name="myCommentBg">#3C003E0E</color>
+
+
 </resources>

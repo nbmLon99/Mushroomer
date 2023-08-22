@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.commu.CommuFragment_hot"
+    tools:context=".ui.commu.CommuFragmentBoard_hot"
     >
 
 
@@ -96,7 +96,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="@string/myPicBoard"
+            android:text="@string/PicBoard"
             android:button="@null"
             android:background="@null"
             android:padding="3dp"

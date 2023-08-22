@@ -3,24 +3,25 @@ package com.nbmlon.mushroomer.data.posts
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.nbmlon.mushroomer.model.Post
-import com.nbmlon.mushroomer.model.PostType
+import com.nbmlon.mushroomer.ui.commu.BoardType
 import retrofit2.HttpException
 import java.io.IOException
 
 class PostPagingSource(
     val backend: PostsService,
-    val query: String
+    val query: String,
+    val boardType: BoardType
 ) : PagingSource<Int, Post>() {
     var tmpPageNum = 1
     override suspend fun load(
-        params: PagingSource.LoadParams<Int>
+        params: PagingSource.LoadParams<Int>,
     ): PagingSource.LoadResult<Int, Post> {
         try {
             // Start refresh at page 1 if undefined.
             val nextPageNumber = params.key ?: 1
             //val response = backend.getDogam(query, nextPageNumber)
 
-            val response = PostsResponse(0, Post.getDummys(PostType.POST_TEXT))
+            val response = PostsResponse(0, Post.getDummys(boardType))
             return PagingSource.LoadResult.Page(
                 data = response.items,
                 prevKey = null, // Only paging forward.

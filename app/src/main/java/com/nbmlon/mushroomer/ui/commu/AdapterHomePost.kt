@@ -8,18 +8,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nbmlon.mushroomer.databinding.ItemCommuHomeIamgeBinding
 import com.nbmlon.mushroomer.databinding.ItemCommuHomeTextBinding
 import com.nbmlon.mushroomer.model.Post
-import com.nbmlon.mushroomer.model.PostType
 
-class AdapterHomePost : ListAdapter<Post, RecyclerView.ViewHolder>(PostDiffCallback()) {
-    private enum class ItemViewType {
-        PHOTO_POST, TEXT_POST
-    }
 
+/** CommuHome에서 표시할 최신글 들 Adapter **/
+class AdapterHomePost(val cl : PostClickListener) : ListAdapter<Post, RecyclerView.ViewHolder>(PostDiffCallback()) {
     inner class TextPostViewHolder(private val itemBinding: ItemCommuHomeTextBinding) : RecyclerView.ViewHolder(itemBinding.root), HomeAdapterHolder {
         override fun bind(pos : Int){
             itemBinding.apply {
                 post = getItem(pos)
                 executePendingBindings()
+                frame.setOnClickListener { cl.openPost(post) }
             }
         }
     }
@@ -29,22 +27,20 @@ class AdapterHomePost : ListAdapter<Post, RecyclerView.ViewHolder>(PostDiffCallb
             itemBinding.apply {
                 post = getItem(pos)
                 executePendingBindings()
+                frame.setOnClickListener { cl.openPost(post) }
             }
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if(getItem(position).type == PostType.POST_PHOTO)
-            ItemViewType.PHOTO_POST.ordinal
-        else
-            ItemViewType.TEXT_POST.ordinal
+        return getItem(position).boardType.ordinal
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if(viewType == ItemViewType.TEXT_POST.ordinal){
-            TextPostViewHolder( ItemCommuHomeTextBinding.inflate(LayoutInflater.from(parent.context)) )
-        } else{
+        return if(viewType == BoardType.PicBoard.ordinal){
             PhotoPostViewHolder( ItemCommuHomeIamgeBinding.inflate(LayoutInflater.from(parent.context)) )
+        } else{
+            TextPostViewHolder( ItemCommuHomeTextBinding.inflate(LayoutInflater.from(parent.context)) )
         }
     }
 

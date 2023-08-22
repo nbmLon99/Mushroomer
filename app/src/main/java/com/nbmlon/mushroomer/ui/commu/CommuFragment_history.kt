@@ -13,11 +13,9 @@ private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
 /**
- * A simple [Fragment] subclass.
- * Use the [CommuFragment_image.newInstance] factory method to
- * create an instance of this fragment.
+     내 댓글, 내 포스트 띄워주는 창
  */
-class CommuFragment_image : Fragment() {
+class CommuFragment_history : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -35,7 +33,7 @@ class CommuFragment_image : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_commu_image, container, false)
+        return inflater.inflate(R.layout.fragment_commu_history, container, false)
     }
 
     companion object {
@@ -45,12 +43,12 @@ class CommuFragment_image : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment PostsFragment_image.
+         * @return A new instance of fragment CommuFragment_history.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            CommuFragment_image().apply {
+            CommuFragment_history().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)

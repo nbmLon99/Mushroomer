@@ -5,28 +5,22 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.databinding.FragmentCommuWriteBinding
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val WRITE_BOARD_TYPE = "type"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [CommuFragment_write.newInstance] factory method to
- * create an instance of this fragment.
- */
 class CommuFragment_write : Fragment() {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var caller_type: Int? = null
 
+    private var _binding: FragmentCommuWriteBinding? = null
+    private val binding get() = _binding!!
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            caller_type = it.getInt(WRITE_BOARD_TYPE)
         }
     }
 
@@ -34,27 +28,30 @@ class CommuFragment_write : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        _binding = FragmentCommuWriteBinding.inflate(LayoutInflater.from(context))
+
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_commu_write, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CommuFragmet_write.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun getInstance(param1: Int) =
             CommuFragment_write().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putInt(WRITE_BOARD_TYPE, param1)
                 }
             }
     }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
+
 }
