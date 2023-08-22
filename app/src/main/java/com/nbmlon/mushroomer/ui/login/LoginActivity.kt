@@ -8,10 +8,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
 import androidx.core.widget.doAfterTextChanged
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.ActivityLoginBinding
+import com.nbmlon.mushroomer.model.User
 import com.nbmlon.mushroomer.ui.MainActivity
 import com.nbmlon.mushroomer.utils.CryptographyManager
 
@@ -79,7 +81,7 @@ class LoginActivity : AppCompatActivity() {
             if (loginResult.success) {
                 Log.d(TAG,
                     "You successfully signed up using password as: user " +
-                            "${AppUser.user?.name} with fake token ${AppUser.token}")
+                            "${AppUser.user?.email} with fake token ${AppUser.token}")
                 updateApp()
             }
         })
@@ -110,13 +112,16 @@ class LoginActivity : AppCompatActivity() {
                 binding.username.text.toString(),
                 binding.password.text.toString()
             )
-            Log.d(TAG, "Username ${AppUser.user?.name}; fake token ${AppUser.token}")
+            Log.d(TAG, "Username ${AppUser.user?.email}; fake token ${AppUser.token}")
         }
-        Log.d(TAG, "Username ${AppUser.user?.name}; fake token ${AppUser.token}")
+        Log.d(TAG, "Username ${AppUser.user?.email}; fake token ${AppUser.token}")
     }
 
     private fun updateApp() {
+        AppUser.user = User(1L,binding.username.text.toString(),"닉네임","")
+        AppUser.percent = 50
         startActivity(Intent(this,MainActivity::class.java))
+        this@LoginActivity.finish()
     }
 
 
