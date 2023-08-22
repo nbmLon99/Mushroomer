@@ -24,16 +24,20 @@ data class Comment(
     val time : DateTime,
     val replies : ArrayList<Comment>?
 ){
-    val isMine = writer == AppUser.user
+    val isMine = (writer == AppUser.user)
 }
 
-class CommentDataBindingAdapter(){
-    @BindingAdapter("checkMyComment")
-    fun bindCommentBackground(linearLayout: LinearLayout, isMine : Boolean){
-        if (isMine)
-            linearLayout.setBackgroundColor(ContextCompat.getColor(linearLayout.context, R.color.CommentBg))
-        else
-            linearLayout.setBackgroundColor(ContextCompat.getColor(linearLayout.context, R.color.myCommentBg))
+class CommentDataBindingAdapter{
+    companion object{
+        @JvmStatic
+        @BindingAdapter("checkMyComment")
+        fun bindCommentBackground(linearLayout: LinearLayout, isMine : Boolean){
+            if (isMine)
+                linearLayout.setBackgroundColor(ContextCompat.getColor(linearLayout.context, R.color.CommentBg))
+            else
+                linearLayout.setBackgroundColor(ContextCompat.getColor(linearLayout.context, R.color.myCommentBg))
+
+        }
 
     }
 

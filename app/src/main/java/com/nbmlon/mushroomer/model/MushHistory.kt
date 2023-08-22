@@ -5,5 +5,7 @@ import java.util.Date
 
 data class MushHistory (
     val picPath : ArrayList<String>,
-    val date : DateTime
+    val date : DateTime,
+    val lat : Long,
+    val lon : Long
 )

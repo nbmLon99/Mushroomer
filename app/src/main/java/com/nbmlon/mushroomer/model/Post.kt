@@ -77,97 +77,104 @@ data class Post(
 }
 
 class PostDataBindingAdapter{
-    @BindingAdapter("imageFromUrlArray")
-    fun bindImageFromUrlArray(view: ImageView, imageUrl: ArrayList<String>?) {
-        if (!imageUrl.isNullOrEmpty()) {
-            Glide.with(view.context)
-                .load(imageUrl[0])
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(view)
-        }
-    }
-
-    @BindingAdapter("setImageIntoTextPost")
-    fun bindImageIntoTextPost(view: ImageView, imageUrl: ArrayList<String>?) {
-        if (!imageUrl.isNullOrEmpty()) {
-            Glide.with(view.context)
-                .load(imageUrl[0])
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(view)
-        }
-        else{
-            view.visibility = View.GONE
-        }
-    }
-    @BindingAdapter("checkMyLove")
-    fun checkMyLoveFromPost(view: ImageView, myLove : Boolean) {
-        if( myLove ){
-            view.setImageDrawable(ContextCompat.getDrawable(view.context, R.drawable.icons_love))
-        }else{
-            view.setImageDrawable(
-                ContextCompat.getDrawable(
-                    view.context,
-                    R.drawable.icons_emp_love
-                )
-            )
-        }
-    }
-    @BindingAdapter("checkMyLike")
-    fun checkMyLikeFromPost(view: ImageView, myLike : Boolean) {
-        if( myLike ){
-            view.setImageDrawable(ContextCompat.getDrawable(view.context, R.drawable.icons_like))
-        }else{
-            view.setImageDrawable(
-                ContextCompat.getDrawable(
-                    view.context,
-                    R.drawable.icons_like_emp
-                )
-            )
-        }
-    }
-
-
-    @BindingAdapter("setTimeRelatively")
-    fun setTimeRelatively(view: TextView, dateAt : DateTime) {
-        val currentTime = DateTime()
-        val duration = Duration(dateAt, currentTime)
-
-        val minutesDifference = duration.standardMinutes
-        val equalDay = (
-                currentTime.year == dateAt.year &&
-                        currentTime.dayOfYear == dateAt.dayOfYear
-                )
-        if( minutesDifference < 60){
-            view.text = "${minutesDifference}분 전"
-
-        }else if( !equalDay ){
-            view.text = SimpleDateFormat("yy.MM.dd").format(dateAt)
-
-        }else{
-            view.text = SimpleDateFormat("HH:mm").format(dateAt)
-
-        }
-    }
-
-    @BindingAdapter("setPostContent")
-    fun bindPostContent(view: TextView, post: Post) {
-        //제대로 된 post라면 content개수랑 images개수가 하나 차이나야함
-        val content =  SpannableStringBuilder()
-        if(post.content.isNotEmpty()){
-            for ( (idx, str) in post.content.withIndex()){
-                content.append(str)
-                content.append(getImageSpannableStringFromUrl(view, post.images?.getOrNull(idx)))
+    companion object{
+        @JvmStatic
+        @BindingAdapter("imageFromUrlArray")
+        fun bindImageFromUrlArray(view: ImageView, imageUrl: ArrayList<String>?) {
+            if (!imageUrl.isNullOrEmpty()) {
+                Glide.with(view.context)
+                    .load(imageUrl[0])
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(view)
             }
         }
-        view.text = content
-    }
+
+        @JvmStatic
+        @BindingAdapter("setImageIntoTextPost")
+        fun bindImageIntoTextPost(view: ImageView, imageUrl: ArrayList<String>?) {
+            if (!imageUrl.isNullOrEmpty()) {
+                Glide.with(view.context)
+                    .load(imageUrl[0])
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(view)
+            }
+            else{
+                view.visibility = View.GONE
+            }
+        }
+        @JvmStatic
+        @BindingAdapter("checkMyLove")
+        fun checkMyLoveFromPost(view: ImageView, myLove : Boolean) {
+            if( myLove ){
+                view.setImageDrawable(ContextCompat.getDrawable(view.context, R.drawable.icons_love))
+            }else{
+                view.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        view.context,
+                        R.drawable.icons_emp_love
+                    )
+                )
+            }
+        }
+        @JvmStatic
+        @BindingAdapter("checkMyLike")
+        fun checkMyLikeFromPost(view: ImageView, myLike : Boolean) {
+            if( myLike ){
+                view.setImageDrawable(ContextCompat.getDrawable(view.context, R.drawable.icons_like))
+            }else{
+                view.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        view.context,
+                        R.drawable.icons_like_emp
+                    )
+                )
+            }
+        }
 
 
-    private fun getImageSpannableStringFromUrl(textView: TextView, url: String?) : SpannableString {
-        val spannable = SpannableString("")
-        url?.let{
-            val imageGetter = object : Html.ImageGetter {
-                override fun getDrawable(source: String?): Drawable {
+        @JvmStatic
+        @BindingAdapter("setTimeRelatively")
+        fun setTimeRelatively(view: TextView, dateAt : DateTime) {
+            val currentTime = DateTime()
+            val duration = Duration(dateAt, currentTime)
+
+            val minutesDifference = duration.standardMinutes
+            val equalDay = (
+                    currentTime.year == dateAt.year &&
+                            currentTime.dayOfYear == dateAt.dayOfYear
+                    )
+            if( minutesDifference < 60){
+                view.text = "${minutesDifference}분 전"
+
+            }else if( !equalDay ){
+                view.text = SimpleDateFormat("yy.MM.dd").format(dateAt)
+
+            }else{
+                view.text = SimpleDateFormat("HH:mm").format(dateAt)
+
+            }
+        }
+
+        @JvmStatic
+        @BindingAdapter("setPostContent")
+        fun bindPostContent(view: TextView, post: Post) {
+            //제대로 된 post라면 content개수랑 images개수가 하나 차이나야함
+            val content =  SpannableStringBuilder()
+            if(post.content.isNotEmpty()){
+                for ( (idx, str) in post.content.withIndex()){
+                    content.append(str)
+                    content.append(getImageSpannableStringFromUrl(view, post.images?.getOrNull(idx)))
+                }
+            }
+            view.text = content
+        }
+
+
+        @JvmStatic
+        private fun getImageSpannableStringFromUrl(textView: TextView, url: String?) : SpannableString {
+            val spannable = SpannableString("")
+            url?.let{
+                val imageGetter = Html.ImageGetter {
                     val imageSpan = ImageSpan(textView.context, R.drawable.drawable_error) // 이미지 로딩 전에 표시할 placeholder 이미지 리소스
                     spannable.setSpan(imageSpan, spannable.length, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
@@ -181,13 +188,14 @@ class PostDataBindingAdapter{
                                 spannable.setSpan(finalImageSpan, spannable.length - 1, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                             }
                         })
-                    return imageSpan.drawable
+                    imageSpan.drawable
                 }
+                imageGetter.getDrawable(url)
             }
-            imageGetter.getDrawable(url)
+            return spannable
         }
-        return spannable
     }
+
 }
 
 
