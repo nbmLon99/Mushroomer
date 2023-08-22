@@ -91,12 +91,13 @@
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:src="@drawable/icons_profile"
+                        setUserIcon="@{post.writer.icon}"
                         />
                     <TextView
                         android:id="@+id/writer_nickname"
                         android:layout_width="50dp"
                         android:layout_height="wrap_content"
-                        android:text="닉네임"
+                        android:text="@{post.writer.nickname}"
                         android:textAlignment="center"
                         android:textSize="@dimen/text_small"
                         />
@@ -154,7 +155,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="right"
                             android:textSize="10sp"
-                            android:text="날짜가 들어갈 곳입니다."
+                            android:text="@{post.time.toString()}"
                             android:textFontWeight="300"
                             />
 
@@ -186,7 +187,7 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:background="@color/bgGray"
-
+                android:layout_marginLeft="10dp"
                 />
 
             <ImageView
