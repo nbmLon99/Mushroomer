@@ -6,6 +6,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.nbmlon.mushroomer.data.posts.PostsService
 import com.nbmlon.mushroomer.model.Post
+import com.nbmlon.mushroomer.ui.commu.BoardType
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -15,8 +16,8 @@ interface PostsRepository {
     fun getPostStream(query: String): Flow<PagingData<Post>>
 }
 
-fun PostsRepository() : PostsRepository = PostsRepositoryImpl()
-private class PostsRepositoryImpl: PostsRepository {
+fun PostsRepository(boardType: BoardType) : PostsRepository = PostsRepositoryImpl(boardType)
+private class PostsRepositoryImpl(val boardType: BoardType): PostsRepository {
     companion object {
         const val NETWORK_PAGE_SIZE = 50
     }
@@ -41,7 +42,7 @@ private class PostsRepositoryImpl: PostsRepository {
                 pageSize = PostsRepositoryImpl.NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { PostPagingSource(PostsService.create(), query) }
+            pagingSourceFactory = { PostPagingSource(PostsService.create(), query, boardType) }
         ).flow
     }
 

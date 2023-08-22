@@ -1,35 +1,32 @@
 package com.nbmlon.mushroomer.ui.commu
 
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.nbmlon.mushroomer.R
-import com.nbmlon.mushroomer.databinding.FragmentCommuHotBinding
 import com.nbmlon.mushroomer.databinding.FragmentCommuPostBinding
+import com.nbmlon.mushroomer.model.Post
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val TARGET_POST = "target_post_display"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [CommuFragment_post.newInstance] factory method to
- * create an instance of this fragment.
- */
 class CommuFragment_post : Fragment() {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var targetPost: Post? = null
+
     private var _binding: FragmentCommuPostBinding? = null
     private val binding get() = _binding!!
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                targetPost = it.getSerializable(TARGET_POST, Post::class.java)
+            }else{
+                targetPost = it.getSerializable(TARGET_POST) as Post
+            }
         }
     }
 
@@ -37,26 +34,25 @@ class CommuFragment_post : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        _binding = FragmentCommuPostBinding.inflate(LayoutInflater.from(context))
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_commu_post, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.apply {
+            post = targetPost
+            boardType.text = resources.getString(post.boardType.boardNameResId) 
+        }
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment PostFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun getInstance(param1: Post) =
             CommuFragment_post().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putSerializable(TARGET_POST, param1)
                 }
             }
     }

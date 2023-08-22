@@ -11,7 +11,6 @@ import com.nbmlon.mushroomer.databinding.FragmentCommuSearchBinding
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val SEARCH_BOARD_TYPE = "search_board_type"
 
 /**
  * 게시글 검색
@@ -24,7 +23,7 @@ class CommuFragment_search : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            search_board_type = it.getInt(SEARCH_BOARD_TYPE)
+            search_board_type = it.getInt(BOARD_TYPE)
         }
     }
 
@@ -46,7 +45,7 @@ class CommuFragment_search : Fragment() {
         fun getInstance(param1: Int) =
             CommuFragment_search().apply {
                 arguments = Bundle().apply {
-                    putInt(SEARCH_BOARD_TYPE, param1)
+                    putInt(BOARD_TYPE, param1)
                 }
             }
     }

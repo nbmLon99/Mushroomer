@@ -34,7 +34,7 @@
             android:layout_height="match_parent"
             android:padding="10dp"
 
-            android:text="@string/myPicBoard"
+            android:text="@string/PicBoard"
             android:textStyle="bold"
             android:textSize="25sp"
 

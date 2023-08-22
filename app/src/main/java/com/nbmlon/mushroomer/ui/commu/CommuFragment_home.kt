@@ -8,12 +8,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCommuHomeBinding
+import com.nbmlon.mushroomer.model.Post
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import taimoor.sultani.sweetalert2.Sweetalert
 
-class CommuFragment_home : Fragment() {
+class CommuFragment_home : Fragment(), PostClickListener {
     companion object {
         const val TAG = "COMMUFRAGMENT_HOME"
     }
@@ -37,9 +38,9 @@ class CommuFragment_home : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCommuHomeBinding.inflate(layoutInflater, container, false)
-        adapterFree =  AdapterHomePost()
-        adapterPic =  AdapterHomePost()
-        adapterQnA =  AdapterHomePost()
+        adapterFree =  AdapterHomePost(this@CommuFragment_home::openPost)
+        adapterPic =  AdapterHomePost(this@CommuFragment_home::openPost)
+        adapterQnA =  AdapterHomePost(this@CommuFragment_home::openPost)
 
         val loading = Sweetalert(requireActivity(),Sweetalert.PROGRESS_TYPE)
         loading.apply {
@@ -107,6 +108,13 @@ class CommuFragment_home : Fragment() {
         val boardTypeOrdinal = boardType.ordinal
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.FragmentContainer, CommuFragmentBoard.getInstance(boardTypeOrdinal))
+            .addToBackStack(null)
+            .commit()
+    }
+
+    override fun openPost(post: Post) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.FragmentContainer, CommuFragment_post.getInstance(post))
             .addToBackStack(null)
             .commit()
     }

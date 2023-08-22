@@ -86,7 +86,7 @@
 
     <!--커뮤 프래그먼트 -->
     <string name="QnABoard">버섯 Q&amp;A</string>
-    <string name="myPicBoard">사진게시판</string>
+    <string name="PicBoard">사진게시판</string>
     <string name="FreeBoard">자유게시판</string>
     <string name="HotBoard">인기게시판</string>
     <string name="HotRules">추천수 N개 이상의 게시글들입니다.</string>

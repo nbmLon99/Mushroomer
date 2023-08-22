@@ -16,14 +16,11 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.ui.commu.BoardType
 import org.joda.time.DateTime
 import org.joda.time.Duration
+import java.io.Serializable
 import java.text.SimpleDateFormat
-
-enum class PostType{
-    POST_PHOTO,
-    POST_TEXT
-}
 
 
 /**
@@ -35,7 +32,7 @@ enum class PostType{
  * @param comments      댓글
  * @param ThumbsUpCount 좋아요 수
  *
- * @param type         포스팅 타입
+ * @param boardType         포스팅 타입
  * @param myThumbsUp    내 좋아요 유무
  * @param updated       수정 유무 ( 수정됨 )
  */
@@ -48,12 +45,12 @@ data class Post(
     val comments: ArrayList<Comment>,
     val ThumbsUpCount: Int,
 
-    val type : PostType,
+    val boardType : BoardType,
     val myThumbsUp: Boolean,
     val updated: Boolean
-    ) {
+    ) :Serializable {
     companion object {
-        fun getDummy(type : PostType): Post {
+        fun getDummy(type : BoardType): Post {
             return Post(
                 title = "제목",
                 images = null,
@@ -63,15 +60,15 @@ data class Post(
                 comments = arrayListOf(),
                 ThumbsUpCount = 0,
                 myThumbsUp = false,
-                type = type,
+                boardType = type,
                 updated = false
             )
         }
 
-        fun getDummys(type : PostType) : ArrayList<Post>{
+        fun getDummys(type : BoardType) : ArrayList<Post>{
             val items = arrayListOf<Post>()
             for ( i in 1..10) {
-                items.add(Post.getDummy(type))
+                items.add(getDummy(type))
             }
             return items
         }
@@ -153,6 +150,7 @@ class PostDataBindingAdapter{
 
     @BindingAdapter("setPostContent")
     fun bindPostContent(view: TextView, post: Post) {
+        //제대로 된 post라면 content개수랑 images개수가 하나 차이나야함
         val content =  SpannableStringBuilder()
         if(post.content.isNotEmpty()){
             for ( (idx, str) in post.content.withIndex()){

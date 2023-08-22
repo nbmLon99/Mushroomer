@@ -96,7 +96,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="@string/myPicBoard"
+            android:text="@string/PicBoard"
             android:button="@null"
             android:background="@null"
             android:padding="3dp"

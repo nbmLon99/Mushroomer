@@ -14,6 +14,8 @@
         android:layout_width="100dp"
         android:layout_height="match_parent"
         >
+
+
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -90,10 +92,13 @@
                 </LinearLayout>
 
             </LinearLayout>
-
+            <ImageView
+                android:id="@+id/frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/click_effect_background"
+                />
         </androidx.cardview.widget.CardView>
-
-
     </FrameLayout>
 
 
