@@ -39,17 +39,7 @@ private const val ARG_PARAM1 = "dogamNo"
 class DogamFragment : Fragment(), DogamItemClickListner {
 
     companion object {
-        private const val TAG = "DogamFragment"
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment DogamFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-
+        const val TAG = "DogamFragment"
 
         //도감 번호 입력해서 넘어갈떄 이렇게 넘어가면될듯?
         @JvmStatic
@@ -93,14 +83,17 @@ class DogamFragment : Fragment(), DogamItemClickListner {
 
         val viewModel: DogamViewModel by viewModels { viewModelFactory }
 
-        binding.bindState(
-            uiState = viewModel.state,
-            pagingData = viewModel.pagingDataFlow,
-            uiActions = viewModel.accept
-        )
+        binding.apply {
+            bindState(
+                uiState = viewModel.state,
+                pagingData = viewModel.pagingDataFlow,
+                uiActions = viewModel.accept
+            )
 
-        AppUser.percent?.let {
-            binding.progressBar.progress = it
+            AppUser.percent?.let {
+                progressBar.progress = it
+                progressText.text = "$it%"
+            }
         }
     }
 
@@ -283,7 +276,7 @@ class DogamFragment : Fragment(), DogamItemClickListner {
     override fun onDogamItemClicked(clickedMushroom: Mushroom) {
         /** 도감 상세보기 화면 넘기기 **/
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.FragmentContainer, DogamFragment_detail.newInstance(clickedMushroom))
+            .replace(R.id.FragmentContainer, DogamFragment_detail.newInstance(clickedMushroom), DogamFragment_detail.TAG)
             .addToBackStack(null) // 백 스택에 Fragment 트랜잭션 추가
             .commit()
     }
