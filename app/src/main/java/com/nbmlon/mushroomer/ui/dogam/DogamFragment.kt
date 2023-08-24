@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.data.dogam.DogamRepository
+import com.nbmlon.mushroomer.databinding.DialogEdittextBinding
 import com.nbmlon.mushroomer.databinding.FragmentDogamBinding
 import com.nbmlon.mushroomer.model.Mushroom
 import kotlinx.coroutines.flow.Flow
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import taimoor.sultani.sweetalert2.Sweetalert
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -39,17 +41,7 @@ private const val ARG_PARAM1 = "dogamNo"
 class DogamFragment : Fragment(), DogamItemClickListner {
 
     companion object {
-        private const val TAG = "DogamFragment"
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment DogamFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-
+        const val TAG = "DogamFragment"
 
         //도감 번호 입력해서 넘어갈떄 이렇게 넘어가면될듯?
         @JvmStatic
@@ -93,17 +85,21 @@ class DogamFragment : Fragment(), DogamItemClickListner {
 
         val viewModel: DogamViewModel by viewModels { viewModelFactory }
 
-        binding.bindState(
-            uiState = viewModel.state,
-            pagingData = viewModel.pagingDataFlow,
-            uiActions = viewModel.accept
-        )
+        binding.apply {
+            bindState(
+                uiState = viewModel.state,
+                pagingData = viewModel.pagingDataFlow,
+                uiActions = viewModel.accept
+            )
 
-        AppUser.percent?.let {
-            binding.progressBar.progress = it
+            AppUser.percent?.let {
+                progressBar.progress = it
+                progressText.text = "$it%"
+            }
+
+            btnSearch.setOnClickListener { showSearchDialog() }
         }
     }
-
 
 
     override fun onDestroyView() {
@@ -112,8 +108,25 @@ class DogamFragment : Fragment(), DogamItemClickListner {
     }
 
 
-
-
+    private fun showSearchDialog(){
+        val title = "버섯 검색"
+        val content = "검색할 버섯명을 입력해주세요"
+        Sweetalert(context, Sweetalert.NORMAL_TYPE).apply {
+            val dialogBinding = DialogEdittextBinding.inflate(layoutInflater).apply {
+                tvContent.text = content
+            }
+            val editText = dialogBinding.editText
+            titleText = title
+            setCustomView(dialogBinding.root)
+            setCancelButton("확인"){
+                it.dismissWithAnimation()
+            }
+            setNeutralButton(resources.getString(R.string.cancel)){
+                it.dismissWithAnimation()
+            }
+            show()
+        }
+    }
 
 
     private fun FragmentDogamBinding.bindState(
@@ -283,7 +296,7 @@ class DogamFragment : Fragment(), DogamItemClickListner {
     override fun onDogamItemClicked(clickedMushroom: Mushroom) {
         /** 도감 상세보기 화면 넘기기 **/
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.FragmentContainer, DogamFragment_detail.newInstance(clickedMushroom))
+            .replace(R.id.FragmentContainer, DogamFragment_detail.newInstance(clickedMushroom), DogamFragment_detail.TAG)
             .addToBackStack(null) // 백 스택에 Fragment 트랜잭션 추가
             .commit()
     }

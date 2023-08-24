@@ -27,7 +27,6 @@
                 android:layout_height="match_parent"
                 android:paddingHorizontal="10dp"
                 app:cardCornerRadius="10dp"
-                checkMyComment = "@{comment.isMine}"
                 >
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -35,6 +34,7 @@
                     android:orientation="vertical"
                     android:padding="10dp"
                     android:background="@color/CommentBg"
+                    checkMyComment = "@{comment.isMine}"
                     >
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -75,6 +75,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:layout_marginLeft="10dp"
+
                 >
                 <ImageView
                     android:id="@+id/iv_user"
@@ -88,6 +90,8 @@
                     android:layout_width="50dp"
                     android:layout_height="wrap_content"
                     android:text="@{comment.writer.nickname}"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:textAlignment="center"
                     android:textSize="@dimen/text_small"
                     />
@@ -96,6 +100,7 @@
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/repliesRV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:listitem="@layout/item_post_reply"

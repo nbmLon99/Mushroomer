@@ -41,7 +41,7 @@ data class Mushroom (
         /** n(도감넘버), gotcha(발견 여부) 지정하여 더미데이터 생성 **/
         fun getDummy(n :Int, gotcha : Boolean) : Mushroom{
             val mush = Mushroom(n,"","${n}번쨰 버섯","설명입니다.", MushType.EDIBLE,20L,ArrayList())
-            if(gotcha){ mush.myHistory.add(MushHistory(ArrayList(), DateTime())) }
+            if(gotcha){ mush.myHistory.add(MushHistory(ArrayList(), DateTime(), 0,0)) }
             return mush
         }
     }
@@ -49,38 +49,45 @@ data class Mushroom (
 }
 
 class MushDataBindingAdapter{
-    @BindingAdapter("imageFromUrl")
-    fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
-        if (!imageUrl.isNullOrEmpty()) {
-            Glide.with(view.context)
-                .load(imageUrl)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(view)
+    companion object{
+        @JvmStatic
+        @BindingAdapter("imageFromUrl")
+        fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
+            if (!imageUrl.isNullOrEmpty()) {
+                Glide.with(view.context)
+                    .load(imageUrl)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(view)
+            }
+        }
+
+        @JvmStatic
+        @BindingAdapter("isDiscovered")
+        fun bindIsGone(view: ImageView, gotcha: Boolean) {
+            if (gotcha) {
+                view.visibility = View.GONE
+            } else {
+                view.visibility = View.VISIBLE
+            }
+        }
+
+
+
+        @JvmStatic
+        @BindingAdapter("setMushType")
+        fun bindMushType(view: TextView, type: MushType) {
+            when(type){
+                MushType.EDIBLE-> view.setText(R.string.typeEat)
+                MushType.POISON-> view.setText(R.string.typePoison)
+            }
+        }
+
+        @JvmStatic
+        @BindingAdapter("picturedAt")
+        fun bindDate(view : TextView, date : DateTime){
+            val format = SimpleDateFormat("yyyy년\nM월 d일", Locale.getDefault())
+            view.text = format.format(date)
         }
     }
 
-    @BindingAdapter("isDiscovered")
-    fun bindIsGone(view: ImageView, gotcha: Boolean) {
-        if (gotcha) {
-            view.visibility = View.GONE
-        } else {
-            view.visibility = View.VISIBLE
-        }
-    }
-
-
-
-    @BindingAdapter("setMushType")
-    fun bindMushType(view: TextView, type: MushType) {
-        when(type){
-            MushType.EDIBLE-> view.setText(R.string.typeEat)
-            MushType.POISON-> view.setText(R.string.typePoison)
-        }
-    }
-
-    @BindingAdapter("picturedAt")
-    fun bindDate(view : TextView, date : DateTime){
-        val format = SimpleDateFormat("yyyy년\nM월 d일", Locale.getDefault())
-        view.text = format.format(date)
-    }
 }

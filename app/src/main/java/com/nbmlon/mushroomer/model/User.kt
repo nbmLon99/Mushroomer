@@ -14,14 +14,13 @@ import com.nbmlon.mushroomer.utils.GlideApp
  */
 data class User(
     val userIdx : Long,
-    val icon : String,
-    val name : String,
-    val nickname : String,
     val email : String,
+    val nickname : String,
+    val icon : String,
 ){
     companion object {
         fun getDummy() : User {
-            return User(-1L,"","김진우","nbmlon99","rhfwleowkd77@naver.com")
+            return User(-1L,"rhfwleowkd77@naver.com","nbmlon99","")
         }
     }
 }
@@ -29,14 +28,19 @@ data class User(
 
 
 class UserDataBindingAdapter{
-    @BindingAdapter("setUserIcon")
-    fun bindReply(view: ImageView, url: String) {
-        if (url.isNotBlank()) {
-            GlideApp
-                .with(view.context)
-                .load(url)
-                .circleCrop()
-                .into(view)
+    companion object{
+        @JvmStatic
+        @BindingAdapter("setUserIcon")
+        fun bindReply(view: ImageView, url: String) {
+            if (url.isNotBlank()) {
+                GlideApp
+                    .with(view.context)
+                    .load(url)
+                    .circleCrop()
+                    .into(view)
+            }
         }
+
+
     }
 }

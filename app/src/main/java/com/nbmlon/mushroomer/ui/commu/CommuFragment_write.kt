@@ -45,6 +45,7 @@ class CommuFragment_write : Fragment() {
     }
 
     companion object {
+        const val TAG = "CommuFragment_write"
         @JvmStatic
         fun getInstance(param1: Int) =
             CommuFragment_write().apply {

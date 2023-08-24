@@ -15,6 +15,7 @@ import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.ItemPostImageBinding
 import com.nbmlon.mushroomer.databinding.ItemPostTextBinding
 import com.nbmlon.mushroomer.model.Post
+import com.nbmlon.mushroomer.model.PostDiffCallback
 
 
 /** CommuBoard에서 표시할 글들 Adapter
@@ -46,9 +47,9 @@ class AdapterBoardPost(val boardType: BoardType) : ListAdapter<Post, RecyclerVie
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if(viewType == BoardType.PicBoard.ordinal){
-            PhotoPostViewHolder( ItemPostImageBinding.inflate(LayoutInflater.from(parent.context)) )
+            PhotoPostViewHolder( ItemPostImageBinding.inflate(LayoutInflater.from(parent.context),parent,false) )
         } else{
-            TextPostViewHolder( ItemPostTextBinding.inflate(LayoutInflater.from(parent.context)) )
+            TextPostViewHolder( ItemPostTextBinding.inflate(LayoutInflater.from(parent.context),parent,false) )
         }
     }
 

@@ -5,6 +5,8 @@ package com.nbmlon.mushroomer.ui.commu
 /** 게시판 열기 **/
 class CommuFragmentBoard {
     companion object {
+        const val TAG = "CommuFragmentBoard"
+
         @JvmStatic
         fun getInstance(param1: Int) =
             when(param1) {

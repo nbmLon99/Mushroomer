@@ -41,6 +41,8 @@ class CommuFragmentBoard_hot : Fragment() {
     }
 
     companion object {
+        const val TAG = "CommuFragmentBoard_hot"
+
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =

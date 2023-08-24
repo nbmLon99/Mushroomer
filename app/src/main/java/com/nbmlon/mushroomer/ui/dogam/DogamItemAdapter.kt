@@ -22,10 +22,8 @@ class DogamItemAdapter(
             binding.apply {
                 mushroom = item
                 executePendingBindings()
-                if (item.gotcha){
-                    root.setOnClickListener {
-                        dogamItemClickListner.onDogamItemClicked(item)
-                    }
+                root.setOnClickListener {
+                    dogamItemClickListner.onDogamItemClicked(item)
                 }
             }
         }

@@ -14,7 +14,17 @@ import com.nbmlon.mushroomer.databinding.FragmentCommuImageBinding
 
 /** 사진 게시판 **/
 class CommuFragmentBoard_image : Fragment() {
-    // TODO: Rename and change types of parameters
+
+    companion object {
+        const val TAG = "CommuFragmentBoard_image"
+        @JvmStatic
+        fun getInstance(param1: Int) =
+            CommuFragmentBoard_image().apply {
+                arguments = Bundle().apply {
+                    putInt(BOARD_TYPE, param1)
+                }
+            }
+    }
     private var boardType: Int? = null
     private var _binding: FragmentCommuImageBinding? = null
     private val binding get() = _binding!!
@@ -44,7 +54,7 @@ class CommuFragmentBoard_image : Fragment() {
             //검색버튼
             btnSearch.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_search())
+                    .replace(R.id.FragmentContainer, CommuFragment_search(), CommuFragment_search.TAG)
                     .addToBackStack(null)
                     .commit()
             }
@@ -52,7 +62,7 @@ class CommuFragmentBoard_image : Fragment() {
             //글쓰기 버튼
             btnWrite.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_write.getInstance(boardType ?: 1))
+                    .replace(R.id.FragmentContainer, CommuFragment_write.getInstance(boardType ?: 1), CommuFragment_write.TAG)
                     .addToBackStack(null)
                     .commit()
             }
@@ -61,15 +71,7 @@ class CommuFragmentBoard_image : Fragment() {
         }
     }
 
-    companion object {
-        @JvmStatic
-        fun getInstance(param1: Int) =
-            CommuFragmentBoard_image().apply {
-                arguments = Bundle().apply {
-                    putInt(BOARD_TYPE, param1)
-                }
-            }
-    }
+
 
     override fun onDestroyView() {
         _binding = null
