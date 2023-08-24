@@ -6,7 +6,7 @@
         />
 
 
-    <group android:id="@+id/menuForReply">
+    <group android:id="@+id/menuForComment">
         <item
             android:id="@+id/write_reply"
             android:title="답글 작성"
@@ -18,11 +18,11 @@
     <group android:id="@+id/menuForOwner"
         android:visible="false">
         <item
-            android:id="@+id/modify_post"
+            android:id="@+id/modify_post_or_comment"
             android:title="수정"
             />
         <item
-            android:id="@+id/delete_post"
+            android:id="@+id/delete_post_or_comment"
             android:title="삭제"
             />
     </group>

@@ -6,10 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCommuReportBinding
 import com.nbmlon.mushroomer.model.Comment
 import com.nbmlon.mushroomer.model.Post
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -25,15 +29,16 @@ class CommuFragment_report : Fragment() {
     private var targetComment: Comment? = null
     private var _binding: FragmentCommuReportBinding? = null
     private val binding get() = _binding!!
+    private val viewModel by viewModels<CommuViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 targetPost = it.getSerializable(TARGET_POST , Post::class.java)
-                targetComment = it.getSerializable(TARGET_COMMENT, Comment::class.java)
+                targetPost?.let { _ -> targetComment = it.getSerializable(TARGET_COMMENT, Comment::class.java) }
             }else{
                 targetPost = it.getSerializable(TARGET_POST ) as Post
-                targetComment = it.getSerializable(TARGET_COMMENT) as Comment
+                targetPost?.let { _ ->targetComment = it.getSerializable(TARGET_COMMENT) as Comment }
             }
         }
     }
@@ -49,9 +54,12 @@ class CommuFragment_report : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
             post = targetPost
             comment = targetComment
+            btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+            btnReport.setOnClickListener {
+                CoroutineScope(Dispatchers.Main).launch {  viewModel.requestReport(targetPost, targetComment) }
+            }
         }
     }
 
