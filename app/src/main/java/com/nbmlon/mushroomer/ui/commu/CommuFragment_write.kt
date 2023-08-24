@@ -37,6 +37,11 @@ class CommuFragment_write : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.apply {
+            btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+            btnUpload.setOnClickListener { TODO("등록") }
+            btnAddPic.setOnClickListener { TODO("사진 추가") }
+        }
     }
 
     companion object {
