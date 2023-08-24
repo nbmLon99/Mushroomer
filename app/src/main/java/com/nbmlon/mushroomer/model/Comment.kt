@@ -7,6 +7,7 @@ import androidx.databinding.BindingAdapter
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
 import org.joda.time.DateTime
+import java.io.Serializable
 import java.util.Date
 
 
@@ -22,7 +23,7 @@ data class Comment(
     val content : String,
     val time : DateTime,
     val replies : ArrayList<Comment>?,
-){
+) : Serializable{
     val isMine = writer == AppUser.user
 }
 
