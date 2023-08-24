@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val TARGET_POST = "target_post_display"
 
-class CommuFragment_post : Fragment(), PopupMenuClickListener{
+class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListener{
     companion object {
         const val TAG= "CommuFragment_post"
         @JvmStatic
@@ -52,7 +52,7 @@ class CommuFragment_post : Fragment(), PopupMenuClickListener{
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentCommuPostBinding.inflate(LayoutInflater.from(context))
+        _binding = FragmentCommuPostBinding.inflate(layoutInflater)
         return binding.root
     }
 

@@ -5,8 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.nbmlon.mushroomer.R
-import com.nbmlon.mushroomer.databinding.FragmentCommuHotBinding
 import com.nbmlon.mushroomer.databinding.FragmentCommuSearchBinding
 
 // TODO: Rename parameter arguments, choose names that match
@@ -15,7 +13,7 @@ import com.nbmlon.mushroomer.databinding.FragmentCommuSearchBinding
 /**
  * 게시글 검색
  */
-class CommuFragment_search : Fragment() {
+class CommuFragment_search private constructor(): Fragment() {
     companion object {
         const val TAG = "CommuFragment_search"
 
@@ -23,7 +21,7 @@ class CommuFragment_search : Fragment() {
         fun getInstance(param1: Int) =
             CommuFragment_search().apply {
                 arguments = Bundle().apply {
-                    putInt(BOARD_TYPE, param1)
+                    putInt(BOARD_TYPE_ORDINAL, param1)
                 }
             }
     }
@@ -34,7 +32,7 @@ class CommuFragment_search : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            search_board_type = it.getInt(BOARD_TYPE)
+            search_board_type = it.getInt(BOARD_TYPE_ORDINAL)
         }
     }
 
@@ -43,7 +41,7 @@ class CommuFragment_search : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentCommuSearchBinding.inflate(LayoutInflater.from(context))
+        _binding = FragmentCommuSearchBinding.inflate(layoutInflater)
         return binding.root
     }
 

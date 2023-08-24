@@ -7,20 +7,26 @@ import android.view.View
 import android.view.ViewGroup
 import com.nbmlon.mushroomer.databinding.FragmentCommuWriteBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val WRITE_BOARD_TYPE = "type"
-
-class CommuFragment_write : Fragment() {
+class CommuFragment_write private constructor() : Fragment() {
+    companion object {
+        const val TAG = "CommuFragment_write"
+        @JvmStatic
+        fun getInstance(param1: Int) =
+            CommuFragment_write().apply {
+                arguments = Bundle().apply {
+                    putInt(BOARD_TYPE_ORDINAL, param1)
+                }
+            }
+    }
     // TODO: Rename and change types of parameters
-    private var caller_type: Int? = null
+    private var board_type_idx : Int? = null
 
     private var _binding: FragmentCommuWriteBinding? = null
     private val binding get() = _binding!!
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            caller_type = it.getInt(WRITE_BOARD_TYPE)
+            board_type_idx = it.getInt(BOARD_TYPE_ORDINAL)
         }
     }
 
@@ -28,7 +34,7 @@ class CommuFragment_write : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentCommuWriteBinding.inflate(LayoutInflater.from(context))
+        _binding = FragmentCommuWriteBinding.inflate(layoutInflater)
 
 
         // Inflate the layout for this fragment
@@ -44,16 +50,7 @@ class CommuFragment_write : Fragment() {
         }
     }
 
-    companion object {
-        const val TAG = "CommuFragment_write"
-        @JvmStatic
-        fun getInstance(param1: Int) =
-            CommuFragment_write().apply {
-                arguments = Bundle().apply {
-                    putInt(WRITE_BOARD_TYPE, param1)
-                }
-            }
-    }
+
 
     override fun onDestroyView() {
         _binding = null
