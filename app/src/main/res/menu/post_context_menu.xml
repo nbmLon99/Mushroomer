@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/report"
+        android:title="신고하기"
+        />
+
+
+    <group android:id="@+id/menuForReply">
+        <item
+            android:id="@+id/write_reply"
+            android:title="답글 작성"
+            android:visible="false"
+            />
+    </group>
+
+
+    <group android:id="@+id/menuForOwner"
+        android:visible="false">
+        <item
+            android:id="@+id/modify_post"
+            android:title="수정"
+            />
+        <item
+            android:id="@+id/delete_post"
+            android:title="삭제"
+            />
+    </group>
+
+
+</menu>
