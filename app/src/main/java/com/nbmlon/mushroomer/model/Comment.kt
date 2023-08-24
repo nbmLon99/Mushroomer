@@ -1,6 +1,5 @@
 package com.nbmlon.mushroomer.model
 
-import android.graphics.Color
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
@@ -8,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
 import org.joda.time.DateTime
-import java.util.Date
+import java.io.Serializable
 
 
 /**
@@ -23,25 +22,26 @@ data class Comment(
     val content : String,
     val time : DateTime,
     val replies : ArrayList<Comment>?
-){
-    companion object{
-        fun getDummyswithReplies() : ArrayList<Comment> {
+): Serializable {
+    companion object {
+        fun getDummyswithReplies(): ArrayList<Comment> {
             val replies = arrayListOf<Comment>()
             for (i in 1..2)
                 replies.add(getDummy())
 
             val comments = arrayListOf<Comment>()
             for (i in 1..3)
-                comments.add(Comment(User.getDummy(),"댓글 예시",DateTime(),replies))
+                comments.add(Comment(User.getDummy(), "댓글 예시", DateTime(), replies))
             return comments
         }
-        fun getDummy() : Comment {
-            return Comment(User.getDummy(),"댓글 예시",DateTime(),null)
+
+        fun getDummy(): Comment {
+            return Comment(User.getDummy(), "댓글 예시", DateTime(), null)
         }
     }
+
     val isMine = (writer == AppUser.user)
 }
-
 class CommentDataBindingAdapter{
     companion object{
         @JvmStatic

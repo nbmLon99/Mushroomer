@@ -44,7 +44,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             />
         <ImageView
-            android:id="@+id/btn_search"
+            android:id="@+id/btn_upload"
 
             android:layout_width="35dp"
             android:layout_height="35dp"

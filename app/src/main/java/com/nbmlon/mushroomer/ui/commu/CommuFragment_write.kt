@@ -39,6 +39,8 @@ class CommuFragment_write : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+            btnUpload.setOnClickListener { TODO("등록") }
+            btnAddPic.setOnClickListener { TODO("사진 추가") }
         }
     }
 

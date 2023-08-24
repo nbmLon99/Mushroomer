@@ -1,10 +1,14 @@
 package com.nbmlon.mushroomer.ui.commu
 
 import android.os.Bundle
+import android.view.ContextMenu
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCommuHomeBinding
@@ -117,5 +121,23 @@ class CommuFragment_home : Fragment(), PostClickListener {
             .replace(R.id.FragmentContainer, CommuFragment_post.getInstance(post),CommuFragment_post.TAG)
             .addToBackStack(null)
             .commit()
+    }
+
+
+
+    override fun onCreateContextMenu(
+        menu: ContextMenu,
+        v: View,
+        menuInfo: ContextMenu.ContextMenuInfo?
+    ) {
+        MenuInflater(requireContext()).inflate(R.menu.post_context_menu,menu)
+        super.onCreateContextMenu(menu, v, menuInfo)
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        return super.onContextItemSelected(item)
+        when(item.itemId){
+
+        }
     }
 }
