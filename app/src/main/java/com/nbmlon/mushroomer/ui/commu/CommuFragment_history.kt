@@ -5,26 +5,34 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.nbmlon.mushroomer.R
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import com.nbmlon.mushroomer.databinding.FragmentCommuHistoryBinding
 
 /**
      내 댓글, 내 포스트 띄워주는 창
  */
-class CommuFragment_history : Fragment() {
+class CommuFragment_history private constructor():  Fragment() {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var board_type_idx: Int? = null
+    companion object {
+        const val TAG = "CommuFragment_history"
+        @JvmStatic
+        fun getInstance(bt: BoardType) =
+            CommuFragment_history().apply {
+                arguments = Bundle().apply {
+                    putInt(BOARD_TYPE_ORDINAL, bt.ordinal)
+                }
+            }
+    }
+
+
+    var _binding : FragmentCommuHistoryBinding? = null
+    val binding get() = _binding!!
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            board_type_idx = it.getInt(BOARD_TYPE_ORDINAL)
         }
     }
 
@@ -32,20 +40,21 @@ class CommuFragment_history : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_commu_history, container, false)
+        _binding = FragmentCommuHistoryBinding.inflate(layoutInflater)
+        return binding.root
     }
 
-    companion object {
-        const val TAG = "CommuFragment_history"
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CommuFragment_history().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.apply {
+            var boardType : BoardType = BoardType.values().get(board_type_idx!!)
+            boardTitle.text = resources.getString(boardType.boardNameResId)
+            historyRV.adapter = AdapterBoardPost(boardType)
+        }
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 }

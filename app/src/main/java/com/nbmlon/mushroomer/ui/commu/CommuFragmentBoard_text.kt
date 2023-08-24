@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCommuTextBinding
-import com.nbmlon.mushroomer.databinding.ItemCommuHomeTextBinding
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -15,14 +14,14 @@ import com.nbmlon.mushroomer.databinding.ItemCommuHomeTextBinding
 /**
  자유게시판 / QnA 게시판 띄울 프래그먼트
  */
-class CommuFragmentBoard_text : Fragment() {
+class CommuFragmentBoard_text private constructor(): Fragment() {
     companion object {
         const val TAG = "CommuFragment_text"
         @JvmStatic
         fun getInstance(param1: Int) =
             CommuFragmentBoard_text().apply {
                 arguments = Bundle().apply {
-                    putInt(BOARD_TYPE, param1)
+                    putInt(BOARD_TYPE_ORDINAL, param1)
                 }
             }
     }
@@ -30,14 +29,14 @@ class CommuFragmentBoard_text : Fragment() {
 
 
     // TODO: Rename and change types of parameters
-    private  var boardType: Int? = null
+    private  var board_type_idx: Int? = null
     private var _binding: FragmentCommuTextBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            boardType = it.getInt(BOARD_TYPE)
+            board_type_idx = it.getInt(BOARD_TYPE_ORDINAL)
         }
     }
 
@@ -45,21 +44,21 @@ class CommuFragmentBoard_text : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentCommuTextBinding.inflate(LayoutInflater.from(context))
+        _binding = FragmentCommuTextBinding.inflate(layoutInflater)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            boardTitle.text = if (boardType == BoardType.FreeBoard.ordinal) getString(R.string.FreeBoard) else getString(R.string.QnABoard)
+            boardTitle.text = if (board_type_idx == BoardType.FreeBoard.ordinal) getString(R.string.FreeBoard) else getString(R.string.QnABoard)
             btnBack.setOnClickListener {
                 requireActivity().supportFragmentManager.popBackStack()
             }
             //검색버튼
             btnSearch.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_search(),CommuFragment_search.TAG)
+                    .replace(R.id.FragmentContainer, CommuFragment_search.getInstance(board_type_idx!!),CommuFragment_search.TAG)
                     .addToBackStack(null)
                     .commit()
             }
@@ -67,7 +66,7 @@ class CommuFragmentBoard_text : Fragment() {
             //글쓰기 버튼
             btnWrite.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_write.getInstance(boardType ?: 1) , CommuFragment_write.TAG)
+                    .replace(R.id.FragmentContainer, CommuFragment_write.getInstance(board_type_idx ?: 1) , CommuFragment_write.TAG)
                     .addToBackStack(null)
                     .commit()
             }

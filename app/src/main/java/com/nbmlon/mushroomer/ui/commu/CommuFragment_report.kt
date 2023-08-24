@@ -23,7 +23,7 @@ private const val TARGET_COMMENT = "target_comment"
 /**
  * 게시글 / 댓글 신고 Fragment
  */
-class CommuFragment_report : Fragment() {
+class CommuFragment_report private constructor() : Fragment() {
     // TODO: Rename and change types of parameters
     private var targetPost: Post? = null
     private var targetComment: Comment? = null
@@ -47,7 +47,7 @@ class CommuFragment_report : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentCommuReportBinding.inflate(LayoutInflater.from(context))
+        _binding = FragmentCommuReportBinding.inflate(layoutInflater)
         return binding.root
     }
 

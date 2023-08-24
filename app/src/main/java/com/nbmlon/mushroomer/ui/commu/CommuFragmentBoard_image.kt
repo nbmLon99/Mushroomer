@@ -21,18 +21,18 @@ class CommuFragmentBoard_image : Fragment() {
         fun getInstance(param1: Int) =
             CommuFragmentBoard_image().apply {
                 arguments = Bundle().apply {
-                    putInt(BOARD_TYPE, param1)
+                    putInt(BOARD_TYPE_ORDINAL, param1)
                 }
             }
     }
-    private var boardType: Int? = null
+    private var board_type_idx: Int? = null
     private var _binding: FragmentCommuImageBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            boardType = it.getInt(BOARD_TYPE)
+            board_type_idx = it.getInt(BOARD_TYPE_ORDINAL)
         }
     }
 
@@ -40,7 +40,7 @@ class CommuFragmentBoard_image : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentCommuImageBinding.inflate(LayoutInflater.from(context))
+        _binding = FragmentCommuImageBinding.inflate(layoutInflater)
         // Inflate the layout for this fragment
         return binding.root
     }
@@ -54,7 +54,7 @@ class CommuFragmentBoard_image : Fragment() {
             //검색버튼
             btnSearch.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_search(), CommuFragment_search.TAG)
+                    .replace(R.id.FragmentContainer, CommuFragment_search.getInstance(board_type_idx!!), CommuFragment_search.TAG)
                     .addToBackStack(null)
                     .commit()
             }
@@ -62,7 +62,7 @@ class CommuFragmentBoard_image : Fragment() {
             //글쓰기 버튼
             btnWrite.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_write.getInstance(boardType ?: 1), CommuFragment_write.TAG)
+                    .replace(R.id.FragmentContainer, CommuFragment_write.getInstance(board_type_idx ?: 1), CommuFragment_write.TAG)
                     .addToBackStack(null)
                     .commit()
             }
