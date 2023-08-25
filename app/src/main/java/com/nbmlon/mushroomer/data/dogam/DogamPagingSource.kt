@@ -2,6 +2,8 @@ package com.nbmlon.mushroomer.data.dogam
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.nbmlon.mushroomer.api.DogamResponse
+import com.nbmlon.mushroomer.api.DogamService
 import com.nbmlon.mushroomer.model.Dogam
 import com.nbmlon.mushroomer.model.Mushroom
 import retrofit2.HttpException

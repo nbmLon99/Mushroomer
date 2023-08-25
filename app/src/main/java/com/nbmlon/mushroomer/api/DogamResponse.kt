@@ -1,10 +1,10 @@
-package com.nbmlon.mushroomer.data.dogam
+package com.nbmlon.mushroomer.api
 
 import com.google.gson.annotations.SerializedName
 import com.nbmlon.mushroomer.model.Mushroom
 
 data class DogamResponse(
-    @SerializedName("") val items : ArrayList<Mushroom> = ArrayList(),
+    @SerializedName("items") val items : ArrayList<Mushroom> = ArrayList(),
     val nextPage : Int? = null
 )
 

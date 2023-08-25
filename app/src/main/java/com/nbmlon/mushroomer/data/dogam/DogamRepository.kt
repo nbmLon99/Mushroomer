@@ -3,6 +3,7 @@ package com.nbmlon.mushroomer.data.dogam
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.nbmlon.mushroomer.api.DogamService
 import com.nbmlon.mushroomer.model.Mushroom
 import kotlinx.coroutines.flow.Flow
 
