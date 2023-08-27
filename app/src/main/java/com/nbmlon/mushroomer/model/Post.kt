@@ -143,7 +143,10 @@ class PostDataBindingAdapter{
                     currentTime.year == dateAt.year &&
                             currentTime.dayOfYear == dateAt.dayOfYear
                     )
-            if( minutesDifference < 60){
+            if( minutesDifference <= 0L ){
+                view.text = "지금"
+            }
+            else if( minutesDifference < 60){
                 view.text = "${minutesDifference}분 전"
 
             }else if( !equalDay ){

@@ -8,12 +8,14 @@ import com.nbmlon.mushroomer.model.Dogam
 import com.nbmlon.mushroomer.model.Mushroom
 import retrofit2.HttpException
 import java.io.IOException
+import kotlin.math.max
+
+private const val STARTING_KEY = 0
 
 class DogamPagingSource(
     val backend: DogamService,
     val query: String
 ) : PagingSource<Int, Mushroom>() {
-    var tmpPageNum = 1
     override suspend fun load(
         params: LoadParams<Int>
     ): LoadResult<Int, Mushroom> {
@@ -21,7 +23,7 @@ class DogamPagingSource(
             // Start refresh at page 1 if undefined.
             val nextPageNumber = params.key ?: 1
             //val response = backend.getDogam(query, nextPageNumber)
-            val response = DogamResponse(Dogam.getDummy(3),tmpPageNum++)
+            val response = DogamResponse(Dogam.getDummy(3), nextPageNumber)
             return LoadResult.Page(
                 data = response.items,
                 prevKey = null, // Only paging forward.
@@ -50,7 +52,12 @@ class DogamPagingSource(
         //    just return null.
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
-            anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
+            ensureValidKey( anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1) ?: STARTING_KEY )
         }
     }
+
+    /**
+     * Makes sure the paging key is never less than [STARTING_KEY]
+     */
+    private fun ensureValidKey(key: Int) = max(STARTING_KEY, key)
 }

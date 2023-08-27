@@ -138,11 +138,16 @@ class DogamFragment : Fragment(), DogamItemClickListner {
         )
 
         bindSort(
+            dogamItemAdapter = dogamItemAdapter,
+            uiState = uiState,
+            pagingData = pagingData,
+            onSortingChanged = uiActions
         )
         bindFilter(
             pagingData = pagingData,
             uiState = uiState,
-            dogamItemAdapter = dogamItemAdapter
+            dogamItemAdapter = dogamItemAdapter,
+            onCheckedChanged = uiActions
         )
         bindList(
             dogamItemAdapter = dogamItemAdapter,
@@ -153,55 +158,77 @@ class DogamFragment : Fragment(), DogamItemClickListner {
 
     }
 
+    /** 체크박스 상태 바인딩 **/
     private fun FragmentDogamBinding.bindFilter(
-        pagingData: Flow<PagingData<UiModel>>,
+        dogamItemAdapter: DogamItemAdapter,
         uiState: StateFlow<UiState>,
-        dogamItemAdapter: DogamItemAdapter
+        pagingData: Flow<PagingData<UiModel>>,
+        onCheckedChanged: (UiAction.Filter) -> Unit
         ) {
         // 체크 박스의 체크 상태에 따라 데이터 필터링
-        binding.undiscoverDisplayCkbox.setOnCheckedChangeListener { _, isChecked ->
+        undiscoverDisplayCkbox.setOnCheckedChangeListener { _, isChecked ->
             // 체크 상태에 따라 데이터 필터링
-            val filteredPagingData = if (isChecked) {
-                pagingData // 원본 데이터 유지
-            } else {
-                pagingData.map { pagingData ->
-                    pagingData.filter { item -> (item as UiModel.MushItem).mush.gotcha }
-                }
-            }
+            onCheckedChanged(UiAction.Filter(isChecked))
+        }
 
-            lifecycleScope.launch {
-                filteredPagingData.collectLatest { filteredData ->
-                    dogamItemAdapter.submitData(filteredData)
-                }
+
+
+        lifecycleScope.launch {
+            uiState
+                .map { it.lastCheckedState }
+                .distinctUntilChanged()
+                .collect{ checkedState ->
+                    // 체크 상태 반영
+                    undiscoverDisplayCkbox.isChecked = checkedState
+
+
+                    //리스트 업데이트
+                    val filteredPagingData = if (checkedState) {
+                        pagingData // 원본 데이터 유지
+                    } else {
+                        pagingData.map { pagingData ->
+                            dogamRV.scrollToPosition(0)
+                            pagingData.filter { item -> (item as UiModel.MushItem).mush.gotcha }
+                        }
+                    }
+                    filteredPagingData.collectLatest { filteredData ->
+                        dogamItemAdapter.submitData(filteredData)
+                    }
             }
         }
     }
 
 
     //정렬하여 다시 페이징 로드
+    /** 스피너 연결 **/
     private fun FragmentDogamBinding.bindSort(
-
+        dogamItemAdapter: DogamItemAdapter,
+        uiState: StateFlow<UiState>,
+        pagingData: Flow<PagingData<UiModel>>,
+        onSortingChanged: (UiAction.Sort) -> Unit
     ) {
-        binding.sortingWay.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        sortingWay.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
                 view: View?,
                 position: Int,
                 id: Long
             ) {
-                val selectedSorting =
-                    parent?.getItemAtPosition(position) as? SortingOption ?: return
+                val selectedSorting = SortingOption.values()[position]
 
                 lifecycleScope.launch {
                     val sortedData = when (selectedSorting) {
                         // 도감넘버
                         SortingOption.MUSH_NO -> {
+                            onSortingChanged(UiAction.Sort(SortingOption.MUSH_NO))
                         }
                         //희귀도로 정렬
                         SortingOption.MUSH_RARE -> {
+                            onSortingChanged(UiAction.Sort(SortingOption.MUSH_NO))
                         }
                         //버섯이름으로 정렬
                         SortingOption.MUSH_NAME -> {
+                            onSortingChanged(UiAction.Sort(SortingOption.MUSH_NO))
                         }
                     }
                 }
@@ -210,6 +237,17 @@ class DogamFragment : Fragment(), DogamItemClickListner {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 // Do nothing
             }
+        }
+        lifecycleScope.launch {
+            uiState
+                .map { it.lastSortingOption }
+                .distinctUntilChanged()
+                .collect{ selectedOption ->
+                    val index = selectedOption.ordinal
+                    if (index != -1) {
+                        sortingWay.setSelection(index)
+                    }
+                }
         }
     }
 

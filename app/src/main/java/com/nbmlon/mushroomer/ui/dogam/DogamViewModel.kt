@@ -42,6 +42,9 @@ class DogamViewModel(
     init {
         val initialQuery: String = savedStateHandle.get(LAST_SEARCH_QUERY) ?: DEFAULT_QUERY
         val lastQueryScrolled: String = savedStateHandle.get(LAST_QUERY_SCROLLED) ?: DEFAULT_QUERY
+        val initialSorting : SortingOption = savedStateHandle.get<SortingOption>(LAST_SORTING_OPTION) ?: SortingOption.values()[DEFAULT_SORTING_ORD]
+        val initialChecked : Boolean = savedStateHandle.get<Boolean>(LAST_CHECKED_STATE) ?: DEFAULT_CHECKED
+
         val actionStateFlow = MutableSharedFlow<UiAction>()
         val searches = actionStateFlow
             .filterIsInstance<UiAction.Search>()
@@ -59,6 +62,17 @@ class DogamViewModel(
             )
             .onStart { emit(UiAction.Scroll(currentQuery = lastQueryScrolled)) }
 
+        // 추가
+        val sorting = actionStateFlow
+            .filterIsInstance<UiAction.Sort>()
+            .distinctUntilChanged()
+            .onStart { emit(UiAction.Sort(initialSorting)) }
+        val checked = actionStateFlow
+            .filterIsInstance<UiAction.Filter>()
+            .distinctUntilChanged()
+            .onStart { emit(UiAction.Filter(initialChecked)) }
+
+        /** search가 변경될 때 마다 페이징 데이터 업데이트 **/
         pagingDataFlow = searches
             .flatMapLatest { loadDogam(queryString = it.query) }
             .cachedIn(viewModelScope)
@@ -66,13 +80,23 @@ class DogamViewModel(
         state = combine(
             searches,
             queriesScrolled,
-            ::Pair
-        ).map { (search, scroll) ->
+            sorting,
+            checked
+        ){ (  _search, _scroll, _sorting, _checked ) ->
+            CombinedAction(
+                searchState = _search,
+                scrollState = _scroll,
+                sortingState = _sorting,
+                checkedState = _checked
+            )
+        }.map { act ->
             UiState(
-                query = search.query,
-                lastQueryScrolled = scroll.currentQuery,
+                query = act.searchState.query,
+                lastQueryScrolled = act.scrollState.currentQuery,
                 // If the search query matches the scroll query, the user has scrolled
-                hasNotScrolledForCurrentSearch = search.query != scroll.currentQuery
+                hasNotScrolledForCurrentSearch = search.query != scroll.currentQuery,
+                lastSortingOption = ,
+                lastCheckedState =
             )
         }
             .stateIn(
@@ -90,6 +114,8 @@ class DogamViewModel(
     override fun onCleared() {
         savedStateHandle[LAST_SEARCH_QUERY] = state.value.query
         savedStateHandle[LAST_QUERY_SCROLLED] = state.value.lastQueryScrolled
+        savedStateHandle[LAST_SORTING_OPTION] = state.value.lastSortingOption
+        savedStateHandle[LAST_CHECKED_STATE] = state.value.lastCheckedState
         super.onCleared()
     }
 
@@ -98,7 +124,12 @@ class DogamViewModel(
             .map { pagingData -> pagingData.map { UiModel.MushItem(it) } }
 }
 
-
+data class CombinedAction(
+    val searchState: UiAction.Search,
+    val scrollState: UiAction.Scroll,
+    val sortingState: UiAction,
+    val checkedState: UiAction
+)
 
 
 
@@ -106,13 +137,16 @@ class DogamViewModel(
 sealed class UiAction {
     data class Search(val query: String) : UiAction()
     data class Scroll(val currentQuery: String) : UiAction()
-    data class Sort(val query: String) : UiAction()
+    data class Sort(val sortOpt: SortingOption) : UiAction()
+    data class Filter(val boolean: Boolean) : UiAction()
 }
 
 data class UiState(
     val query: String = DEFAULT_QUERY,
     val lastQueryScrolled: String = DEFAULT_QUERY,
-    val hasNotScrolledForCurrentSearch: Boolean = false
+    val hasNotScrolledForCurrentSearch: Boolean = false,
+    val lastSortingOption: SortingOption,
+    val lastCheckedState : Boolean
 )
 
 sealed class UiModel {
@@ -121,4 +155,8 @@ sealed class UiModel {
 
 private const val LAST_QUERY_SCROLLED: String = "last_query_scrolled"
 private const val LAST_SEARCH_QUERY: String = "last_search_query"
+private const val LAST_SORTING_OPTION : String = "last_sorting_option"
+private const val LAST_CHECKED_STATE : String = "last_checked_state"
 private const val DEFAULT_QUERY = "Android"
+private const val DEFAULT_SORTING_ORD = 0
+private const val DEFAULT_CHECKED = false
