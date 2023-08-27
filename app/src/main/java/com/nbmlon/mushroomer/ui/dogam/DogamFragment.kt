@@ -12,7 +12,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
-import androidx.paging.filter
 import androidx.recyclerview.widget.RecyclerView
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
@@ -71,7 +70,7 @@ class DogamFragment : Fragment(), DogamItemClickListner {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentDogamBinding.inflate(inflater, container, false)
         val viewModelFactory = DogamViewModelFactory(
             owner = this,
@@ -84,6 +83,7 @@ class DogamFragment : Fragment(), DogamItemClickListner {
             pagingData = viewModel.pagingDataFlow,
             uiActions = viewModel.accept
         )
+
         return binding.root
     }
 
@@ -94,7 +94,6 @@ class DogamFragment : Fragment(), DogamItemClickListner {
                 progressBar.progress = it
                 progressText.text = "$it%"
             }
-            btnSearch.setOnClickListener { showSearchDialog() }
         }
     }
 
@@ -105,17 +104,18 @@ class DogamFragment : Fragment(), DogamItemClickListner {
     }
 
 
-    private fun showSearchDialog(){
+    private fun showSearchDialog(onSearchBtnClicked: (UiAction.Search) -> Unit){
         val title = "버섯 검색"
         val content = "검색할 버섯명을 입력해주세요"
         Sweetalert(context, Sweetalert.NORMAL_TYPE).apply {
             val dialogBinding = DialogEdittextBinding.inflate(layoutInflater).apply {
                 tvContent.text = content
             }
-            val editText = dialogBinding.editText
             titleText = title
             setCustomView(dialogBinding.root)
             setCancelButton(resources.getString(R.string.CONFIRM)){
+                val query: String? = dialogBinding.editText.text.takeIf { it.isNotEmpty() }?.toString()
+                onSearchBtnClicked(UiAction.Search(query = query))
                 it.dismissWithAnimation()
             }
             setNeutralButton(resources.getString(R.string.cancel)){
@@ -137,16 +137,17 @@ class DogamFragment : Fragment(), DogamItemClickListner {
             footer = DogamLoadStateAdapter { dogamItemAdapter.retry() }
         )
 
+
+        bindSearch(
+            onSearchCall =  uiActions
+        )
+
         bindSort(
-            dogamItemAdapter = dogamItemAdapter,
             uiState = uiState,
-            pagingData = pagingData,
             onSortingChanged = uiActions
         )
         bindFilter(
-            pagingData = pagingData,
             uiState = uiState,
-            dogamItemAdapter = dogamItemAdapter,
             onCheckedChanged = uiActions
         )
         bindList(
@@ -155,16 +156,20 @@ class DogamFragment : Fragment(), DogamItemClickListner {
             pagingData = pagingData,
             onScrollChanged = uiActions
         )
+    }
 
+
+    private fun FragmentDogamBinding.bindSearch(
+        onSearchCall: (UiAction.Search) -> Unit
+    ){
+        btnSearch.setOnClickListener { showSearchDialog(onSearchCall) }
     }
 
     /** 체크박스 상태 바인딩 **/
     private fun FragmentDogamBinding.bindFilter(
-        dogamItemAdapter: DogamItemAdapter,
         uiState: StateFlow<UiState>,
-        pagingData: Flow<PagingData<UiModel>>,
         onCheckedChanged: (UiAction.Filter) -> Unit
-        ) {
+    ) {
         // 체크 박스의 체크 상태에 따라 데이터 필터링
         undiscoverDisplayCkbox.setOnCheckedChangeListener { _, isChecked ->
             // 체크 상태에 따라 데이터 필터링
@@ -180,31 +185,14 @@ class DogamFragment : Fragment(), DogamItemClickListner {
                 .collect{ checkedState ->
                     // 체크 상태 반영
                     undiscoverDisplayCkbox.isChecked = checkedState
-
-
-                    //리스트 업데이트
-                    val filteredPagingData = if (checkedState) {
-                        pagingData // 원본 데이터 유지
-                    } else {
-                        pagingData.map { pagingData ->
-                            dogamRV.scrollToPosition(0)
-                            pagingData.filter { item -> (item as UiModel.MushItem).mush.gotcha }
-                        }
-                    }
-                    filteredPagingData.collectLatest { filteredData ->
-                        dogamItemAdapter.submitData(filteredData)
-                    }
             }
         }
     }
 
 
-    //정렬하여 다시 페이징 로드
     /** 스피너 연결 **/
     private fun FragmentDogamBinding.bindSort(
-        dogamItemAdapter: DogamItemAdapter,
         uiState: StateFlow<UiState>,
-        pagingData: Flow<PagingData<UiModel>>,
         onSortingChanged: (UiAction.Sort) -> Unit
     ) {
         sortingWay.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -240,12 +228,11 @@ class DogamFragment : Fragment(), DogamItemClickListner {
         }
         lifecycleScope.launch {
             uiState
-                .map { it.lastSortingOption }
+                .map { it.sort }
                 .distinctUntilChanged()
                 .collect{ selectedOption ->
-                    val index = selectedOption.ordinal
-                    if (index != -1) {
-                        sortingWay.setSelection(index)
+                    if (selectedOption.ordinal != -1) {
+                        sortingWay.setSelection(selectedOption.ordinal)
                     }
                 }
         }
@@ -259,7 +246,7 @@ class DogamFragment : Fragment(), DogamItemClickListner {
         ) {
             dogamRV.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (dy != 0) onScrollChanged(UiAction.Scroll(currentQuery = uiState.value.query))
+                    if (dy != 0) onScrollChanged(UiAction.Scroll(currentQuery = uiState.value.query, currentSort = uiState.value.sort))
                 }
             })
 
@@ -272,7 +259,7 @@ class DogamFragment : Fragment(), DogamItemClickListner {
 
             //Flow 생성
             val hasNotScrolledForCurrentSearch = uiState
-                .map { it.hasNotScrolledForCurrentSearch }
+                .map { it.hasNotScrolledForCurrentRV }
                 .distinctUntilChanged()
 
             val shouldScrollToTop = combine(

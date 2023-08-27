@@ -5,6 +5,5 @@ import com.nbmlon.mushroomer.model.Mushroom
 
 data class DogamResponse(
     @SerializedName("items") val items : ArrayList<Mushroom> = ArrayList(),
-    val nextPage : Int? = null
 )
 
