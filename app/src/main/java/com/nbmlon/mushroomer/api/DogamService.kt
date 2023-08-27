@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.data.dogam
+package com.nbmlon.mushroomer.api
 
 import okhttp3.Call
 import okhttp3.OkHttpClient

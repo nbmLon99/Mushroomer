@@ -35,10 +35,10 @@ class CommuFragment_report private constructor() : Fragment() {
         arguments?.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 targetPost = it.getSerializable(TARGET_POST , Post::class.java)
-                targetPost?.let { _ -> targetComment = it.getSerializable(TARGET_COMMENT, Comment::class.java) }
+                targetComment = it.getSerializable(TARGET_COMMENT, Comment::class.java)
             }else{
-                targetPost = it.getSerializable(TARGET_POST ) as Post
-                targetPost?.let { _ ->targetComment = it.getSerializable(TARGET_COMMENT) as Comment }
+                targetPost = it.getSerializable(TARGET_POST ) as Post?
+                targetComment = it.getSerializable(TARGET_COMMENT) as Comment?
             }
         }
     }

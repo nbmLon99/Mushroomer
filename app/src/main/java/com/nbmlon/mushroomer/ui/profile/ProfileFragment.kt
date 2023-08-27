@@ -72,7 +72,7 @@ class ProfileFragment : Fragment(), DialogListener {
             btnWithdrawal.setOnClickListener { showDialogWithEditText(SettingType.WITHDRAWAL, this@ProfileFragment as DialogListener) }
             btnChgLoginMethod.setOnClickListener { showDialogLoginMethod() }
 
-            btnLogout.setOnClickListener {  }
+            btnLogout.setOnClickListener { showLogoutDialog() }
         }
     }
 
@@ -140,6 +140,17 @@ class ProfileFragment : Fragment(), DialogListener {
         requireActivity().finish()
     }
 
+    private fun showLogoutDialog(){
+        Sweetalert(context, Sweetalert.NORMAL_TYPE).apply {
+            titleText = "로그아웃 하시겠습니까?"
+            setNeutralButton("취소"){ it.dismissWithAnimation()}
+            setCancelButton("네"){
+                logout()
+                it.dismissWithAnimation()
+            }
+            show()
+        }
+    }
 
 
 

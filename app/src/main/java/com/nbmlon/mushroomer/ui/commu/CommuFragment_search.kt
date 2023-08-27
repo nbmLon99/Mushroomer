@@ -1,11 +1,14 @@
 package com.nbmlon.mushroomer.ui.commu
 
+import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import androidx.fragment.app.Fragment
 import com.nbmlon.mushroomer.databinding.FragmentCommuSearchBinding
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -49,6 +52,9 @@ class CommuFragment_search private constructor(): Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+            etSearch.requestFocus()
+            (requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                .showSoftInput(etSearch, InputMethodManager.SHOW_IMPLICIT)
         }
     }
 

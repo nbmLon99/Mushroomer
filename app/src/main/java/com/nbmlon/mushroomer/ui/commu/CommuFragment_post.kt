@@ -65,7 +65,7 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
                 commentRV.adapter = AdapterPostComment(this@CommuFragment_post as PopupMenuClickListener).apply { submitList(comments) }
             }
             btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
-            btnPostMore.setOnClickListener {  }
+            btnPostMore.setOnClickListener { showContextMenu(btnPostMore) }
         }
     }
 
@@ -82,8 +82,9 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
         val inflater = popupMenu.menuInflater
         inflater.inflate(R.menu.post_context_menu, popupMenu.menu)
         popupMenu.apply {
-            menu?.findItem(R.id.menuForOwner)?.isVisible = targetPost?.writer == AppUser.user
-            menu?.findItem(R.id.menuForComment)?.isVisible = false
+            menu?.setGroupVisible(R.id.menuForOwner,true)
+//            menu?.setGroupVisible(R.id.menuForOwner,targetPost?.writer == AppUser.user)
+            menu?.setGroupVisible(R.id.menuForComment,false)
 
             setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {

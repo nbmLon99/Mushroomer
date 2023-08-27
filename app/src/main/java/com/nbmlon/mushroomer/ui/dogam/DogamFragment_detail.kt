@@ -56,11 +56,16 @@ class DogamFragment_detail : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.mushroom = mMush
-        binding.btnClose.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
-        val adapter = HistoryPicturesAdapter()
-        adapter.submitList(mMush!!.myHistory)
-        binding.myMushHistory.adapter = adapter
+        binding.apply {
+            mushroom = mMush
+            btnClose.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+            myMushHistory.adapter = HistoryPicturesAdapter().apply {
+                submitList(mMush!!.myHistory)
+            }
+            if(!mMush!!.gotcha)
+                myMushPicturesFrame.visibility = View.GONE
+        }
+
     }
 
 
