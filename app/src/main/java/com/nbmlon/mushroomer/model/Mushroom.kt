@@ -86,8 +86,7 @@ class MushDataBindingAdapter{
         @JvmStatic
         @BindingAdapter("picturedAt")
         fun bindDate(view : TextView, date : DateTime){
-            val format = SimpleDateFormat("yyyy년\nM월 d일", Locale.getDefault())
-            view.text = format.format(date)
+            view.text = date.toString("yyyy년\nM월 d일")
         }
     }
 
