@@ -120,7 +120,6 @@
 
     <Button
         android:id="@+id/login"
-        android:layout_marginTop="40dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="70dp"
@@ -132,7 +131,7 @@
         />
 
     <LinearLayout
-        android:paddingVertical="20dp"
+        android:paddingVertical="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -187,7 +186,7 @@
     </LinearLayout>
 
     <TextView
-        android:layout_margin="30dp"
+        android:layout_margin="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/or"
