@@ -196,12 +196,17 @@ class DogamFragment : Fragment(), DogamItemClickListner {
         onSortingChanged: (UiAction.Sort) -> Unit
     ) {
         sortingWay.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            private var initialSelection = true // Flag to ignore initial selection
             override fun onItemSelected(
                 parent: AdapterView<*>?,
                 view: View?,
                 position: Int,
                 id: Long
             ) {
+                if (initialSelection) {
+                    initialSelection = false
+                    return // Ignore initial selection
+                }
                 val selectedSorting = SortingOption.values()[position]
 
                 lifecycleScope.launch {

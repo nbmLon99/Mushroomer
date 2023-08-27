@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 
 class DogamViewModel(
@@ -49,13 +50,24 @@ class DogamViewModel(
         val initialChecked : Boolean = savedStateHandle.get<Boolean>(LAST_CHECKED_STATE) ?: DEFAULT_CHECKED
 
         val actionStateFlow = MutableSharedFlow<UiAction>()
-        
+
         //emit 된 actionFlow가 search -> 검색 이벤트 발생
         val searches = actionStateFlow
             .filterIsInstance<UiAction.Search>()
             .distinctUntilChanged()
             .onStart { emit(UiAction.Search(query = initialQuery)) }
-        
+        //emit 된 actionFlow가 sort -> 정렬 이벤트 발생
+        val sorting = actionStateFlow
+            .filterIsInstance<UiAction.Sort>()
+            .distinctUntilChanged()
+            .onStart { emit(UiAction.Sort(initialSorting)) }
+        //emit 된 actionFlow가 filter -> 체크 이벤트 발생
+        val checked = actionStateFlow
+            .filterIsInstance<UiAction.Filter>()
+            .distinctUntilChanged()
+            .onStart { emit(UiAction.Filter(initialChecked)) }
+
+
         //emit 된 actionFlow가 scroll -> 스크롤 이벤트 발생
         val queriesScrolled = actionStateFlow
             .filterIsInstance<UiAction.Scroll>()
@@ -69,21 +81,7 @@ class DogamViewModel(
             )
             .onStart { emit(UiAction.Scroll(currentQuery = lastQueryScrolled, currentSort = lastSortingScrolled)) }
 
-        //emit 된 actionFlow가 sort -> 정렬 이벤트 발생
-        val sorting = actionStateFlow
-            .filterIsInstance<UiAction.Sort>()
-            .distinctUntilChanged()
-            .onStart { emit(UiAction.Sort(initialSorting)) }
-
-        //emit 된 actionFlow가 filter -> 체크 이벤트 발생
-        val checked = actionStateFlow
-            .filterIsInstance<UiAction.Filter>()
-            .distinctUntilChanged()
-            .onStart { emit(UiAction.Filter(initialChecked)) }
-
-
-
-        /** 정렬 / 체크 / 검색 변경될 때 마다 페이징 데이터 업데이트 **/
+        /** 정렬 / 체크 / 검색 모두 준비 되면, 플로우 열어서 변경될 때 마다 페이징 데이터 업데이트 **/
         pagingDataFlow = combine(
                 searches,
                 sorting,
@@ -96,15 +94,14 @@ class DogamViewModel(
                     sortingWay = _sorting.sortOpt
                 )
 
-                val filteredPaging = if (_checked.checked) {
-                    paging.map { paging ->
-                        paging.filter { item -> (item as UiModel.MushItem).mush.gotcha }
-                    }
-                } else {
+                if (_checked.checked) {
                     paging
+                } else {
+                    val filteredPaging = paging.map { pagingList ->
+                        pagingList.filter { item -> (item as UiModel.MushItem).mush.gotcha }
+                    }
+                    filteredPaging
                 }
-
-                filteredPaging
             }
             .cachedIn(viewModelScope)
 
@@ -208,4 +205,4 @@ private const val LAST_CHECKED_STATE : String = "last_checked_state"
 
 private val DEFAULT_QUERY = null
 private val DEFAULT_SORTING = SortingOption.MUSH_NO
-private const val DEFAULT_CHECKED = false
+private const val DEFAULT_CHECKED = true
