@@ -61,7 +61,7 @@
 
 
     <RadioGroup
-        android:id="@+id/radio_group"
+        android:id="@+id/board_radio_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -104,6 +104,7 @@
     </RadioGroup>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/postRV"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

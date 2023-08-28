@@ -1,10 +1,11 @@
 package com.nbmlon.mushroomer.ui.commu
 
 import com.nbmlon.mushroomer.R
+import java.io.Serializable
 
 const val BOARD_TYPE_ORDINAL = "board_type_ordinal"
 
-enum class BoardType (val boardNameResId : Int){
+enum class BoardType (val boardNameResId : Int) : Serializable{
     FreeBoard(R.string.FreeBoard),
     QnABoard(R.string.QnABoard),
     PicBoard(R.string.PicBoard),

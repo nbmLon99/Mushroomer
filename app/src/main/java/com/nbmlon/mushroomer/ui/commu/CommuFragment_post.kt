@@ -2,13 +2,12 @@ package com.nbmlon.mushroomer.ui.commu
 
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCommuPostBinding
 import com.nbmlon.mushroomer.model.Comment
@@ -36,7 +35,7 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
     private var targetPost: Post? = null
     private var _binding: FragmentCommuPostBinding? = null
     private val binding get() = _binding!!
-    private val viewModel by viewModels<CommuViewModel>()
+    private val viewModel by viewModels<BoardViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {

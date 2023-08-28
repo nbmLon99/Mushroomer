@@ -88,7 +88,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textSize="8sp"
-                                android:text="@{post.thumbsUpCount}"
+                                android:text="@{String.valueOf(post.comments.size())}"
                                 android:textColor="@color/likeRed"
                                 android:layout_marginRight="3dp"
                                 />

@@ -2,12 +2,11 @@ package com.nbmlon.mushroomer.ui.commu
 
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCommuReportBinding
 import com.nbmlon.mushroomer.model.Comment
 import com.nbmlon.mushroomer.model.Post
@@ -29,7 +28,7 @@ class CommuFragment_report private constructor() : Fragment() {
     private var targetComment: Comment? = null
     private var _binding: FragmentCommuReportBinding? = null
     private val binding get() = _binding!!
-    private val viewModel by viewModels<CommuViewModel>()
+    private val viewModel by viewModels<BoardViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
