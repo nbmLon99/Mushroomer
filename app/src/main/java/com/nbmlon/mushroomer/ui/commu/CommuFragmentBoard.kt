@@ -1,5 +1,6 @@
 package com.nbmlon.mushroomer.ui.commu
 
+import android.util.Log
 import android.widget.ImageView
 import android.widget.RadioGroup
 import android.widget.Toast
@@ -8,10 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.DialogEdittextBinding
 import com.nbmlon.mushroomer.model.Post
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -24,11 +28,13 @@ import taimoor.sultani.sweetalert2.Sweetalert
 
 
 open abstract class CommuBoardFragment : Fragment(){
+    companion object{
+        const val TAG = "CommuBoardFragment"
+    }
 
     private lateinit var boardType: BoardType
     private lateinit var list : RecyclerView
     private lateinit var adapter : AdapterBoardPost
-    private lateinit var searchBtn : ImageView
     private var sortGroup : RadioGroup? = null
     private var boardGroup : RadioGroup? = null
 
@@ -36,14 +42,11 @@ open abstract class CommuBoardFragment : Fragment(){
     protected fun bindView(
         boardType: BoardType,
         list : RecyclerView,
-        adapter : AdapterBoardPost,
-        searchBtn : ImageView,
         sortGroup : RadioGroup?,
         boardGroup : RadioGroup?
     ){
         this.boardType = boardType
-        this.adapter = adapter
-        this.searchBtn = searchBtn
+        this.adapter = AdapterBoardPost(boardType)
         this.sortGroup = sortGroup
         this.boardGroup = boardGroup
         this.list = list
@@ -58,11 +61,7 @@ open abstract class CommuBoardFragment : Fragment(){
             pagingData = pagingData,
             onScrollChanged = uiActions
         )
-
-        bindSearch(
-            onSearchClicked = uiActions
-        )
-        if(boardType != BoardType.HotBoard) {
+        if(boardType != BoardType.HotBoard){
             bindSort(
                 uiState = uiState,
                 onRadioClicked = uiActions
@@ -82,10 +81,10 @@ open abstract class CommuBoardFragment : Fragment(){
         pagingData: Flow<PagingData<Post>>,
         onScrollChanged: (CommuUiAction.Scroll) -> Unit
     ){
-        list.adapter = this.adapter
+        var previousJob: Job? = null // 페이징 데이터 collectLatest 작업을 추적하는 Job 객체
         list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy != 0) onScrollChanged(CommuUiAction.Scroll(currentQuery = uiState.value.query, currentSort = uiState.value.sort))
+                if (dy != 0) onScrollChanged(CommuUiAction.Scroll( currentSort = uiState.value.sort))
             }
         })
 
@@ -108,10 +107,10 @@ open abstract class CommuBoardFragment : Fragment(){
         )
             .distinctUntilChanged()
 
-
-        lifecycleScope.launch {
-            pagingData.collectLatest(adapter::submitData)
-        }
+//
+//        lifecycleScope.launch {
+//            pagingData.collectLatest(adapter::submitData)
+//        }
 
         lifecycleScope.launch {
             shouldScrollToTop.collect { shouldScroll ->
@@ -120,6 +119,39 @@ open abstract class CommuBoardFragment : Fragment(){
         }
 
         lifecycleScope.launch {
+            uiState
+                .map { it.targetBoardType }
+                .distinctUntilChanged()
+                .collect{ type ->
+                    // 이전 어댑터에서 수행하던 작업 취소
+                    previousJob?.cancel()
+
+                    adapter = AdapterBoardPost(type)
+                    list.adapter = adapter
+
+                    val layoutManager = when (type) {
+                        BoardType.QnABoard, BoardType.FreeBoard -> LinearLayoutManager(requireContext())
+                        else -> {
+                            val gridLayoutManager = StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL)
+                            if (type != BoardType.PicBoard) {
+                                throw IllegalArgumentException("Invalid board type: $type")
+                            }
+                            gridLayoutManager
+                        }
+                    }
+                    list.layoutManager = layoutManager
+
+                    // 새로운 어댑터와 함께 페이징 데이터 처리
+                    previousJob = lifecycleScope.launch {
+                        pagingData.collectLatest {
+                            adapter.submitData(it)
+                        }
+                    }
+                }
+//
+//            uiState
+//                .map{it.sort}
+
             adapter.loadStateFlow.collect { loadState ->
                 val isListEmpty = loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0
                 // show empty list
@@ -145,37 +177,8 @@ open abstract class CommuBoardFragment : Fragment(){
                 }
             }
         }
-        adapter
-
     }
 
-    // 핫 게시판은 지금 안되고있음.
-    /** Search Frg로 수정 필요 **/
-    private fun bindSearch(
-        onSearchClicked: (CommuUiAction.Search) -> Unit,
-    ){
-        if( searchBtn == null )
-            return
-
-        searchBtn.setOnClickListener {
-            Sweetalert(context,Sweetalert.NORMAL_TYPE).apply {
-                titleText = "검색"
-                val dialogBinding = DialogEdittextBinding.inflate(layoutInflater).apply {
-                    tvContent.text = "검색어를 입력해주세요"
-                }
-                setCustomView(dialogBinding.root)
-                setCancelButton("검색"){
-                    val query : String? = dialogBinding.editText.text.takeIf { it.isNotEmpty() }?.toString()
-                    onSearchClicked(CommuUiAction.Search(query))
-                    it.dismissWithAnimation()
-                }
-                setNeutralButton("취소"){
-                    it.dismissWithAnimation()
-                }
-                show()
-            }
-        }
-    }
     private fun bindSort(
         uiState: StateFlow<CommuUiState>,
         onRadioClicked : (CommuUiAction.Sort) -> Unit
@@ -218,15 +221,12 @@ open abstract class CommuBoardFragment : Fragment(){
         boardGroup!!.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.radio_qna -> {
-                    adapter = AdapterBoardPost(BoardType.QnABoard)
                     onRadioClicked(CommuUiAction.ChangeBoardType(BoardType.QnABoard))
                 }
                 R.id.radio_free -> {
-                    adapter = AdapterBoardPost(BoardType.FreeBoard)
                     onRadioClicked(CommuUiAction.ChangeBoardType(BoardType.FreeBoard))
                 }
                 R.id.radio_myPic -> {
-                    adapter = AdapterBoardPost(BoardType.PicBoard)
                     onRadioClicked(CommuUiAction.ChangeBoardType(BoardType.PicBoard))
                 }
             }
@@ -255,22 +255,5 @@ fun getBoardFragment(boardType: BoardType) : CommuBoardFragment{
         BoardType.QnABoard -> CommuFragmentBoard_text.getInstance(boardType.ordinal)
         BoardType.HotBoard -> CommuFragmentBoard_hot.getInstance(boardType.ordinal)
         else -> error("게시판 형태 오류")
-    }
-}
-
-/** 게시판 열기 **/
-class CommuFragmentBoard {
-    companion object {
-        const val TAG = "CommuFragmentBoard"
-
-        @JvmStatic
-        fun getInstance(param1: Int) =
-            when(param1) {
-                BoardType.FreeBoard.ordinal -> CommuFragmentBoard_text.getInstance(param1)
-                BoardType.PicBoard.ordinal -> CommuFragmentBoard_img.getInstance(param1)
-                BoardType.QnABoard.ordinal -> CommuFragmentBoard_text.getInstance(param1)
-                //BoardType.HotBoard.ordinal -> CommuFragmentBoard_hot()
-                else ->  error("Invalid board type")
-            }
     }
 }

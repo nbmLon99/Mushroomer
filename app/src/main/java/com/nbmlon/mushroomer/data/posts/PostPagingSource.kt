@@ -18,8 +18,8 @@ private const val STARTING_KEY = 0
  */
 class PostPagingSource(
     val backend: PostsService,
-    val query: String?,
-    val boardType: BoardType
+    val boardType: BoardType,
+    val query: String?
 ) : PagingSource<Int, Post>() {
     override suspend fun load(
         params: PagingSource.LoadParams<Int>,

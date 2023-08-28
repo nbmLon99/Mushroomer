@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.data.posts.PostsRepository
 import com.nbmlon.mushroomer.databinding.FragmentCommuHotBinding
 
@@ -54,8 +55,6 @@ class CommuFragmentBoard_hot private constructor(): CommuBoardFragment() {
         val viewModel: BoardViewModel by viewModels { viewModelFactory }
         bindView(
             boardType = mBoardType,
-            adapter = AdapterBoardPost(boardType =mBoardType),
-            searchBtn = binding.btnSearch,
             sortGroup = null,
             boardGroup = binding.boardRadioGroup,
             list = binding.postRV
@@ -74,6 +73,12 @@ class CommuFragmentBoard_hot private constructor(): CommuBoardFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+            btnSearch.setOnClickListener {
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.FragmentContainer, CommuFragment_search.getInstance(board_typd_idx!!), CommuFragment_search.TAG)
+                    .addToBackStack(null)
+                    .commit()
+            }
         }
     }
 
@@ -83,30 +88,3 @@ class CommuFragmentBoard_hot private constructor(): CommuBoardFragment() {
     }
 
 }
-
-
-/**
- *
- * val radioGroup = findViewById<RadioGroup>(R.id.radio_group)
-val radioButton1 = findViewById<RadioButton>(R.id.radio_button_1)
-val radioButton2 = findViewById<RadioButton>(R.id.radio_button_2)
-
-radioGroup.setOnCheckedChangeListener { _, checkedId ->
-when (checkedId) {
-R.id.radio_button_1 -> {
-radioButton1.setTypeface(null, Typeface.BOLD)
-radioButton1.paintFlags = radioButton1.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-
-radioButton2.setTypeface(null, Typeface.NORMAL)
-radioButton2.paintFlags = radioButton2.paintFlags and Paint.UNDERLINE_TEXT_FLAG.inv()
-}
-R.id.radio_button_2 -> {
-radioButton2.setTypeface(null, Typeface.BOLD)
-radioButton2.paintFlags = radioButton2.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-
-radioButton1.setTypeface(null, Typeface.NORMAL)
-radioButton1.paintFlags = radioButton1.paintFlags and Paint.UNDERLINE_TEXT_FLAG.inv()
-}
-}
-}
- */

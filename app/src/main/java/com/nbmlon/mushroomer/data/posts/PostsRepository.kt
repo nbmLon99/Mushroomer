@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface PostsRepository {
     /** 게시판 페이징 데이터 가져옴 **/
-    fun getPostStream(boardType: BoardType, query: String?, sortOpt : PostSortingOption ): Flow<PagingData<Post>>
+    fun getPostStream(boardType: BoardType, sortOpt : PostSortingOption ): Flow<PagingData<Post>>
 }
 
 /** 홈화면 최신 게시글 레포지토리 **/
@@ -27,7 +27,7 @@ fun CommuHomeRepository() : CommuHomeRepository = CommuHomeRepositoryImpl()
 
 
 
-private class PostsRepositoryImpl(): PostsRepository {
+private class PostsRepositoryImpl: PostsRepository {
     companion object {
         const val NETWORK_PAGE_SIZE = 50
     }
@@ -46,13 +46,13 @@ private class PostsRepositoryImpl(): PostsRepository {
 //
 //
 
-    override fun getPostStream(boardType: BoardType, query: String?, sortOpt : PostSortingOption): Flow<PagingData<Post>> {
+    override fun getPostStream(boardType: BoardType, sortOpt : PostSortingOption): Flow<PagingData<Post>> {
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { PostPagingSource(PostsService.create(), query, boardType) }
+            pagingSourceFactory = { PostPagingSource(PostsService.create(), boardType, null) }
         ).flow
     }
 }

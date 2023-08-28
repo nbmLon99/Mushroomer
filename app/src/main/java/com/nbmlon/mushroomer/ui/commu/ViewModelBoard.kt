@@ -47,19 +47,11 @@ class BoardViewModel(
     init{
         val initialBoardType = savedStateHandle.get<BoardType>(LAST_BOARD_TYPE) ?:
             if (boardType == BoardType.HotBoard) { BoardType.QnABoard } else { boardType }
-        val initialQuery: String? = savedStateHandle[LAST_SEARCH_QUERY] ?: DEFAULT_QUERY
-        val lastQueryScrolled: String? = savedStateHandle[LAST_QUERY_SCROLLED] ?: DEFAULT_QUERY
         val initialSorting : PostSortingOption = savedStateHandle.get<PostSortingOption>(LAST_SORTING_OPTION) ?: DEFAULT_SORTING
         val lastSortingScrolled : PostSortingOption = savedStateHandle.get<PostSortingOption>(LAST_SORTING_SCROLLED) ?: DEFAULT_SORTING
 
         val actionStateFlow = MutableSharedFlow<CommuUiAction>()
 
-
-        //emit 된 actionFlow가 search -> 검색 이벤트 발생
-        val searches = actionStateFlow
-            .filterIsInstance<CommuUiAction.Search>()
-            .distinctUntilChanged()
-            .onStart { emit(CommuUiAction.Search(query = initialQuery)) }
         //emit 된 actionFlow가 sort -> 정렬 이벤트 발생
         val sorting = actionStateFlow
             .filterIsInstance<CommuUiAction.Sort>()
@@ -80,31 +72,21 @@ class BoardViewModel(
                 started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
                 replay = 1
             )
-            .onStart { emit(CommuUiAction.Scroll(currentQuery = lastQueryScrolled, currentSort = lastSortingScrolled)) }
+            .onStart { emit(CommuUiAction.Scroll(currentSort = lastSortingScrolled)) }
 
         // 상태 업데이트
         state = combine(
-            searches,
-            queriesScrolled,
+            boardChanges,
             sorting,
-            boardChanges
-        ){ (  _search, _scroll, _sorting, _board ) ->
-            CombinedAction(
-                searchState = _search as CommuUiAction.Search,
-                scrollState = _scroll as CommuUiAction.Scroll,
-                sortingState = _sorting as CommuUiAction.Sort,
-                boardState = _board as CommuUiAction.ChangeBoardType
-            )
-        }.map { act ->
+            queriesScrolled,
+            ::Triple
+        ).map {( _board, _sorting, _scroll  ) ->
             CommuUiState(
-                targetBoardType = act.boardState.postingBoardType,
-                query = act.searchState.query,
-                lastQueryScrolled = act.scrollState.currentQuery,
-                sort = act.sortingState.sortOpt,
-                lastSortScrolled = act.scrollState.currentSort,
+                targetBoardType = _board.postingBoardType,
+                sort = _sorting.sortOpt,
+                lastSortScrolled = _scroll.currentSort,
                 hasNotScrolledForCurrentRV =
-                    act.searchState.query != act.scrollState.currentQuery ||
-                    act.sortingState.sortOpt != act.scrollState.currentSort
+                     _sorting.sortOpt != _scroll.currentSort
             )
         }.stateIn(
                 scope = viewModelScope,
@@ -114,14 +96,12 @@ class BoardViewModel(
 
 
         pagingDataFlow = combine(
-            searches,
             sorting,
             boardChanges,
-            ::Triple
-        ).flatMapLatest { (_search, _sorting, _board) ->
+            ::Pair
+        ).flatMapLatest { (_sorting, _board) ->
                 loadPostsPaging(
                     boardType = _board.postingBoardType,
-                    query = _search.query,
                     sortOpt = _sorting.sortOpt
                 )
             }
@@ -168,10 +148,9 @@ class BoardViewModel(
 
 
     /** 페이징 데이터 요청 **/
-    private fun loadPostsPaging(boardType: BoardType, query : String?, sortOpt : PostSortingOption): Flow<PagingData<Post>> =
+    private fun loadPostsPaging(boardType: BoardType, sortOpt : PostSortingOption): Flow<PagingData<Post>> =
         repository.getPostStream(
             boardType = boardType,
-            query = query,
             sortOpt = sortOpt
         )
 
@@ -211,9 +190,7 @@ class BoardViewModel(
 
     override fun onCleared() {
         savedStateHandle[LAST_BOARD_TYPE] = state.value.targetBoardType
-        savedStateHandle[LAST_SEARCH_QUERY] = state.value.query
         savedStateHandle[LAST_SORTING_OPTION] = state.value.sort
-        savedStateHandle[LAST_QUERY_SCROLLED] = state.value.lastQueryScrolled
         savedStateHandle[LAST_SORTING_SCROLLED] = state.value.lastSortScrolled
         super.onCleared()
     }
@@ -221,15 +198,8 @@ class BoardViewModel(
 
 }
 
-data class CombinedAction(
-    val searchState: CommuUiAction.Search,
-    val scrollState: CommuUiAction.Scroll,
-    val sortingState: CommuUiAction.Sort,
-    val boardState: CommuUiAction.ChangeBoardType
-)
 sealed class CommuUiAction {
-    data class Search(val query: String?) : CommuUiAction()
-    data class Scroll(val currentQuery: String?, val currentSort : PostSortingOption) : CommuUiAction()
+    data class Scroll(val currentSort : PostSortingOption) : CommuUiAction()
     data class Sort(val sortOpt: PostSortingOption) : CommuUiAction()
 
     // 인기게시판 -> 게시판 변경
@@ -237,17 +207,12 @@ sealed class CommuUiAction {
 }
 
 data class CommuUiState(
+    //Board상태 -> 인기게시판
     val targetBoardType: BoardType,
-
-    //검색 상태
-    val query: String? = DEFAULT_QUERY,
-    val lastQueryScrolled: String? = DEFAULT_QUERY,
 
     //정렬 상태
     val sort: PostSortingOption = DEFAULT_SORTING,
     val lastSortScrolled: PostSortingOption = DEFAULT_SORTING,
-
-    //Board상태 -> 인기게시판
 
     //새로 고침(정렬 / 상태가 바뀜)
     val hasNotScrolledForCurrentRV: Boolean = false,
@@ -282,11 +247,8 @@ sealed class CommuResponse{
 
 
 
-private const val LAST_SEARCH_QUERY: String = "last_search_query"
 private const val LAST_SORTING_OPTION : String = "last_sorting_option"
-private const val LAST_QUERY_SCROLLED: String = "last_query_scrolled"
 private const val LAST_SORTING_SCROLLED : String = "last_sorting_scrolled"
 private const val LAST_BOARD_TYPE : String = "last_board_type"
 
-private val DEFAULT_QUERY = null
 private val DEFAULT_SORTING = PostSortingOption.SORTING_TIME
