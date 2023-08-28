@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCommuPostBinding
 import com.nbmlon.mushroomer.model.Comment
@@ -81,8 +82,10 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
         val inflater = popupMenu.menuInflater
         inflater.inflate(R.menu.post_context_menu, popupMenu.menu)
         popupMenu.apply {
-            menu?.setGroupVisible(R.id.menuForOwner,true)
-//            menu?.setGroupVisible(R.id.menuForOwner,targetPost?.writer == AppUser.user)
+            val isMine = targetPost?.writer == AppUser.user
+            menu?.findItem(R.id.report)?.isVisible = !isMine
+//            menu?.setGroupVisible(R.id.menuForOwner,true)
+            menu?.setGroupVisible(R.id.menuForOwner, isMine)
             menu?.setGroupVisible(R.id.menuForComment,false)
 
             setOnMenuItemClickListener { menuItem ->
