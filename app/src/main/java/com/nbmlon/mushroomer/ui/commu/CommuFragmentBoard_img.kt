@@ -4,8 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.data.posts.PostsRepository
 import com.nbmlon.mushroomer.databinding.FragmentCommuImageBinding
 
 // TODO: Rename parameter arguments, choose names that match
@@ -13,26 +14,27 @@ import com.nbmlon.mushroomer.databinding.FragmentCommuImageBinding
 
 
 /** 사진 게시판 **/
-class CommuFragmentBoard_image : Fragment() {
-
+class CommuFragmentBoard_img private constructor(): CommuBoardFragment() {
     companion object {
         const val TAG = "CommuFragmentBoard_image"
         @JvmStatic
         fun getInstance(param1: Int) =
-            CommuFragmentBoard_image().apply {
+            CommuFragmentBoard_img().apply {
                 arguments = Bundle().apply {
                     putInt(BOARD_TYPE_ORDINAL, param1)
                 }
             }
     }
-    private var board_type_idx: Int? = null
+    private var board_typd_idx: Int? = null
+    private lateinit var mBoardType: BoardType
     private var _binding: FragmentCommuImageBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            board_type_idx = it.getInt(BOARD_TYPE_ORDINAL)
+            board_typd_idx = it.getInt(BOARD_TYPE_ORDINAL)
+            mBoardType = BoardType.values()[board_typd_idx!!]
         }
     }
 
@@ -41,7 +43,28 @@ class CommuFragmentBoard_image : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCommuImageBinding.inflate(layoutInflater)
-        // Inflate the layout for this fragment
+        val viewModelFactory = BoardViewModelFactory(
+            owner = this,
+            repository = PostsRepository(),
+            boardType =  mBoardType
+        )
+
+        val viewModel: BoardViewModel by viewModels { viewModelFactory }
+        bindView(
+            boardType = mBoardType,
+            adapter = AdapterBoardPost(boardType =mBoardType),
+            searchBtn = binding.btnSearch,
+            sortGroup = binding.sortRadioGroup,
+            boardGroup = null,
+            list = binding.postRV
+        )
+
+        bindState(
+            uiState = viewModel.state,
+            pagingData = viewModel.pagingDataFlow,
+            uiActions = viewModel.accept
+        )
+
         return binding.root
     }
 
@@ -54,7 +77,7 @@ class CommuFragmentBoard_image : Fragment() {
             //검색버튼
             btnSearch.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_search.getInstance(board_type_idx!!), CommuFragment_search.TAG)
+                    .replace(R.id.FragmentContainer, CommuFragment_search.getInstance(board_typd_idx!!), CommuFragment_search.TAG)
                     .addToBackStack(null)
                     .commit()
             }
@@ -62,12 +85,10 @@ class CommuFragmentBoard_image : Fragment() {
             //글쓰기 버튼
             btnWrite.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_write.getInstance(board_type_idx ?: 1), CommuFragment_write.TAG)
+                    .replace(R.id.FragmentContainer, CommuFragment_write.getInstance(board_typd_idx ?: 1), CommuFragment_write.TAG)
                     .addToBackStack(null)
                     .commit()
             }
-
-            bindSort()
         }
     }
 
@@ -77,9 +98,4 @@ class CommuFragmentBoard_image : Fragment() {
         _binding = null
         super.onDestroyView()
     }
-
-    private fun FragmentCommuImageBinding.bindSort(){
-
-    }
-
 }

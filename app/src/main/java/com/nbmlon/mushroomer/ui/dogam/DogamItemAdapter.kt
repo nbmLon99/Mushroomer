@@ -13,7 +13,7 @@ import com.nbmlon.mushroomer.model.Mushroom
 
 class DogamItemAdapter(
     val dogamItemClickListner: DogamItemClickListner
-) : PagingDataAdapter<UiModel, DogamItemAdapter.DogamViewHolder>(UIMODEL_COMPARATOR) {
+) : PagingDataAdapter<DogamUiModel, DogamItemAdapter.DogamViewHolder>(UIMODEL_COMPARATOR) {
     inner class DogamViewHolder(
         private val binding: ItemDogamBinding
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -39,19 +39,19 @@ class DogamItemAdapter(
         val uiModel = getItem(position)
         uiModel.let {
             when (uiModel) {
-                is UiModel.MushItem -> (holder as DogamViewHolder).bind(uiModel.mush)
+                is DogamUiModel.MushItem -> (holder as DogamViewHolder).bind(uiModel.mush)
                 null -> throw UnsupportedOperationException("Unknown view")
             }
         }
     }
     companion object {
-        private val UIMODEL_COMPARATOR = object : DiffUtil.ItemCallback<UiModel>() {
-            override fun areItemsTheSame(oldItem: UiModel, newItem: UiModel): Boolean {
-                return (oldItem is UiModel.MushItem && newItem is UiModel.MushItem &&
+        private val UIMODEL_COMPARATOR = object : DiffUtil.ItemCallback<DogamUiModel>() {
+            override fun areItemsTheSame(oldItem: DogamUiModel, newItem: DogamUiModel): Boolean {
+                return (oldItem is DogamUiModel.MushItem && newItem is DogamUiModel.MushItem &&
                         oldItem.mush.dogamNo == newItem.mush.dogamNo)
             }
 
-            override fun areContentsTheSame(oldItem: UiModel, newItem: UiModel): Boolean =
+            override fun areContentsTheSame(oldItem: DogamUiModel, newItem: DogamUiModel): Boolean =
                 oldItem == newItem
         }
     }

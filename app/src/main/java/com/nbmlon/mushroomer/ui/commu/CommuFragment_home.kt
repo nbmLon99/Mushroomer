@@ -2,13 +2,12 @@ package com.nbmlon.mushroomer.ui.commu
 
 import android.os.Bundle
 import android.view.ContextMenu
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContentProviderCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCommuHomeBinding
@@ -30,7 +29,7 @@ class CommuFragment_home : Fragment(), PostClickListener {
     private lateinit var adapterFree : AdapterHomePost
     private lateinit var adapterPic : AdapterHomePost
 
-    private val viewModel : CommuViewModel by viewModels()
+    private val viewModel : CommuHomeViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,9 +108,8 @@ class CommuFragment_home : Fragment(), PostClickListener {
 
 
     private fun openBoard(boardType: BoardType) {
-        val boardTypeOrdinal = boardType.ordinal
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.FragmentContainer, CommuFragmentBoard.getInstance(boardTypeOrdinal),CommuFragmentBoard.TAG)
+            .replace(R.id.FragmentContainer, getBoardFragment(boardType) ,CommuFragmentBoard.TAG)
             .addToBackStack(null)
             .commit()
     }

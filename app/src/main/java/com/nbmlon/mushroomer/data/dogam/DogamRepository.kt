@@ -5,11 +5,11 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.nbmlon.mushroomer.api.DogamService
 import com.nbmlon.mushroomer.model.Mushroom
-import com.nbmlon.mushroomer.ui.dogam.SortingOption
+import com.nbmlon.mushroomer.ui.dogam.DogamSortingOption
 import kotlinx.coroutines.flow.Flow
 
 interface DogamRepository {
-    fun getDogamstream(query : String?, sortingOption: SortingOption): Flow<PagingData<Mushroom>>
+    fun getDogamstream(query : String?, sortingOption: DogamSortingOption): Flow<PagingData<Mushroom>>
 }
 
 fun DogamRepository() : DogamRepository = DogamRepositoryImpl()
@@ -20,7 +20,7 @@ private class DogamRepositoryImpl : DogamRepository {
     }
 
 
-    override fun getDogamstream(query : String?, sortingOption: SortingOption): Flow<PagingData<Mushroom>> {
+    override fun getDogamstream(query : String?, sortingOption: DogamSortingOption): Flow<PagingData<Mushroom>> {
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,

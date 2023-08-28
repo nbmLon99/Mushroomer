@@ -1,17 +1,9 @@
 package com.nbmlon.mushroomer.ui.commu
 
-import android.content.ContentProvider
-import android.view.ContextMenu
 import android.view.LayoutInflater
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.recyclerview.widget.ListAdapter
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.nbmlon.mushroomer.AppUser
-import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.ItemPostImageBinding
 import com.nbmlon.mushroomer.databinding.ItemPostTextBinding
 import com.nbmlon.mushroomer.model.Post
@@ -22,7 +14,9 @@ import com.nbmlon.mushroomer.model.PostDiffCallback
  * TODO 페이징 구현
  * **/
 
-class AdapterBoardPost(val boardType: BoardType) : ListAdapter<Post, RecyclerView.ViewHolder>(PostDiffCallback()) {
+class AdapterBoardPost(
+    val boardType: BoardType
+) : PagingDataAdapter<Post, RecyclerView.ViewHolder>(PostDiffCallback()) {
     inner class TextPostViewHolder(private val itemBinding: ItemPostTextBinding) : RecyclerView.ViewHolder(itemBinding.root), HomeAdapterHolder {
         override fun bind(pos : Int){
             itemBinding.apply {

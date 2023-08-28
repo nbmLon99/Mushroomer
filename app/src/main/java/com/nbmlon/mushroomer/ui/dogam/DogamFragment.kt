@@ -104,7 +104,7 @@ class DogamFragment : Fragment(), DogamItemClickListner {
     }
 
 
-    private fun showSearchDialog(onSearchBtnClicked: (UiAction.Search) -> Unit){
+    private fun showSearchDialog(onSearchBtnClicked: (DogamUiAction.Search) -> Unit){
         val title = "버섯 검색"
         val content = "검색할 버섯명을 입력해주세요"
         Sweetalert(context, Sweetalert.NORMAL_TYPE).apply {
@@ -115,7 +115,7 @@ class DogamFragment : Fragment(), DogamItemClickListner {
             setCustomView(dialogBinding.root)
             setCancelButton(resources.getString(R.string.CONFIRM)){
                 val query: String? = dialogBinding.editText.text.takeIf { it.isNotEmpty() }?.toString()
-                onSearchBtnClicked(UiAction.Search(query = query))
+                onSearchBtnClicked(DogamUiAction.Search(query = query))
                 it.dismissWithAnimation()
             }
             setNeutralButton(resources.getString(R.string.cancel)){
@@ -127,9 +127,9 @@ class DogamFragment : Fragment(), DogamItemClickListner {
 
 
     private fun FragmentDogamBinding.bindState(
-        uiState: StateFlow<UiState>,
-        pagingData: Flow<PagingData<UiModel>>,
-        uiActions: (UiAction) -> Unit
+        uiState: StateFlow<DogamUiState>,
+        pagingData: Flow<PagingData<DogamUiModel>>,
+        uiActions: (DogamUiAction) -> Unit
     ) {
         val dogamItemAdapter = DogamItemAdapter(this@DogamFragment::onDogamItemClicked)
 
@@ -160,20 +160,20 @@ class DogamFragment : Fragment(), DogamItemClickListner {
 
 
     private fun FragmentDogamBinding.bindSearch(
-        onSearchCall: (UiAction.Search) -> Unit
+        onSearchCall: (DogamUiAction.Search) -> Unit
     ){
         btnSearch.setOnClickListener { showSearchDialog(onSearchCall) }
     }
 
     /** 체크박스 상태 바인딩 **/
     private fun FragmentDogamBinding.bindFilter(
-        uiState: StateFlow<UiState>,
-        onCheckedChanged: (UiAction.Filter) -> Unit
+        uiState: StateFlow<DogamUiState>,
+        onCheckedChanged: (DogamUiAction.Filter) -> Unit
     ) {
         // 체크 박스의 체크 상태에 따라 데이터 필터링
         undiscoverDisplayCkbox.setOnCheckedChangeListener { _, isChecked ->
             // 체크 상태에 따라 데이터 필터링
-            onCheckedChanged(UiAction.Filter(isChecked))
+            onCheckedChanged(DogamUiAction.Filter(isChecked))
         }
 
 
@@ -192,8 +192,8 @@ class DogamFragment : Fragment(), DogamItemClickListner {
 
     /** 스피너 연결 **/
     private fun FragmentDogamBinding.bindSort(
-        uiState: StateFlow<UiState>,
-        onSortingChanged: (UiAction.Sort) -> Unit
+        uiState: StateFlow<DogamUiState>,
+        onSortingChanged: (DogamUiAction.Sort) -> Unit
     ) {
         sortingWay.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             private var initialSelection = true // Flag to ignore initial selection
@@ -207,21 +207,21 @@ class DogamFragment : Fragment(), DogamItemClickListner {
                     initialSelection = false
                     return // Ignore initial selection
                 }
-                val selectedSorting = SortingOption.values()[position]
+                val selectedSorting = DogamSortingOption.values()[position]
 
                 lifecycleScope.launch {
                     val sortedData = when (selectedSorting) {
                         // 도감넘버
-                        SortingOption.MUSH_NO -> {
-                            onSortingChanged(UiAction.Sort(SortingOption.MUSH_NO))
+                        DogamSortingOption.MUSH_NO -> {
+                            onSortingChanged(DogamUiAction.Sort(DogamSortingOption.MUSH_NO))
                         }
                         //희귀도로 정렬
-                        SortingOption.MUSH_RARE -> {
-                            onSortingChanged(UiAction.Sort(SortingOption.MUSH_NO))
+                        DogamSortingOption.MUSH_RARE -> {
+                            onSortingChanged(DogamUiAction.Sort(DogamSortingOption.MUSH_NO))
                         }
                         //버섯이름으로 정렬
-                        SortingOption.MUSH_NAME -> {
-                            onSortingChanged(UiAction.Sort(SortingOption.MUSH_NO))
+                        DogamSortingOption.MUSH_NAME -> {
+                            onSortingChanged(DogamUiAction.Sort(DogamSortingOption.MUSH_NO))
                         }
                     }
                 }
@@ -245,13 +245,13 @@ class DogamFragment : Fragment(), DogamItemClickListner {
 
         private fun FragmentDogamBinding.bindList(
             dogamItemAdapter: DogamItemAdapter,
-            uiState: StateFlow<UiState>,
-            pagingData: Flow<PagingData<UiModel>>,
-            onScrollChanged: (UiAction.Scroll) -> Unit
+            uiState: StateFlow<DogamUiState>,
+            pagingData: Flow<PagingData<DogamUiModel>>,
+            onScrollChanged: (DogamUiAction.Scroll) -> Unit
         ) {
             dogamRV.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (dy != 0) onScrollChanged(UiAction.Scroll(currentQuery = uiState.value.query, currentSort = uiState.value.sort))
+                    if (dy != 0) onScrollChanged(DogamUiAction.Scroll(currentQuery = uiState.value.query, currentSort = uiState.value.sort))
                 }
             })
 
@@ -325,7 +325,7 @@ class DogamFragment : Fragment(), DogamItemClickListner {
 }
 
 
-enum class SortingOption {
+enum class DogamSortingOption {
     MUSH_NO,
     MUSH_RARE,
     MUSH_NAME

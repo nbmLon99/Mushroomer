@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
@@ -18,7 +17,6 @@ import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.DialogEdittextBinding
 import com.nbmlon.mushroomer.databinding.DialogLoginMethodBinding
 import com.nbmlon.mushroomer.databinding.FragmentProfileBinding
-import com.nbmlon.mushroomer.ui.commu.CommuFragment_search
 import com.nbmlon.mushroomer.ui.login.BiometricPromptUtils
 import com.nbmlon.mushroomer.ui.login.CIPHERTEXT_WRAPPER
 import com.nbmlon.mushroomer.ui.login.LoginActivity
@@ -123,7 +121,7 @@ class ProfileFragment : Fragment(), DialogListener {
             setCustomView(dialogBinding.root)
             setNeutralButton("취소"){ it.dismissWithAnimation()}
             setCancelButton("확인"){
-                dialogBinding.radioGroup.checkedRadioButtonId?.let {
+                dialogBinding.methodRadio.checkedRadioButtonId?.let {
                     loginMethodModify(it)
                 }}
             show()

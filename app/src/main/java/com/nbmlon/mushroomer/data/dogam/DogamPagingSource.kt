@@ -6,7 +6,7 @@ import com.nbmlon.mushroomer.api.DogamResponse
 import com.nbmlon.mushroomer.api.DogamService
 import com.nbmlon.mushroomer.model.Dogam
 import com.nbmlon.mushroomer.model.Mushroom
-import com.nbmlon.mushroomer.ui.dogam.SortingOption
+import com.nbmlon.mushroomer.ui.dogam.DogamSortingOption
 import retrofit2.HttpException
 import java.io.IOException
 import kotlin.math.max
@@ -20,7 +20,7 @@ private const val STARTING_KEY = 0
 class DogamPagingSource(
     val backend: DogamService,
     val query : String?,
-    val sortingOption: SortingOption
+    val sortingOption: DogamSortingOption
 ) : PagingSource<Int, Mushroom>() {
     override suspend fun load(
         params: LoadParams<Int>

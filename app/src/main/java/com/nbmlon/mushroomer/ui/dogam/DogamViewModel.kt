@@ -15,14 +15,12 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 
 class DogamViewModel(
@@ -33,44 +31,42 @@ class DogamViewModel(
     /**
      * Stream of immutable states representative of the UI.
      */
-    val state: StateFlow<UiState>
+    val state: StateFlow<DogamUiState>
 
-    val pagingDataFlow: Flow<PagingData<UiModel>>
+    val pagingDataFlow: Flow<PagingData<DogamUiModel>>
 
     /**
      * Processor of side effects from the UI which in turn feedback into [state]
      */
-    val accept: (UiAction) -> Unit
+    val accept: (DogamUiAction) -> Unit
 
     init {
         val initialQuery: String? = savedStateHandle[LAST_SEARCH_QUERY] ?: DEFAULT_QUERY
         val lastQueryScrolled: String? = savedStateHandle[LAST_QUERY_SCROLLED] ?: DEFAULT_QUERY
-        val initialSorting : SortingOption = savedStateHandle.get<SortingOption>(LAST_SORTING_OPTION) ?: DEFAULT_SORTING
-        val lastSortingScrolled : SortingOption = savedStateHandle.get<SortingOption>(LAST_SORTING_SCROLLED) ?: DEFAULT_SORTING
+        val initialSorting : DogamSortingOption = savedStateHandle.get<DogamSortingOption>(LAST_SORTING_OPTION) ?: DEFAULT_SORTING
+        val lastSortingScrolled : DogamSortingOption = savedStateHandle.get<DogamSortingOption>(LAST_SORTING_SCROLLED) ?: DEFAULT_SORTING
         val initialChecked : Boolean = savedStateHandle.get<Boolean>(LAST_CHECKED_STATE) ?: DEFAULT_CHECKED
 
-        val actionStateFlow = MutableSharedFlow<UiAction>()
+        val actionStateFlow = MutableSharedFlow<DogamUiAction>()
 
         //emit 된 actionFlow가 search -> 검색 이벤트 발생
         val searches = actionStateFlow
-            .filterIsInstance<UiAction.Search>()
+            .filterIsInstance<DogamUiAction.Search>()
             .distinctUntilChanged()
-            .onStart { emit(UiAction.Search(query = initialQuery)) }
+            .onStart { emit(DogamUiAction.Search(query = initialQuery)) }
         //emit 된 actionFlow가 sort -> 정렬 이벤트 발생
         val sorting = actionStateFlow
-            .filterIsInstance<UiAction.Sort>()
+            .filterIsInstance<DogamUiAction.Sort>()
             .distinctUntilChanged()
-            .onStart { emit(UiAction.Sort(initialSorting)) }
+            .onStart { emit(DogamUiAction.Sort(initialSorting)) }
         //emit 된 actionFlow가 filter -> 체크 이벤트 발생
         val checked = actionStateFlow
-            .filterIsInstance<UiAction.Filter>()
+            .filterIsInstance<DogamUiAction.Filter>()
             .distinctUntilChanged()
-            .onStart { emit(UiAction.Filter(initialChecked)) }
-
-
+            .onStart { emit(DogamUiAction.Filter(initialChecked)) }
         //emit 된 actionFlow가 scroll -> 스크롤 이벤트 발생
         val queriesScrolled = actionStateFlow
-            .filterIsInstance<UiAction.Scroll>()
+            .filterIsInstance<DogamUiAction.Scroll>()
             .distinctUntilChanged()
             // This is shared to keep the flow "hot" while caching the last query scrolled,
             // otherwise each flatMapLatest invocation would lose the last query scrolled,
@@ -79,7 +75,7 @@ class DogamViewModel(
                 started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
                 replay = 1
             )
-            .onStart { emit(UiAction.Scroll(currentQuery = lastQueryScrolled, currentSort = lastSortingScrolled)) }
+            .onStart { emit(DogamUiAction.Scroll(currentQuery = lastQueryScrolled, currentSort = lastSortingScrolled)) }
 
         /** 정렬 / 체크 / 검색 모두 준비 되면, 플로우 열어서 변경될 때 마다 페이징 데이터 업데이트 **/
         pagingDataFlow = combine(
@@ -98,7 +94,7 @@ class DogamViewModel(
                     paging
                 } else {
                     val filteredPaging = paging.map { pagingList ->
-                        pagingList.filter { item -> (item as UiModel.MushItem).mush.gotcha }
+                        pagingList.filter { item -> (item as DogamUiModel.MushItem).mush.gotcha }
                     }
                     filteredPaging
                 }
@@ -114,13 +110,13 @@ class DogamViewModel(
             checked
         ){ (  _search, _scroll, _sorting, _checked ) ->
             CombinedAction(
-                searchState = _search as UiAction.Search,
-                scrollState = _scroll as UiAction.Scroll,
-                sortingState = _sorting as UiAction.Sort,
-                checkedState = _checked as UiAction.Filter
+                searchState = _search as DogamUiAction.Search,
+                scrollState = _scroll as DogamUiAction.Scroll,
+                sortingState = _sorting as DogamUiAction.Sort,
+                checkedState = _checked as DogamUiAction.Filter
             )
         }.map { act ->
-            UiState(
+            DogamUiState(
                 query = act.searchState.query,
                 sort = act.sortingState.sortOpt,
                 lastSortScrolled = act.scrollState.currentSort,
@@ -131,11 +127,10 @@ class DogamViewModel(
                     act.sortingState.sortOpt != act.scrollState.currentSort,
                 lastCheckedState = act.checkedState.checked
             )
-        }
-            .stateIn(
+        }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
-                initialValue = UiState()
+                initialValue = DogamUiState()
             )
 
 
@@ -155,36 +150,36 @@ class DogamViewModel(
         super.onCleared()
     }
 
-    private fun loadDogam(query : String?, sortingWay : SortingOption): Flow<PagingData<UiModel>> =
+    private fun loadDogam(query : String?, sortingWay : DogamSortingOption): Flow<PagingData<DogamUiModel>> =
         repository.getDogamstream(query, sortingWay)
-            .map { pagingData -> pagingData.map { UiModel.MushItem(it) } }
+            .map { pagingData -> pagingData.map { DogamUiModel.MushItem(it) } }
 }
 
 data class CombinedAction(
-    val searchState: UiAction.Search,
-    val scrollState: UiAction.Scroll,
-    val sortingState: UiAction.Sort,
-    val checkedState: UiAction.Filter
+    val searchState: DogamUiAction.Search,
+    val scrollState: DogamUiAction.Scroll,
+    val sortingState: DogamUiAction.Sort,
+    val checkedState: DogamUiAction.Filter
 )
 
 
 
 
-sealed class UiAction {
-    data class Search(val query: String?) : UiAction()
-    data class Scroll(val currentQuery: String?, val currentSort : SortingOption) : UiAction()
-    data class Sort(val sortOpt: SortingOption) : UiAction()
-    data class Filter(val checked: Boolean) : UiAction()
+sealed class DogamUiAction {
+    data class Search(val query: String?) : DogamUiAction()
+    data class Scroll(val currentQuery: String?, val currentSort : DogamSortingOption) : DogamUiAction()
+    data class Sort(val sortOpt: DogamSortingOption) : DogamUiAction()
+    data class Filter(val checked: Boolean) : DogamUiAction()
 }
 
-data class UiState(
+data class DogamUiState(
     //검색 상태
     val query: String? = DEFAULT_QUERY,
     val lastQueryScrolled: String? = DEFAULT_QUERY,
     
     //정렬 상태
-    val sort: SortingOption = DEFAULT_SORTING,
-    val lastSortScrolled: SortingOption = DEFAULT_SORTING,
+    val sort: DogamSortingOption = DEFAULT_SORTING,
+    val lastSortScrolled: DogamSortingOption = DEFAULT_SORTING,
     
     //새로 고침(정렬 / 상태가 바뀜)
     val hasNotScrolledForCurrentRV: Boolean = false,
@@ -193,8 +188,8 @@ data class UiState(
     val lastCheckedState : Boolean = DEFAULT_CHECKED
 )
 
-sealed class UiModel {
-    data class MushItem(val mush: Mushroom) : UiModel()
+sealed class DogamUiModel {
+    data class MushItem(val mush: Mushroom) : DogamUiModel()
 }
 
 private const val LAST_SEARCH_QUERY: String = "last_search_query"
@@ -204,5 +199,5 @@ private const val LAST_SORTING_SCROLLED : String = "last_sorting_scrolled"
 private const val LAST_CHECKED_STATE : String = "last_checked_state"
 
 private val DEFAULT_QUERY = null
-private val DEFAULT_SORTING = SortingOption.MUSH_NO
+private val DEFAULT_SORTING = DogamSortingOption.MUSH_NO
 private const val DEFAULT_CHECKED = true
