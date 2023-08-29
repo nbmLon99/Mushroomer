@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="recommended_pic_count">3</integer>
+    <integer name="hotBoard_minimum_like">20</integer>
 </resources>

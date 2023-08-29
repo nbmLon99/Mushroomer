@@ -18,7 +18,7 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:cardCornerRadius="16dp"
             app:cardElevation="5dp"
             android:layout_margin="5dp"
@@ -30,14 +30,22 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 >
-                <ImageView
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:src="@drawable/example_mushroom"
-                    android:scaleType="fitXY"
-                    imageFromUrlArray="@{post.images}"
-                    />
+                    >
+                    <ImageView
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        app:layout_constraintDimensionRatio="1"
+                        android:src="@drawable/example_mushroom"
+                        android:scaleType="fitXY"
+                        imageFromUrlArray="@{post.images}"
+                        />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -53,7 +61,7 @@
 
                         android:padding="5dp"
                         android:text="@{post.title}"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_sub"
                         android:textStyle="bold"
                         />
 

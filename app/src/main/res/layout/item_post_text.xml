@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable
@@ -11,10 +10,12 @@
     </data>
 
     <FrameLayout
+        android:id="@+id/frame"
+        android:background="@drawable/click_effect_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -22,8 +23,10 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/post_descript"
+                app:layout_constraintTop_toTopOf="parent"
                 >
                 <TextView
                     android:layout_width="match_parent"
@@ -31,7 +34,7 @@
                     android:padding="8dp"
 
                     android:text="@{post.title}"
-                    android:textSize="12sp"
+                    android:textSize="@dimen/text_sub"
                     android:textStyle="bold"
                     />
 
@@ -48,42 +51,49 @@
                     android:paddingVertical="8dp"
 
                     android:text="@{post.content[0]}"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/text_sub"
                     android:textFontWeight="300"
                     android:ellipsize="end"
                     />
             </LinearLayout>
 
+            <!-- 닉네임 / 시간 / 좋아요 -->
             <LinearLayout
+                android:id="@+id/post_descript"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="bottom|right"
                 android:paddingBottom="8dp"
                 android:paddingHorizontal="5dp"
+                app:layout_constraintRight_toLeftOf="@id/image"
+                android:layout_marginRight="5dp"
                 >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{post.writer.nickname}"
-                    android:textFontWeight="300"
-                    android:textSize="8sp"
-                    />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="10분전"
+                    android:layout_gravity="right"
                     android:layout_marginVertical="5dp"
-                    android:textSize="8sp"
+                    android:textSize="@dimen/text_small"
                     setTimeRelatively="@{post.time}"
                     />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{post.writer.nickname}"
+                    android:layout_gravity="right"
+                    android:textFontWeight="300"
+                    android:textSize="@dimen/text_small"
+                    />
+
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_gravity="center_vertical"
+                    android:layout_gravity="right|bottom"
                     android:gravity="center"
                     android:layout_marginTop="5dp"
                     >
@@ -96,10 +106,12 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="8sp"
+                        android:textSize="@dimen/text_small"
                         android:text="@{String.valueOf(post.thumbsUpCount)}"
                         android:textColor="@color/likeRed"
-                        android:layout_marginRight="3dp"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginRight="6dp"
+
                         />
                     <ImageView
                         android:layout_width="8dp"
@@ -110,25 +122,34 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="8sp"
+                        android:textSize="@dimen/text_small"
                         android:text="@{String.valueOf(post.comments.size())}"
                         android:textColor="@color/chatPurple"
-                        android:layout_marginRight="3dp"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginRight="6dp"
+
                         />
                 </LinearLayout>
 
             </LinearLayout>
 
             <ImageView
-                android:layout_width="55dp"
-                android:layout_height="55dp"
+                app:layout_constraintTop_toTopOf="@id/post_descript"
+                app:layout_constraintBottom_toBottomOf="@id/post_descript"
+                app:layout_constraintRight_toRightOf="parent"
+
+
+                android:id="@+id/image"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:padding="5dp"
                 android:src="@drawable/example_mushroom"
                 android:scaleType="fitXY"
+                app:layout_constraintDimensionRatio="1:1"
                 setImageIntoTextPost="@{post.images}"
                 />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>
 
