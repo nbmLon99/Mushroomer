@@ -74,10 +74,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/QnABoard"
+            android:textColor="@color/option_radio_clickable_color"
             android:button="@null"
             android:background="@null"
             android:checked="true"
             android:padding="3dp"
+
             />
 
         <RadioButton
@@ -85,6 +87,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            android:textColor="@color/option_radio_clickable_color"
             android:text="@string/FreeBoard"
             android:button="@null"
             android:background="@null"
@@ -96,6 +99,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            android:textColor="@color/option_radio_clickable_color"
             android:text="@string/PicBoard"
             android:button="@null"
             android:background="@null"
@@ -110,6 +114,8 @@
         android:layout_weight="1"
         android:padding="10dp"
         tools:listitem="@layout/item_post_text"
+        android:scrollbars="vertical"
+
         />
     <TextView
         android:layout_width="match_parent"

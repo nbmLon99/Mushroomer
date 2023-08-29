@@ -76,6 +76,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sort_time"
+                android:textColor="@color/option_radio_clickable_color"
                 android:button="@null"
                 android:textSize="@dimen/text_sub"
                 android:background="@null"
@@ -88,6 +89,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sort_like"
+                android:textColor="@color/option_radio_clickable_color"
                 android:textSize="@dimen/text_sub"
                 android:button="@null"
                 android:background="@null"
@@ -114,5 +116,6 @@
         app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
         app:spanCount="2"
         tools:listitem="@layout/item_post_image"
+        android:scrollbars="vertical"
         />
 </LinearLayout>

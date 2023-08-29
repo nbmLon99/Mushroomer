@@ -31,5 +31,6 @@
     <color name="CommentBg">#3CD9D9D9</color>
     <color name="myCommentBg">#3C003E0E</color>
 
+    <color name="unclickedOptionGray">#999999</color>
 
 </resources>

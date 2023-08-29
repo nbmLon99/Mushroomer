@@ -52,8 +52,6 @@ class CommuFragmentBoard_img private constructor(): CommuBoardFragment() {
         val viewModel: BoardViewModel by viewModels { viewModelFactory }
         bindView(
             boardType = mBoardType,
-            adapter = AdapterBoardPost(boardType =mBoardType),
-            searchBtn = binding.btnSearch,
             sortGroup = binding.sortRadioGroup,
             boardGroup = null,
             list = binding.postRV

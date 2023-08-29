@@ -109,7 +109,7 @@ class CommuFragment_home : Fragment(), PostClickListener {
 
     private fun openBoard(boardType: BoardType) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.FragmentContainer, getBoardFragment(boardType) ,CommuFragmentBoard.TAG)
+            .replace(R.id.FragmentContainer, getBoardFragment(boardType) ,CommuBoardFragment.TAG)
             .addToBackStack(null)
             .commit()
     }

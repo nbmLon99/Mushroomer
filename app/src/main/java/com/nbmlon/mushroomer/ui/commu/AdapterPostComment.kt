@@ -34,6 +34,7 @@ class AdapterPostComment(private val menu_cl: PopupMenuClickListener) : ListAdap
             val inflater = popupMenu.menuInflater
             inflater.inflate(R.menu.post_context_menu, popupMenu.menu)
             popupMenu.apply {
+                menu?.findItem(R.id.report)?.isVisible = !(targetComment?.isMine ?: false)
                 menu?.setGroupVisible(R.id.menuForOwner, targetComment?.isMine ?: false)
                 menu?.setGroupVisible(R.id.menuForComment, true)
                 setOnMenuItemClickListener { menuItem ->
