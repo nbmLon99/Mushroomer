@@ -62,7 +62,7 @@ class BoardViewModel(
             .distinctUntilChanged()
             .onStart { emit(CommuUiAction.ChangeBoardType(initialBoardType)) }
         //emit 된 actionFlow가 scroll -> 스크롤 이벤트 발생
-        val queriesScrolled = actionStateFlow
+        val sortScrolled = actionStateFlow
             .filterIsInstance<CommuUiAction.Scroll>()
             .distinctUntilChanged()
             // This is shared to keep the flow "hot" while caching the last query scrolled,
@@ -78,14 +78,14 @@ class BoardViewModel(
         state = combine(
             boardChanges,
             sorting,
-            queriesScrolled,
+            sortScrolled,
             ::Triple
         ).map {( _board, _sorting, _scroll  ) ->
             CommuUiState(
                 targetBoardType = _board.postingBoardType,
                 sort = _sorting.sortOpt,
                 lastSortScrolled = _scroll.currentSort,
-                hasNotScrolledForCurrentRV =
+                hasNotScrolledForCurrentSort =
                      _sorting.sortOpt != _scroll.currentSort
             )
         }.stateIn(
@@ -215,7 +215,7 @@ data class CommuUiState(
     val lastSortScrolled: PostSortingOption = DEFAULT_SORTING,
 
     //새로 고침(정렬 / 상태가 바뀜)
-    val hasNotScrolledForCurrentRV: Boolean = false,
+    val hasNotScrolledForCurrentSort: Boolean = false,
 )
 
 
