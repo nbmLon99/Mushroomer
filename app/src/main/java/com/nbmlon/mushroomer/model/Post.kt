@@ -51,9 +51,9 @@ data class Post(
     val updated: Boolean
     ) :Serializable {
     companion object {
-        fun getDummy(type : BoardType): Post {
+        fun getDummy(type : BoardType, query: String?): Post {
             return Post(
-                title = "제목",
+                title = query ?: "제목",
                 images = null,
                 content = arrayListOf("내용"),
                 time = DateTime(),
@@ -66,10 +66,10 @@ data class Post(
             )
         }
 
-        fun getDummys(type : BoardType) : ArrayList<Post>{
+        fun getDummys(type : BoardType, query : String? = null) : ArrayList<Post>{
             val items = arrayListOf<Post>()
             for ( i in 1..10) {
-                items.add(getDummy(type))
+                items.add(getDummy(type, query))
             }
             return items
         }

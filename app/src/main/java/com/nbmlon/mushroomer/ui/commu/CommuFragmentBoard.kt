@@ -1,9 +1,6 @@
 package com.nbmlon.mushroomer.ui.commu
 
-import android.util.Log
 import android.widget.RadioGroup
-import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -85,40 +82,6 @@ open abstract class CommuBoardFragment : Fragment(){
                 if (dy != 0) onScrollChanged(CommuUiAction.Scroll( currentSort = uiState.value.sort))
             }
         })
-//
-//        //Flow 생성
-//        val notLoading = adapter.loadStateFlow
-//            // Only emit when REFRESH LoadState for the paging source changes.
-//            .distinctUntilChangedBy { it.source.refresh }
-//            // Only react to cases where REFRESH completes i.e., NotLoading.
-//            .map {
-//                Log.d(TAG,it.source.refresh.toString())
-//                it.source.refresh is LoadState.NotLoading }
-//
-//        //Flow 생성
-//        val hasNotScrolledForCurrentSort = uiState
-//            .map {
-//                Log.d(TAG, it.hasNotScrolledForCurrentSort.toString())
-//                it.hasNotScrolledForCurrentSort
-//            }
-//            .distinctUntilChanged()
-//
-//        val shouldScrollToTop = combine(
-//            notLoading,
-//            hasNotScrolledForCurrentSort,
-//            Boolean::and
-//        )
-//            .distinctUntilChanged()
-//
-//
-//        lifecycleScope.launch {
-//            shouldScrollToTop.collect { shouldScroll ->
-//                if (shouldScroll){
-//                    list.scrollToPosition(0)
-//                    Log.d(TAG,"scroll 요청됨")
-//                }
-//            }
-//        }
 
         lifecycleScope.launch {
             uiState
@@ -130,7 +93,6 @@ open abstract class CommuBoardFragment : Fragment(){
 
                     adapter = AdapterBoardPost(type)
                     list.adapter = adapter
-                    Log.d(TAG,"설정됨")
 
                     val layoutManager = when (type) {
                         BoardType.QnABoard, BoardType.FreeBoard -> LinearLayoutManager(requireContext())
@@ -189,20 +151,17 @@ open abstract class CommuBoardFragment : Fragment(){
         uiState: StateFlow<CommuUiState>,
         pagingData: Flow<PagingData<Post>>
     ) : Job{
-        Log.d(TAG,"1번 호출")
         //Flow 생성
         val notLoading = adapter.loadStateFlow
             // Only emit when REFRESH LoadState for the paging source changes.
             .distinctUntilChangedBy { it.source.refresh }
             // Only react to cases where REFRESH completes i.e., NotLoading.
             .map {
-                Log.d(TAG,it.source.refresh.toString())
                 it.source.refresh is LoadState.NotLoading }
 
         //Flow 생성
         val hasNotScrolledForCurrentSort = uiState
             .map {
-                Log.d(TAG, it.hasNotScrolledForCurrentSort.toString())
                 it.hasNotScrolledForCurrentSort
             }
             .distinctUntilChanged()
@@ -216,50 +175,15 @@ open abstract class CommuBoardFragment : Fragment(){
         val parentJob = Job()
 
         lifecycleScope.launch(parentJob) {
-            Log.d(TAG, "작업 요청됨")
             //페이징 데이터 UI 반영
-            pagingData.collectLatest {
-                Log.d(TAG, "페이징호출")
-                adapter.submitData(it)
-            }
+            pagingData.collectLatest{adapter.submitData(it)}
         }
         lifecycleScope.launch(parentJob) {
-
+            //근데 굳이 이런식으로 안하고 radiobutton.onitem거기에 등록했어도 문제없었을듯?
+            //radiobutton이면 어댑터 로드 상태가 반영이 안되긴하네
             shouldScrollToTop.collect { shouldScroll ->
-                if (shouldScroll) {
+                if (shouldScroll)
                     list.scrollToPosition(0)
-                    Log.d(TAG, "scroll 요청됨")
-                }
-            }
-
-        }
-        lifecycleScope.launch(parentJob){
-            // 어댑터 로드 상태에 따른 UI 변경
-            adapter.loadStateFlow.collect { loadState ->
-                Log.d("로드 플로우", loadState.refresh.toString())
-                val isListEmpty =
-                    loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0
-                // show empty list
-                //emptyList.isVisible = isListEmpty
-                // Only show the list if refresh succeeds.
-                list.isVisible = !isListEmpty
-                // Show loading spinner during initial load or refresh.
-                //progressSpinner.isVisible = loadState.source.refresh is LoadState.Loading
-                // Show the retry state if initial load or refresh fails.
-                //retryButton.isVisible = loadState.source.refresh is LoadState.Error
-
-                // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
-                val errorState = loadState.source.append as? LoadState.Error
-                    ?: loadState.source.prepend as? LoadState.Error
-                    ?: loadState.append as? LoadState.Error
-                    ?: loadState.prepend as? LoadState.Error
-                errorState?.let {
-                    Toast.makeText(
-                        requireContext(),
-                        "\uD83D\uDE28 Wooops ${it.error}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
             }
         }
         return parentJob

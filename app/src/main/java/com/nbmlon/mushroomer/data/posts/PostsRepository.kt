@@ -12,25 +12,52 @@ import kotlinx.coroutines.flow.Flow
 /** 게시판 포스팅 레포지토리 **/
 
 interface PostsRepository {
-    /** 게시판 페이징 데이터 가져옴 **/
+    //** 게시판 페이징 데이터 가져옴 **/
     fun getPostStream(boardType: BoardType, sortOpt : PostSortingOption ): Flow<PagingData<Post>>
 }
 
 /** 홈화면 최신 게시글 레포지토리 **/
 interface CommuHomeRepository {
-    /** 게시판 홈 화면에 띄울 최신글 가져옴 **/
+    // 게시판 홈 화면에 띄울 최신글 가져옴
     fun getRecentPostsIntoHome(boardType: BoardType) : ArrayList<Post>
 }
 
+/** 게시판별 검색 창 **/
+interface PostsSearchRepository {
+    //** 검색된 페이징 데이터 가져옴 **/
+    fun getSearchedPostStream(boardType: BoardType, query : String) : Flow<PagingData<Post>>
+}
+
+
+
+
+
+
+
 fun PostsRepository() : PostsRepository = PostsRepositoryImpl()
 fun CommuHomeRepository() : CommuHomeRepository = CommuHomeRepositoryImpl()
+fun PostsSearchRepository() : PostsSearchRepository = PostsSearchRepositoryImpl()
 
+class PostsSearchRepositoryImpl : PostsSearchRepository {
+    /** query를 통해 검색된 값 가져오기 **/
+
+    override fun getSearchedPostStream(
+        boardType: BoardType,
+        query: String
+    ): Flow<PagingData<Post>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = NETWORK_PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { PostPagingSource(PostsService.create(), boardType, query) }
+        ).flow
+    }
+
+}
 
 
 private class PostsRepositoryImpl: PostsRepository {
-    companion object {
-        const val NETWORK_PAGE_SIZE = 50
-    }
 //
 //    private val baseUrl : String = ""
 //    private val retrofit: Retrofit = Retrofit.Builder()
@@ -52,7 +79,7 @@ private class PostsRepositoryImpl: PostsRepository {
                 pageSize = NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { PostPagingSource(PostsService.create(), boardType, null) }
+            pagingSourceFactory = { PostPagingSource(PostsService.create(), boardType) }
         ).flow
     }
 }
@@ -63,3 +90,5 @@ private class CommuHomeRepositoryImpl : CommuHomeRepository {
     }
 
 }
+
+private const val NETWORK_PAGE_SIZE = 50

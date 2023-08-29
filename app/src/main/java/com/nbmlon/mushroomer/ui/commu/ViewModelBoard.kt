@@ -225,25 +225,6 @@ enum class PostSortingOption(val textResId : Int) {
     SORTING_LIKE(R.string.sort_like)
 }
 
-enum class ResponseCode{
-    SUCCESS,
-    FAIL
-}
-
-sealed class CommuRequest{
-    data class ForReport(val post : Post?, val comment : Comment?) : CommuRequest()
-    data class ForDelete(val post : Post?, val comment : Comment?) : CommuRequest()
-    data class ForUpload(val post : Post?, val comment : Comment?) : CommuRequest()
-    data class ForModify(val post : Post?, val comment : Comment?) : CommuRequest()
-}
-
-
-sealed class CommuResponse{
-    data class ForReport(val code : ResponseCode) : CommuResponse()
-    data class ForDelete(val code : ResponseCode) : CommuResponse()
-    data class ForUpload(val code : ResponseCode) : CommuResponse()
-    data class ForModify(val code : ResponseCode) : CommuResponse()
-}
 
 
 

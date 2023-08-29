@@ -19,7 +19,7 @@ private const val STARTING_KEY = 0
 class PostPagingSource(
     val backend: PostsService,
     val boardType: BoardType,
-    val query: String?
+    val query: String? = null
 ) : PagingSource<Int, Post>() {
     override suspend fun load(
         params: PagingSource.LoadParams<Int>,
@@ -29,7 +29,11 @@ class PostPagingSource(
             val startKey = params.key ?: STARTING_KEY
             val range = startKey.until(startKey + params.loadSize)
             //val response = backend.getDogam(query, nextPageNumber)
-            val response = PostsResponse( Post.getDummys(boardType) )
+            var response : PostsResponse
+            if(query?.isEmpty() == true || (  query!= null && query == "test" )) //빈값 테스트 위함
+                response = PostsResponse()
+            else
+                response = PostsResponse( Post.getDummys(boardType, query) )
             return LoadResult.Page(
                 data = response.items,
                 prevKey = when (startKey) {
@@ -40,7 +44,7 @@ class PostPagingSource(
                         else -> prevKey
                     }
                 },
-                nextKey = range.last + 1
+                nextKey = if (response.items.isEmpty()) null else range.last + 1
             )
         } catch (e: IOException) {
             // IOException for network failures.
