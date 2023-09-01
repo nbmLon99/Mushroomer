@@ -51,13 +51,13 @@ data class Post(
     val updated: Boolean
     ) :Serializable {
     companion object {
-        fun getDummy(type : BoardType, query: String?): Post {
+        fun getDummy(type : BoardType, query: String?, writer: User?): Post {
             return Post(
                 title = query ?: "제목",
                 images = null,
                 content = arrayListOf("내용"),
                 time = DateTime(),
-                writer = User.getDummy(),
+                writer = writer ?: User.getDummy(),
                 comments = Comment.getDummyswithReplies(),
                 ThumbsUpCount = 0,
                 myThumbsUp = false,
@@ -66,7 +66,7 @@ data class Post(
             )
         }
 
-        fun getDummys(type : BoardType, query : String? = null) : ArrayList<Post>{
+        fun getDummys(type : BoardType, query : String? = null, writer: User? = null) : ArrayList<Post>{
             val items = arrayListOf<Post>()
             for ( i in 1..10) {
                 items.add(getDummy(type, query))

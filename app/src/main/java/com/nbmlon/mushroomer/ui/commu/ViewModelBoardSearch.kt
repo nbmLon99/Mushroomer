@@ -98,7 +98,7 @@ class BoardSearchViewModel(
     private fun loadPostsPagingSearchResult (query : String): Flow<PagingData<Post>> =
         repository.getSearchedPostStream(
             boardType = boardType,
-            query = query
+            searchKeyword = query
         )
 
 

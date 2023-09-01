@@ -33,6 +33,7 @@ class BoardViewModel(
     val responseFlow = MutableSharedFlow<CommuResponse>()
     val request : (CommuRequest) -> Unit
     val pagingDataFlow: Flow<PagingData<Post>>
+    var isHotBoard : Boolean = false
 
     /**
      * Stream of immutable states representative of the UI.
@@ -46,7 +47,10 @@ class BoardViewModel(
 
     init{
         val initialBoardType = savedStateHandle.get<BoardType>(LAST_BOARD_TYPE) ?:
-            if (boardType == BoardType.HotBoard) { BoardType.QnABoard } else { boardType }
+            if (boardType == BoardType.HotBoard) {
+                isHotBoard = true
+                BoardType.QnABoard
+            } else { boardType }
         val initialSorting : PostSortingOption = savedStateHandle.get<PostSortingOption>(LAST_SORTING_OPTION) ?: DEFAULT_SORTING
         val lastSortingScrolled : PostSortingOption = savedStateHandle.get<PostSortingOption>(LAST_SORTING_SCROLLED) ?: DEFAULT_SORTING
 
@@ -102,7 +106,7 @@ class BoardViewModel(
         ).flatMapLatest { (_sorting, _board) ->
                 loadPostsPaging(
                     boardType = _board.postingBoardType,
-                    sortOpt = _sorting.sortOpt
+                    sortOpt = _sorting.sortOpt,
                 )
             }
             .cachedIn(viewModelScope)
@@ -151,7 +155,8 @@ class BoardViewModel(
     private fun loadPostsPaging(boardType: BoardType, sortOpt : PostSortingOption): Flow<PagingData<Post>> =
         repository.getPostStream(
             boardType = boardType,
-            sortOpt = sortOpt
+            sortOpt = sortOpt,
+            isHotBoard = isHotBoard
         )
 
 
