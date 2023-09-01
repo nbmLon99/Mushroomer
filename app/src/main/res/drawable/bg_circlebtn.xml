@@ -1,4 +1,12 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
-    <solid android:color="#FFF" /> <!-- 배경색 설정 -->
-</shape>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape android:shape="oval">
+            <solid android:color="@color/unclickedOptionGray" /> <!-- Change to your desired clicked color -->
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@android:color/white" /> <!-- Default background color -->
+        </shape>
+    </item>
+</selector>

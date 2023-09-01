@@ -1,10 +1,6 @@
 package com.nbmlon.mushroomer.ui.commu
 
-import android.util.Log
-import android.widget.ImageView
 import android.widget.RadioGroup
-import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -13,9 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.nbmlon.mushroomer.R
-import com.nbmlon.mushroomer.databinding.DialogEdittextBinding
 import com.nbmlon.mushroomer.model.Post
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -24,7 +20,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import taimoor.sultani.sweetalert2.Sweetalert
 
 
 open abstract class CommuBoardFragment : Fragment(){
@@ -81,42 +76,12 @@ open abstract class CommuBoardFragment : Fragment(){
         pagingData: Flow<PagingData<Post>>,
         onScrollChanged: (CommuUiAction.Scroll) -> Unit
     ){
-        var previousJob: Job? = null // 페이징 데이터 collectLatest 작업을 추적하는 Job 객체
+        var currentJob : Job? = null // 페이징 데이터 collectLatest 작업을 추적하는 Job 객체
         list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dy != 0) onScrollChanged(CommuUiAction.Scroll( currentSort = uiState.value.sort))
             }
         })
-
-        //Flow 생성
-        val notLoading = adapter.loadStateFlow
-            // Only emit when REFRESH LoadState for the paging source changes.
-            .distinctUntilChangedBy { it.source.refresh }
-            // Only react to cases where REFRESH completes i.e., NotLoading.
-            .map { it.source.refresh is LoadState.NotLoading }
-
-        //Flow 생성
-        val hasNotScrolledForCurrentSearch = uiState
-            .map { it.hasNotScrolledForCurrentRV }
-            .distinctUntilChanged()
-
-        val shouldScrollToTop = combine(
-            notLoading,
-            hasNotScrolledForCurrentSearch,
-            Boolean::and
-        )
-            .distinctUntilChanged()
-
-//
-//        lifecycleScope.launch {
-//            pagingData.collectLatest(adapter::submitData)
-//        }
-
-        lifecycleScope.launch {
-            shouldScrollToTop.collect { shouldScroll ->
-                if (shouldScroll) list.scrollToPosition(0)
-            }
-        }
 
         lifecycleScope.launch {
             uiState
@@ -124,7 +89,7 @@ open abstract class CommuBoardFragment : Fragment(){
                 .distinctUntilChanged()
                 .collect{ type ->
                     // 이전 어댑터에서 수행하던 작업 취소
-                    previousJob?.cancel()
+                    currentJob?.cancelChildren()
 
                     adapter = AdapterBoardPost(type)
                     list.adapter = adapter
@@ -142,40 +107,11 @@ open abstract class CommuBoardFragment : Fragment(){
                     list.layoutManager = layoutManager
 
                     // 새로운 어댑터와 함께 페이징 데이터 처리
-                    previousJob = lifecycleScope.launch {
-                        pagingData.collectLatest {
-                            adapter.submitData(it)
-                        }
-                    }
+                    currentJob = bindBoardAdapter(
+                        uiState =uiState, 
+                        pagingData = pagingData
+                    )
                 }
-//
-//            uiState
-//                .map{it.sort}
-
-            adapter.loadStateFlow.collect { loadState ->
-                val isListEmpty = loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0
-                // show empty list
-                //emptyList.isVisible = isListEmpty
-                // Only show the list if refresh succeeds.
-                list.isVisible = !isListEmpty
-                // Show loading spinner during initial load or refresh.
-                //progressSpinner.isVisible = loadState.source.refresh is LoadState.Loading
-                // Show the retry state if initial load or refresh fails.
-                //retryButton.isVisible = loadState.source.refresh is LoadState.Error
-
-                // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
-                val errorState = loadState.source.append as? LoadState.Error
-                    ?: loadState.source.prepend as? LoadState.Error
-                    ?: loadState.append as? LoadState.Error
-                    ?: loadState.prepend as? LoadState.Error
-                errorState?.let {
-                    Toast.makeText(
-                        requireContext(),
-                        "\uD83D\uDE28 Wooops ${it.error}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
         }
     }
 
@@ -209,6 +145,48 @@ open abstract class CommuBoardFragment : Fragment(){
                     }
                 }
         }
+    }
+
+    private fun bindBoardAdapter (
+        uiState: StateFlow<CommuUiState>,
+        pagingData: Flow<PagingData<Post>>
+    ) : Job{
+        //Flow 생성
+        val notLoading = adapter.loadStateFlow
+            // Only emit when REFRESH LoadState for the paging source changes.
+            .distinctUntilChangedBy { it.source.refresh }
+            // Only react to cases where REFRESH completes i.e., NotLoading.
+            .map {
+                it.source.refresh is LoadState.NotLoading }
+
+        //Flow 생성
+        val hasNotScrolledForCurrentSort = uiState
+            .map {
+                it.hasNotScrolledForCurrentSort
+            }
+            .distinctUntilChanged()
+
+        val shouldScrollToTop = combine(
+            notLoading,
+            hasNotScrolledForCurrentSort,
+            Boolean::and
+        )
+            .distinctUntilChanged()
+        val parentJob = Job()
+
+        lifecycleScope.launch(parentJob) {
+            //페이징 데이터 UI 반영
+            pagingData.collectLatest{adapter.submitData(it)}
+        }
+        lifecycleScope.launch(parentJob) {
+            //근데 굳이 이런식으로 안하고 radiobutton.onitem거기에 등록했어도 문제없었을듯?
+            //radiobutton이면 어댑터 로드 상태가 반영이 안되긴하네
+            shouldScrollToTop.collect { shouldScroll ->
+                if (shouldScroll)
+                    list.scrollToPosition(0)
+            }
+        }
+        return parentJob
     }
 
     private fun bindChangeBoard(

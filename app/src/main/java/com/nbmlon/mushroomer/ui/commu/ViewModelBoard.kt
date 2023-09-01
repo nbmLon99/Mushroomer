@@ -33,6 +33,7 @@ class BoardViewModel(
     val responseFlow = MutableSharedFlow<CommuResponse>()
     val request : (CommuRequest) -> Unit
     val pagingDataFlow: Flow<PagingData<Post>>
+    var isHotBoard : Boolean = false
 
     /**
      * Stream of immutable states representative of the UI.
@@ -46,7 +47,10 @@ class BoardViewModel(
 
     init{
         val initialBoardType = savedStateHandle.get<BoardType>(LAST_BOARD_TYPE) ?:
-            if (boardType == BoardType.HotBoard) { BoardType.QnABoard } else { boardType }
+            if (boardType == BoardType.HotBoard) {
+                isHotBoard = true
+                BoardType.QnABoard
+            } else { boardType }
         val initialSorting : PostSortingOption = savedStateHandle.get<PostSortingOption>(LAST_SORTING_OPTION) ?: DEFAULT_SORTING
         val lastSortingScrolled : PostSortingOption = savedStateHandle.get<PostSortingOption>(LAST_SORTING_SCROLLED) ?: DEFAULT_SORTING
 
@@ -62,7 +66,7 @@ class BoardViewModel(
             .distinctUntilChanged()
             .onStart { emit(CommuUiAction.ChangeBoardType(initialBoardType)) }
         //emit 된 actionFlow가 scroll -> 스크롤 이벤트 발생
-        val queriesScrolled = actionStateFlow
+        val sortScrolled = actionStateFlow
             .filterIsInstance<CommuUiAction.Scroll>()
             .distinctUntilChanged()
             // This is shared to keep the flow "hot" while caching the last query scrolled,
@@ -78,14 +82,14 @@ class BoardViewModel(
         state = combine(
             boardChanges,
             sorting,
-            queriesScrolled,
+            sortScrolled,
             ::Triple
         ).map {( _board, _sorting, _scroll  ) ->
             CommuUiState(
                 targetBoardType = _board.postingBoardType,
                 sort = _sorting.sortOpt,
                 lastSortScrolled = _scroll.currentSort,
-                hasNotScrolledForCurrentRV =
+                hasNotScrolledForCurrentSort =
                      _sorting.sortOpt != _scroll.currentSort
             )
         }.stateIn(
@@ -102,7 +106,7 @@ class BoardViewModel(
         ).flatMapLatest { (_sorting, _board) ->
                 loadPostsPaging(
                     boardType = _board.postingBoardType,
-                    sortOpt = _sorting.sortOpt
+                    sortOpt = _sorting.sortOpt,
                 )
             }
             .cachedIn(viewModelScope)
@@ -151,7 +155,8 @@ class BoardViewModel(
     private fun loadPostsPaging(boardType: BoardType, sortOpt : PostSortingOption): Flow<PagingData<Post>> =
         repository.getPostStream(
             boardType = boardType,
-            sortOpt = sortOpt
+            sortOpt = sortOpt,
+            isHotBoard = isHotBoard
         )
 
 
@@ -215,7 +220,7 @@ data class CommuUiState(
     val lastSortScrolled: PostSortingOption = DEFAULT_SORTING,
 
     //새로 고침(정렬 / 상태가 바뀜)
-    val hasNotScrolledForCurrentRV: Boolean = false,
+    val hasNotScrolledForCurrentSort: Boolean = false,
 )
 
 
@@ -225,25 +230,6 @@ enum class PostSortingOption(val textResId : Int) {
     SORTING_LIKE(R.string.sort_like)
 }
 
-enum class ResponseCode{
-    SUCCESS,
-    FAIL
-}
-
-sealed class CommuRequest{
-    data class ForReport(val post : Post?, val comment : Comment?) : CommuRequest()
-    data class ForDelete(val post : Post?, val comment : Comment?) : CommuRequest()
-    data class ForUpload(val post : Post?, val comment : Comment?) : CommuRequest()
-    data class ForModify(val post : Post?, val comment : Comment?) : CommuRequest()
-}
-
-
-sealed class CommuResponse{
-    data class ForReport(val code : ResponseCode) : CommuResponse()
-    data class ForDelete(val code : ResponseCode) : CommuResponse()
-    data class ForUpload(val code : ResponseCode) : CommuResponse()
-    data class ForModify(val code : ResponseCode) : CommuResponse()
-}
 
 
 
