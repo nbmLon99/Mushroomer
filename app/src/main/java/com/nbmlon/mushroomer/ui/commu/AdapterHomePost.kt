@@ -10,7 +10,9 @@ import com.nbmlon.mushroomer.model.Post
 import com.nbmlon.mushroomer.model.PostDiffCallback
 
 
-/** CommuHome에서 표시할 최신글 들 Adapter **/
+/**
+ * 커뮤니티 탭을 처음 클릭했을 떄 표시할 최시글들을 담을 ListAdpater
+ * **/
 class AdapterHomePost(val cl : PostClickListener) : ListAdapter<Post, RecyclerView.ViewHolder>(PostDiffCallback()) {
     inner class TextPostViewHolder(private val itemBinding: ItemCommuHomeTextBinding) : RecyclerView.ViewHolder(itemBinding.root), HomeAdapterHolder {
         override fun bind(pos : Int){
@@ -32,6 +34,9 @@ class AdapterHomePost(val cl : PostClickListener) : ListAdapter<Post, RecyclerVi
         }
     }
 
+
+
+
     override fun getItemViewType(position: Int): Int {
         return getItem(position).boardType.ordinal
     }
@@ -49,3 +54,6 @@ class AdapterHomePost(val cl : PostClickListener) : ListAdapter<Post, RecyclerVi
     }
 }
 
+fun interface HomeAdapterHolder {
+    fun bind(position : Int)
+}

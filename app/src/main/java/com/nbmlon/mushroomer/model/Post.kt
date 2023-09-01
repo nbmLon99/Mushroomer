@@ -33,7 +33,7 @@ import java.text.SimpleDateFormat
  * @param comments      댓글
  * @param ThumbsUpCount 좋아요 수
  *
- * @param boardType         포스팅 타입
+ * @param boardType     포스팅 게시판 소속  (자유게시판/ QnA게시판 / 사진게시판 으로만 구성되어야함.)
  * @param myThumbsUp    내 좋아요 유무
  * @param updated       수정 유무 ( 수정됨 )
  */
@@ -69,7 +69,7 @@ data class Post(
         fun getDummys(type : BoardType, query : String? = null, writer: User? = null) : ArrayList<Post>{
             val items = arrayListOf<Post>()
             for ( i in 1..10) {
-                items.add(getDummy(type, query))
+                items.add(getDummy(type, query, writer))
             }
             return items
         }

@@ -85,14 +85,14 @@ class CommuFragment_home : Fragment(), PostClickListener {
             //내 댓글 열기
             openMyComment.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_history.getInstance(BoardType.MyComments),CommuFragment_history.TAG)
+                    .replace(R.id.FragmentContainer, CommuFragment_history.getInstance(BoardType.MyComments, false),CommuFragment_history.TAG)
                     .addToBackStack(null)
                     .commit()
             }
             //내 포스트 열기
             openMyPost.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_history.getInstance(BoardType.MyPosts),CommuFragment_history.TAG)
+                    .replace(R.id.FragmentContainer, CommuFragment_history.getInstance(BoardType.MyPosts, true),CommuFragment_history.TAG)
                     .addToBackStack(null)
                     .commit()
             }
