@@ -34,7 +34,7 @@
                     android:orientation="vertical"
                     android:padding="10dp"
                     android:background="@color/CommentBg"
-                    checkMyComment = "@{comment.isMine}"
+                    app:checkMyComment = "@{comment.isMine}"
                     >
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -66,7 +66,7 @@
                         android:gravity="right"
                         android:textSize="@dimen/text_small"
                         android:textFontWeight="300"
-                        setTimeRelatively="@{comment.time}"
+                        app:setTimeRelatively="@{comment.time}"
                         />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -83,7 +83,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:src="@drawable/icons_profile"
-                    setUserIcon="@{comment.writer.icon}"
+                    app:setUserIcon="@{comment.writer.icon}"
                     />
                 <TextView
                     android:id="@+id/tv_user"

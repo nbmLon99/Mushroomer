@@ -77,7 +77,7 @@
                     android:layout_gravity="right"
                     android:layout_marginVertical="5dp"
                     android:textSize="@dimen/text_small"
-                    setTimeRelatively="@{post.time}"
+                    app:setTimeRelatively="@{post.time}"
                     />
                 <TextView
                     android:layout_width="wrap_content"
@@ -146,7 +146,7 @@
                 android:src="@drawable/example_mushroom"
                 android:scaleType="fitXY"
                 app:layout_constraintDimensionRatio="1:1"
-                setImageIntoTextPost="@{post.images}"
+                app:setImageIntoPreview="@{post.images}"
                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

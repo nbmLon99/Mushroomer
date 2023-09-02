@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     >
     <data>
         <variable
@@ -33,7 +34,7 @@
             android:textSize="10sp"
             android:text="10분전"
             android:textFontWeight="300"
-            setTimeRelatively="@{post.time}"
+            app:setTimeRelatively="@{post.time}"
             />
     </LinearLayout>
 
