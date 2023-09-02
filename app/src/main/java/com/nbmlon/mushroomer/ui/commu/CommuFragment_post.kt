@@ -118,8 +118,7 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
     /** PopupMenu Listener For Comment **/
     override fun onClickReport(target_post: Post?, target_comment: Comment?) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.FragmentContainer, CommuFragment_report.newInstance(target_post,target_comment))
-            .addToBackStack(null)
+            .add(R.id.FragmentContainer, CommuFragment_report.newInstance(target_post,target_comment))
             .commit()
     }
 
