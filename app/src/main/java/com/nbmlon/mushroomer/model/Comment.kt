@@ -43,17 +43,12 @@ data class Comment(
     val isMine = (writer == AppUser.user)
 }
 class CommentDataBindingAdapter{
-    companion object{
-        @JvmStatic
-        @BindingAdapter("checkMyComment")
-        fun bindCommentBackground(linearLayout: LinearLayout, isMine : Boolean){
-            if (isMine)
-                linearLayout.setBackgroundColor(ContextCompat.getColor(linearLayout.context, R.color.CommentBg))
-            else
-                linearLayout.setBackgroundColor(ContextCompat.getColor(linearLayout.context, R.color.myCommentBg))
-
-        }
-
+    @BindingAdapter("checkMyComment")
+    fun bindCommentBackground(linearLayout: LinearLayout, isMine : Boolean){
+        if (isMine)
+            linearLayout.setBackgroundColor(ContextCompat.getColor(linearLayout.context, R.color.CommentBg))
+        else
+            linearLayout.setBackgroundColor(ContextCompat.getColor(linearLayout.context, R.color.myCommentBg))
     }
 
 }

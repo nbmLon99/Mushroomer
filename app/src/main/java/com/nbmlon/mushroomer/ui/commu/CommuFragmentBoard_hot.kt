@@ -75,8 +75,7 @@ class CommuFragmentBoard_hot private constructor(): CommuBoardFragment() {
             btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
             btnSearch.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_search.getInstance(board_typd_idx!!), CommuFragment_search.TAG)
-                    .addToBackStack(null)
+                    .add(R.id.FragmentContainer, CommuFragment_search.getInstance(board_typd_idx!!), CommuFragment_search.TAG)
                     .commit()
             }
         }

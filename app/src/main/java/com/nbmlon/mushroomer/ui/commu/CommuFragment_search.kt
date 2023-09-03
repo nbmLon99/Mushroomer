@@ -16,6 +16,7 @@ import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.data.posts.PostsSearchRepository
 import com.nbmlon.mushroomer.databinding.FragmentCommuSearchBinding
 import com.nbmlon.mushroomer.model.Post
@@ -35,7 +36,7 @@ import kotlinx.coroutines.launch
 /**
  * 게시글 검색
  */
-class CommuFragment_search private constructor(): Fragment() {
+class CommuFragment_search private constructor(): Fragment(), PostClickListener {
     companion object {
         const val TAG = "CommuFragment_search"
 
@@ -110,7 +111,7 @@ class CommuFragment_search private constructor(): Fragment() {
         pagingData: Flow<PagingData<Post>>,
         uiActions: (SearchUiAction) -> Unit,
     ){
-        val searchAdapter = AdapterBoardPost(boardType = mBoardType)
+        val searchAdapter = AdapterBoardPost(boardType = mBoardType, cl = this@CommuFragment_search::openPost)
         val layoutManager = when (mBoardType) {
             BoardType.PicBoard -> StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             else -> LinearLayoutManager(requireContext())
@@ -227,4 +228,10 @@ class CommuFragment_search private constructor(): Fragment() {
         }
     }
 
+
+    override fun openPost(post: Post) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .add(R.id.FragmentContainer, CommuFragment_post.getInstance(post),CommuFragment_post.TAG)
+            .commit()
+    }
 }

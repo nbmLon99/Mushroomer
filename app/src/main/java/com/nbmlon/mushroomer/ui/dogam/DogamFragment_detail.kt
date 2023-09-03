@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.nbmlon.mushroomer.databinding.FragmentDogamDetailBinding
+import com.nbmlon.mushroomer.model.MushHistory
 import com.nbmlon.mushroomer.model.Mushroom
 
 private const val TARGET_MUSH = "mush"
@@ -15,7 +16,7 @@ private const val TARGET_MUSH = "mush"
 /**
  * 특정 버섯 표시하는 도감 디테일
  */
-class DogamFragment_detail : Fragment() {
+class DogamFragment_detail : Fragment(), DogamHistoryClickListener{
 
     companion object {
         const val TAG ="DogamFragment_Detail"
@@ -59,13 +60,18 @@ class DogamFragment_detail : Fragment() {
         binding.apply {
             mushroom = mMush
             btnClose.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
-            myMushHistory.adapter = HistoryPicturesAdapter().apply {
+            myMushHistory.adapter = HistoryPicturesAdapter( this@DogamFragment_detail::openPictureDialog ).apply {
                 submitList(mMush!!.myHistory)
             }
             if(!mMush!!.gotcha)
                 myMushPicturesFrame.visibility = View.GONE
         }
 
+    }
+
+    override fun openPictureDialog(clickedMushHistory: MushHistory) {
+        PictureDialogFragment.getInstance(target= clickedMushHistory,callFrom= PictureDialogFrom.DogamFrag)
+            .show(requireActivity().supportFragmentManager,PictureDialogFragment.TAG)
     }
 
 

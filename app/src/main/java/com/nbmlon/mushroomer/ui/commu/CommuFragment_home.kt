@@ -1,5 +1,6 @@
 package com.nbmlon.mushroomer.ui.commu
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.ContextMenu
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCommuHomeBinding
+import com.nbmlon.mushroomer.model.MushHistory
 import com.nbmlon.mushroomer.model.Post
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -85,15 +87,13 @@ class CommuFragment_home : Fragment(), PostClickListener {
             //내 댓글 열기
             openMyComment.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_history.getInstance(BoardType.MyComments),CommuFragment_history.TAG)
-                    .addToBackStack(null)
+                    .add(R.id.FragmentContainer, CommuFragment_history.getInstance(BoardType.MyComments, false),CommuFragment_history.TAG)
                     .commit()
             }
             //내 포스트 열기
             openMyPost.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_history.getInstance(BoardType.MyPosts),CommuFragment_history.TAG)
-                    .addToBackStack(null)
+                    .add(R.id.FragmentContainer, CommuFragment_history.getInstance(BoardType.MyPosts, true),CommuFragment_history.TAG)
                     .commit()
             }
         }
@@ -109,15 +109,13 @@ class CommuFragment_home : Fragment(), PostClickListener {
 
     private fun openBoard(boardType: BoardType) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.FragmentContainer, getBoardFragment(boardType) ,CommuBoardFragment.TAG)
-            .addToBackStack(null)
+            .add(R.id.FragmentContainer, getBoardFragment(boardType) ,CommuBoardFragment.TAG)
             .commit()
     }
 
     override fun openPost(post: Post) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.FragmentContainer, CommuFragment_post.getInstance(post),CommuFragment_post.TAG)
-            .addToBackStack(null)
+            .add(R.id.FragmentContainer, CommuFragment_post.getInstance(post),CommuFragment_post.TAG)
             .commit()
     }
 

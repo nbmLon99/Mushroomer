@@ -109,6 +109,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
+                            android:layout_marginBottom="5dp"
                             >
                             <TextView
                                 android:id="@+id/post_title"
@@ -127,16 +128,41 @@
                                 android:padding="1dp"
                                 android:src="@drawable/icons_more" />
                         </LinearLayout>
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <com.smarteist.autoimageslider.SliderView
+                                android:id="@+id/imageSlider"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                app:layout_constraintDimensionRatio="1"
+                                app:layout_constraintTop_toTopOf="parent"
+                                
+                                app:sliderAnimationDuration="600"
+                                app:sliderAutoCycleDirection="back_and_forth"
+                                app:sliderAutoCycleEnabled="true"
+                                app:sliderIndicatorAnimationDuration="600"
+                                app:sliderIndicatorGravity="center_horizontal|bottom"
+                                app:sliderIndicatorMargin="15dp"
+                                app:sliderIndicatorOrientation="horizontal"
+                                app:sliderIndicatorPadding="3dp"
+                                app:sliderIndicatorRadius="2dp"
+                                app:sliderIndicatorSelectedColor="#5A5A5A"
+                                app:sliderIndicatorUnselectedColor="#FFF"
+                                app:sliderStartAutoCycle="false"
+                                />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <TextView
                             android:id="@+id/post_content"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
 
-                            android:text="내용이 들어가는 곳입니다."
+                            android:text="@{post.content}"
                             android:paddingVertical="10dp"
                             android:textSize="12sp"
-                            setPostContent="@{post}"
                             />
                         <TextView
                             android:id="@+id/post_time"

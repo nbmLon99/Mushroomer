@@ -8,13 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nbmlon.mushroomer.databinding.ItemHistoryPicturesBinding
 import com.nbmlon.mushroomer.model.MushHistory
 
-class HistoryPicturesAdapter : ListAdapter<MushHistory, HistoryPicturesAdapter.HistoryPicturesViewHolder>(DiffCallback()) {
+class HistoryPicturesAdapter(private val cl : DogamHistoryClickListener) : ListAdapter<MushHistory, HistoryPicturesAdapter.HistoryPicturesViewHolder>(DiffCallback()) {
     private lateinit var itemBinding: ItemHistoryPicturesBinding
 
     inner class HistoryPicturesViewHolder(val binding : ItemHistoryPicturesBinding) : RecyclerView.ViewHolder(binding.root){
         fun bind(position: Int){
             binding.apply {
                 mushHistory = getItem(position)
+                frame.setOnClickListener { cl.openPictureDialog( getItem(position) ) }
                 executePendingBindings()
             }
         }
@@ -26,6 +27,7 @@ class HistoryPicturesAdapter : ListAdapter<MushHistory, HistoryPicturesAdapter.H
     override fun onBindViewHolder(holder: HistoryPicturesViewHolder, position: Int) {
         holder.bind(position)
     }
+
 }
 
 class DiffCallback : DiffUtil.ItemCallback<MushHistory>() {

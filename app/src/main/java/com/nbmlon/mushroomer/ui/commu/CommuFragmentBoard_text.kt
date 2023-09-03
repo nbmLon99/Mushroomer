@@ -81,16 +81,14 @@ class CommuFragmentBoard_text private constructor(): CommuBoardFragment() {
             //검색버튼
             btnSearch.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_search.getInstance(board_type_idx!!),CommuFragment_search.TAG)
-                    .addToBackStack(null)
+                    .add(R.id.FragmentContainer, CommuFragment_search.getInstance(board_type_idx!!),CommuFragment_search.TAG)
                     .commit()
             }
 
             //글쓰기 버튼
             btnWrite.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_write.getInstance(board_type_idx ?: 1) , CommuFragment_write.TAG)
-                    .addToBackStack(null)
+                    .add(R.id.FragmentContainer, CommuFragment_write.getInstance(board_type_idx ?: 1) , CommuFragment_write.TAG)
                     .commit()
             }
 

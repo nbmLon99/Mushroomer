@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 
-open abstract class CommuBoardFragment : Fragment(){
+open abstract class CommuBoardFragment : Fragment(), PostClickListener{
     companion object{
         const val TAG = "CommuBoardFragment"
     }
@@ -34,6 +34,7 @@ open abstract class CommuBoardFragment : Fragment(){
     private var boardGroup : RadioGroup? = null
 
 
+
     protected fun bindView(
         boardType: BoardType,
         list : RecyclerView,
@@ -41,7 +42,7 @@ open abstract class CommuBoardFragment : Fragment(){
         boardGroup : RadioGroup?
     ){
         this.boardType = boardType
-        this.adapter = AdapterBoardPost(boardType)
+        this.adapter = AdapterBoardPost(boardType, this@CommuBoardFragment::openPost)
         this.sortGroup = sortGroup
         this.boardGroup = boardGroup
         this.list = list
@@ -91,7 +92,7 @@ open abstract class CommuBoardFragment : Fragment(){
                     // 이전 어댑터에서 수행하던 작업 취소
                     currentJob?.cancelChildren()
 
-                    adapter = AdapterBoardPost(type)
+                    adapter = AdapterBoardPost(type, this@CommuBoardFragment::openPost)
                     list.adapter = adapter
 
                     val layoutManager = when (type) {
@@ -223,6 +224,12 @@ open abstract class CommuBoardFragment : Fragment(){
                     }
                 }
         }
+    }
+
+    override fun openPost(post: Post) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .add(R.id.FragmentContainer, CommuFragment_post.getInstance(post),CommuFragment_post.TAG)
+            .commit()
     }
 }
 

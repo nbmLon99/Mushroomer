@@ -18,10 +18,10 @@ class CommuFragmentBoard_img private constructor(): CommuBoardFragment() {
     companion object {
         const val TAG = "CommuFragmentBoard_image"
         @JvmStatic
-        fun getInstance(param1: Int) =
+        fun getInstance(boardTypeOrd: Int) =
             CommuFragmentBoard_img().apply {
                 arguments = Bundle().apply {
-                    putInt(BOARD_TYPE_ORDINAL, param1)
+                    putInt(BOARD_TYPE_ORDINAL, boardTypeOrd)
                 }
             }
     }
@@ -75,16 +75,14 @@ class CommuFragmentBoard_img private constructor(): CommuBoardFragment() {
             //검색버튼
             btnSearch.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_search.getInstance(board_typd_idx!!), CommuFragment_search.TAG)
-                    .addToBackStack(null)
+                    .add(R.id.FragmentContainer, CommuFragment_search.getInstance(board_typd_idx!!), CommuFragment_search.TAG)
                     .commit()
             }
 
             //글쓰기 버튼
             btnWrite.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_write.getInstance(board_typd_idx ?: 1), CommuFragment_write.TAG)
-                    .addToBackStack(null)
+                    .add(R.id.FragmentContainer, CommuFragment_write.getInstance(board_typd_idx ?: 1), CommuFragment_write.TAG)
                     .commit()
             }
         }
