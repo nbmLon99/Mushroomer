@@ -50,7 +50,7 @@ class CommuFragment_history private constructor():  Fragment(), PostClickListene
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCommuHistoryBinding.inflate(layoutInflater)
-        val viewModel = BoardHistoryViewModel(forMyPost)
+        val viewModel = ViewModelBoardHistory(forMyPost)
         myPostAdpater = AdapterBoardPost(mBoardType, this@CommuFragment_history::openPost)
 
         lifecycleScope.launch{

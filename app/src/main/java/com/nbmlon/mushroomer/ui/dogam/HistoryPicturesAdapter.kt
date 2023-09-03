@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nbmlon.mushroomer.databinding.ItemHistoryPicturesBinding
 import com.nbmlon.mushroomer.model.MushHistory
 
-class HistoryPicturesAdapter(private val cl : DogamHistoryClickListener) : ListAdapter<MushHistory, HistoryPicturesAdapter.HistoryPicturesViewHolder>(DiffCallback()) {
+class HistoryPicturesAdapter(private val cl : DogamHistoryClickListener) : ListAdapter<MushHistory, HistoryPicturesAdapter.HistoryPicturesViewHolder>(MushHistoryDiffCallback()) {
     private lateinit var itemBinding: ItemHistoryPicturesBinding
 
     inner class HistoryPicturesViewHolder(val binding : ItemHistoryPicturesBinding) : RecyclerView.ViewHolder(binding.root){
@@ -30,7 +30,7 @@ class HistoryPicturesAdapter(private val cl : DogamHistoryClickListener) : ListA
 
 }
 
-class DiffCallback : DiffUtil.ItemCallback<MushHistory>() {
+class MushHistoryDiffCallback : DiffUtil.ItemCallback<MushHistory>() {
     override fun areItemsTheSame(oldItem: MushHistory, newItem: MushHistory): Boolean {
         return oldItem.date == newItem.date
     }

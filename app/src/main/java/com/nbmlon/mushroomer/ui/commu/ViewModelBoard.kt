@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class BoardViewModel(
+class ViewModelBoard(
     private val repository : PostsRepository,
     private val savedStateHandle: SavedStateHandle,
     boardType: BoardType

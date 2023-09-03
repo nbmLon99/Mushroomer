@@ -28,7 +28,7 @@ class CommuFragment_report private constructor() : Fragment() {
     private var targetComment: Comment? = null
     private var _binding: FragmentCommuReportBinding? = null
     private val binding get() = _binding!!
-    private val viewModel by viewModels<BoardViewModel>()
+    private val viewModel by viewModels<ViewModelBoard>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {

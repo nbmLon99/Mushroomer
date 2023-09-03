@@ -79,34 +79,49 @@
                 android:gravity="center_vertical"
                 android:hint="제목을 입력하세요"
 
-                android:textSize="20sp"
+                android:textSize="@dimen/text_main"
                 android:textStyle="bold"
                 />
             <ImageView
                 android:id="@+id/btnAddPic"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-
+                android:clickable="true"
+                android:background="@drawable/bg_clickable_circlebtn"
                 android:src="@drawable/icons_camera"
                 android:padding="5dp"
                 />
 
         </LinearLayout>
         <!--Content -->
+        <!-- 올린 사진 -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:visibility="gone"
+            android:id="@+id/pictureRV"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:layout_marginVertical="20dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_photo_checking"
+            />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:layout_marginVertical="10dp"
+            android:padding="5dp"
+            android:scrollbars="vertical"
 
             android:hint="내용을 입력하세요"
+            android:textSize="@dimen/text_sub"
             />
 
         <!-- 커뮤니티 이용 규칙 -->
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="100dp"
             android:orientation="vertical"
             >
             <LinearLayout

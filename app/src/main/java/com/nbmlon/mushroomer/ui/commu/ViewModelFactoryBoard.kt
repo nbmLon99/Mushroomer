@@ -20,10 +20,10 @@ class BoardViewModelFactory(
         modelClass: Class<T>,
         handle: SavedStateHandle
     ): T {
-        if (modelClass.isAssignableFrom(BoardViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(ViewModelBoard::class.java)) {
 
             @Suppress("UNCHECKED_CAST")
-            return BoardViewModel(repository, handle, boardType ) as T
+            return ViewModelBoard(repository, handle, boardType ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
@@ -40,9 +40,9 @@ class SearchViewModelFactory(
         modelClass: Class<T>,
         handle: SavedStateHandle
     ): T {
-        if (modelClass.isAssignableFrom(BoardSearchViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(ViewModelBoardSearch::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return BoardSearchViewModel(repository, handle, boardType ) as T
+            return ViewModelBoardSearch(repository, handle, boardType ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

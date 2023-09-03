@@ -13,7 +13,7 @@ import com.nbmlon.mushroomer.model.PostDiffCallback
 /**
  * 커뮤니티 탭을 처음 클릭했을 떄 표시할 최시글들을 담을 ListAdpater
  * **/
-class AdapterHomePost(val cl : PostClickListener) : ListAdapter<Post, RecyclerView.ViewHolder>(PostDiffCallback()) {
+class AdapterHomePost(val cl : PostClickListener) : ListAdapter<Post, RecyclerView.ViewHolder>(PostDiffCallback) {
     inner class TextPostViewHolder(private val itemBinding: ItemCommuHomeTextBinding) : RecyclerView.ViewHolder(itemBinding.root), HomeAdapterHolder {
         override fun bind(pos : Int){
             itemBinding.apply {

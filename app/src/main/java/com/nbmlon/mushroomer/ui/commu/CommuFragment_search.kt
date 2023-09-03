@@ -75,7 +75,7 @@ class CommuFragment_search private constructor(): Fragment(), PostClickListener 
             repository = PostsSearchRepository(),
             boardType =  mBoardType
         )
-        val viewModel: BoardSearchViewModel by viewModels { viewModelFactory }
+        val viewModel: ViewModelBoardSearch by viewModels { viewModelFactory }
 
         binding.bindState(
             uiState = viewModel.state,

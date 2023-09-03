@@ -52,7 +52,7 @@ class CommuFragmentBoard_hot private constructor(): CommuBoardFragment() {
             boardType =  mBoardType
         )
 
-        val viewModel: BoardViewModel by viewModels { viewModelFactory }
+        val viewModel: ViewModelBoard by viewModels { viewModelFactory }
         bindView(
             boardType = mBoardType,
             sortGroup = null,

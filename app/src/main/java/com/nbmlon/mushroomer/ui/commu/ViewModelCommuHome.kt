@@ -10,7 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
-class CommuHomeViewModel(
+class ViewModelCommuHome(
 ) : ViewModel() {
     val repository = CommuHomeRepository()
     private val _recentPosts = MutableLiveData<Commu>()

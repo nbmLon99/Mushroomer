@@ -78,6 +78,9 @@ class PictureDialogFragment private constructor(): DialogFragment() {
 
 
     private fun goAnother(){
+        if (requireActivity() is pictureDialogListener) {
+            (requireActivity() as pictureDialogListener).goAnotherBtnClicked(callFrom)
+        }
         when (callFrom){
             PictureDialogFrom.DogamFrag->{
                 requireActivity().supportFragmentManager.beginTransaction()
@@ -93,8 +96,8 @@ class PictureDialogFragment private constructor(): DialogFragment() {
     }
 
     private fun goPicBoard(){
-        if (requireActivity() is goPicBoardBtnClickListener) {
-            (requireActivity() as goPicBoardBtnClickListener).goPicBoardBtnClicked(mMushHistory)
+        if (requireActivity() is pictureDialogListener) {
+            (requireActivity() as pictureDialogListener).goPicBoardBtnClicked(mMushHistory)
         }
     }
 
@@ -105,6 +108,8 @@ enum class PictureDialogFrom{
     DogamFrag
 }
 
-fun interface goPicBoardBtnClickListener {
+interface pictureDialogListener {
     fun goPicBoardBtnClicked(mushHistory: MushHistory)
+    fun goAnotherBtnClicked(from : PictureDialogFrom)
+
 }

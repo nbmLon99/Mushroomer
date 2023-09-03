@@ -29,7 +29,7 @@ class CommuFragment_home : Fragment(), PostClickListener {
     private lateinit var adapterFree : AdapterHomePost
     private lateinit var adapterPic : AdapterHomePost
 
-    private val viewModel : CommuHomeViewModel by viewModels()
+    private val viewModel : ViewModelCommuHome by viewModels()
     private var loading : Sweetalert? = null
 
 
