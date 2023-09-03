@@ -42,7 +42,7 @@
                         app:layout_constraintDimensionRatio="1"
                         android:src="@drawable/example_mushroom"
                         android:scaleType="fitXY"
-                        imageFromUrlArray="@{post.images}"
+                        app:imageFromUrlArrayIntoPicPostPreview="@{post.images}"
                         />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -82,7 +82,7 @@
                                 android:layout_width="8dp"
                                 android:layout_height="8dp"
                                 android:src="@drawable/icons_love"
-                                checkMyLove="@{post.myThumbsUp}"
+                                app:checkMyLove="@{post.myThumbsUp}"
                                 />
                             <TextView
                                 android:layout_width="wrap_content"

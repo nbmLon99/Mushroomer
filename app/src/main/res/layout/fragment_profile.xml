@@ -44,7 +44,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginRight="15dp"
-                setUserIcon="@{user.icon}"
+                app:setUserIcon="@{user.icon}"
                 />
 
             <LinearLayout

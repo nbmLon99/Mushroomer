@@ -1,58 +1,110 @@
 package com.nbmlon.mushroomer.ui.dogam
 
+import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.databinding.FragmentPictureDialogBinding
+import com.nbmlon.mushroomer.model.MushHistory
+import com.nbmlon.mushroomer.ui.map.MapFragment
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val TARGET_MUSH_HISTORY = "target_mush_history"
+private const val DIALOG_CALL_FROM = "dialog_call_from"
+
 
 /**
  * 작업 요함
  */
-class PictureDialogFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class PictureDialogFragment private constructor(): DialogFragment() {
+    companion object {
+        const val TAG = "PictureDialogFragment"
+
+        @JvmStatic
+        fun getInstance(target : MushHistory, callFrom : PictureDialogFrom) =
+            PictureDialogFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable(TARGET_MUSH_HISTORY, target)
+                    putInt(DIALOG_CALL_FROM, callFrom.ordinal)
+                }
+            }
+    }
+    private var _binding : FragmentPictureDialogBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var mMushHistory : MushHistory
+    private lateinit var callFrom : PictureDialogFrom
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        dialog?.window?.setBackgroundDrawableResource(R.color.trans)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                mMushHistory = it.getSerializable(TARGET_MUSH_HISTORY, MushHistory::class.java)!!
+            } else{
+                mMushHistory = it.getSerializable(TARGET_MUSH_HISTORY) as MushHistory
+            }
+            callFrom = PictureDialogFrom.values()[it.getInt(DIALOG_CALL_FROM)]
         }
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_picture_dialog, container, false)
+        _binding = FragmentPictureDialogBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment PictureDialogFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            PictureDialogFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.apply {
+            history = mMushHistory
+            btnGoAnother.setOnClickListener { goAnother(); this@PictureDialogFragment.dismiss() }
+            btnGoBoard.setOnClickListener { goPicBoard(); this@PictureDialogFragment.dismiss() }
+            btnClose.setOnClickListener { this@PictureDialogFragment.dismiss() }
+        }
     }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
+
+
+    private fun goAnother(){
+        when (callFrom){
+            PictureDialogFrom.DogamFrag->{
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.FragmentContainer,MapFragment.getFocusedFor(mMushHistory))
+                    .commit()
+            };
+            PictureDialogFrom.MapFrag->{
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.FragmentContainer,DogamFragment.openDetail(mMushHistory))
+                    .commit()
+            }
+        }
+    }
+
+    private fun goPicBoard(){
+        if (requireActivity() is goPicBoardBtnClickListener) {
+            (requireActivity() as goPicBoardBtnClickListener).goPicBoardBtnClicked(mMushHistory)
+        }
+    }
+
+}
+
+enum class PictureDialogFrom{
+    MapFrag,
+    DogamFrag
+}
+
+fun interface goPicBoardBtnClickListener {
+    fun goPicBoardBtnClicked(mushHistory: MushHistory)
 }

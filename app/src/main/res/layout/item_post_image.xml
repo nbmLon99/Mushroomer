@@ -37,7 +37,7 @@
                     android:adjustViewBounds="true"
                     android:src="@drawable/example_mushroom"
                     android:scaleType="fitXY"
-                    imageFromUrlArray="@{post.images}"
+                    app:imageFromUrlArrayIntoPicPostPreview="@{post.images}"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintDimensionRatio="1:1"
                     />
@@ -88,7 +88,7 @@
                                 android:layout_width="8dp"
                                 android:layout_height="8dp"
                                 android:src="@drawable/icons_like"
-                                checkMyLike="@{post.myThumbsUp}"
+                                app:checkMyLike="@{post.myThumbsUp}"
                                 />
                             <TextView
                                 android:layout_width="wrap_content"

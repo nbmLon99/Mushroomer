@@ -30,6 +30,7 @@ class CommuFragment_home : Fragment(), PostClickListener {
     private lateinit var adapterPic : AdapterHomePost
 
     private val viewModel : CommuHomeViewModel by viewModels()
+    private var loading : Sweetalert? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,8 +46,7 @@ class CommuFragment_home : Fragment(), PostClickListener {
         adapterPic =  AdapterHomePost(this@CommuFragment_home::openPost)
         adapterQnA =  AdapterHomePost(this@CommuFragment_home::openPost)
 
-        val loading = Sweetalert(requireActivity(),Sweetalert.PROGRESS_TYPE)
-        loading.apply {
+        loading = Sweetalert(requireActivity(),Sweetalert.PROGRESS_TYPE).apply {
             setTitleText(R.string.loading)
             setCancelable(false)
             show()
@@ -56,7 +56,8 @@ class CommuFragment_home : Fragment(), PostClickListener {
             adapterFree.submitList(item.newFreePosts)
             adapterPic.submitList(item.newPicPosts)
             adapterQnA.submitList(item.newQnAPosts)
-            loading.dismissWithAnimation()
+            loading?.dismissWithAnimation()
+            loading = null
         }
         CoroutineScope(Dispatchers.Main).launch {
             viewModel.loadRecentPosts()
@@ -85,14 +86,14 @@ class CommuFragment_home : Fragment(), PostClickListener {
             //내 댓글 열기
             openMyComment.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_history.getInstance(BoardType.MyComments),CommuFragment_history.TAG)
+                    .replace(R.id.FragmentContainer, CommuFragment_history.getInstance(BoardType.MyComments, false),CommuFragment_history.TAG)
                     .addToBackStack(null)
                     .commit()
             }
             //내 포스트 열기
             openMyPost.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_history.getInstance(BoardType.MyPosts),CommuFragment_history.TAG)
+                    .replace(R.id.FragmentContainer, CommuFragment_history.getInstance(BoardType.MyPosts, true),CommuFragment_history.TAG)
                     .addToBackStack(null)
                     .commit()
             }
@@ -102,6 +103,7 @@ class CommuFragment_home : Fragment(), PostClickListener {
 
     override fun onDestroyView() {
         _binding = null
+        loading?.let { it.dismissWithAnimation() }
         super.onDestroyView()
     }
 

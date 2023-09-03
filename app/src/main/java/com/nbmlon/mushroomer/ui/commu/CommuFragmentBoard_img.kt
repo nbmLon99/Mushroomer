@@ -18,10 +18,10 @@ class CommuFragmentBoard_img private constructor(): CommuBoardFragment() {
     companion object {
         const val TAG = "CommuFragmentBoard_image"
         @JvmStatic
-        fun getInstance(param1: Int) =
+        fun getInstance(boardTypeOrd: Int) =
             CommuFragmentBoard_img().apply {
                 arguments = Bundle().apply {
-                    putInt(BOARD_TYPE_ORDINAL, param1)
+                    putInt(BOARD_TYPE_ORDINAL, boardTypeOrd)
                 }
             }
     }

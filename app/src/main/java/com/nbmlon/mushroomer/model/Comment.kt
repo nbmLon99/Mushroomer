@@ -51,10 +51,9 @@ class CommentDataBindingAdapter{
                 linearLayout.setBackgroundColor(ContextCompat.getColor(linearLayout.context, R.color.CommentBg))
             else
                 linearLayout.setBackgroundColor(ContextCompat.getColor(linearLayout.context, R.color.myCommentBg))
-
         }
-
     }
+
 
 }
 class CommentDiffCallback : DiffUtil.ItemCallback<Comment>() {

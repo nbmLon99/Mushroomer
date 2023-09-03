@@ -1,19 +1,21 @@
 package com.nbmlon.mushroomer.ui.commu
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCommuHistoryBinding
+import com.nbmlon.mushroomer.model.Post
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**
      내 댓글, 내 포스트 띄워주는 창
  */
-class CommuFragment_history private constructor():  Fragment() {
+class CommuFragment_history private constructor():  Fragment(), PostClickListener {
     companion object {
         const val TAG = "CommuFragment_history"
         @JvmStatic
@@ -49,7 +51,7 @@ class CommuFragment_history private constructor():  Fragment() {
     ): View? {
         _binding = FragmentCommuHistoryBinding.inflate(layoutInflater)
         val viewModel = BoardHistoryViewModel(forMyPost)
-        myPostAdpater = AdapterBoardPost(mBoardType)
+        myPostAdpater = AdapterBoardPost(mBoardType, this@CommuFragment_history::openPost)
 
         lifecycleScope.launch{
             viewModel.pagingDataFlow.collectLatest{myPostAdpater.submitData(it)}
@@ -61,6 +63,7 @@ class CommuFragment_history private constructor():  Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             boardTitle.text = resources.getString(mBoardType.boardNameResId)
+            btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
             historyRV.adapter = myPostAdpater
         }
     }
@@ -68,6 +71,13 @@ class CommuFragment_history private constructor():  Fragment() {
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
+    }
+
+    override fun openPost(post: Post) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.FragmentContainer, CommuFragment_post.getInstance(post),CommuFragment_post.TAG)
+            .addToBackStack(null)
+            .commit()
     }
 }
 

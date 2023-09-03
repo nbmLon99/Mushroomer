@@ -1,5 +1,6 @@
 package com.nbmlon.mushroomer.ui.dogam
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +19,7 @@ import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.data.dogam.DogamRepository
 import com.nbmlon.mushroomer.databinding.DialogEdittextBinding
 import com.nbmlon.mushroomer.databinding.FragmentDogamBinding
+import com.nbmlon.mushroomer.model.MushHistory
 import com.nbmlon.mushroomer.model.Mushroom
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,16 +30,8 @@ import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import taimoor.sultani.sweetalert2.Sweetalert
+private const val TARGET_DOGAM_DETAIL = "target_dogam_detail"
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "dogamNo"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [DogamFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class DogamFragment : Fragment(), DogamItemClickListner {
 
     companion object {
@@ -45,24 +39,28 @@ class DogamFragment : Fragment(), DogamItemClickListner {
 
         //도감 번호 입력해서 넘어갈떄 이렇게 넘어가면될듯?
         @JvmStatic
-        fun newInstance() =
+        fun openDetail(target : MushHistory) =
             DogamFragment().apply {
                 arguments = Bundle().apply {
+                    putSerializable(TARGET_DOGAM_DETAIL, target.mushroom)
                 }
             }
     }
     private var _binding: FragmentDogamBinding? = null
     private val binding get() = _binding!!
-
-    private val dogamViewModel: DogamViewModel by viewModels()
-
-    // TODO: Rename and change types of parameters
-    private var dogamNo: Int? = null
+    private var targetMush: Mushroom? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            dogamNo = it.getInt(ARG_PARAM1)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                targetMush = it.getSerializable(TARGET_DOGAM_DETAIL, Mushroom::class.java)!!
+            }else{
+                targetMush = it.getSerializable(TARGET_DOGAM_DETAIL) as Mushroom
+            }
+            targetMush?.let { mush->
+                onDogamItemClicked(mush)
+            }
         }
 
     }
@@ -318,7 +316,7 @@ class DogamFragment : Fragment(), DogamItemClickListner {
         /** 도감 상세보기 화면 넘기기 **/
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.FragmentContainer, DogamFragment_detail.newInstance(clickedMushroom), DogamFragment_detail.TAG)
-            .addToBackStack(null) // 백 스택에 Fragment 트랜잭션 추가
+            .addToBackStack(null)
             .commit()
     }
 

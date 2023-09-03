@@ -40,7 +40,5 @@ class UserDataBindingAdapter{
                     .into(view)
             }
         }
-
-
     }
 }

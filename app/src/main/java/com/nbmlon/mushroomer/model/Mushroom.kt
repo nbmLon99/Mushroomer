@@ -9,9 +9,6 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.nbmlon.mushroomer.R
 import org.joda.time.DateTime
 import java.io.Serializable
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 enum class MushType{
     EDIBLE,
@@ -42,7 +39,7 @@ data class Mushroom (
         fun getDummy(n :Int, gotcha : Boolean, name: String? = null) : Mushroom{
             val mushName = name ?: "${n}번쨰 버섯"
             val mush = Mushroom(n,"", mushName,"설명입니다.", MushType.EDIBLE,20L,ArrayList())
-            if(gotcha){ mush.myHistory.add(MushHistory(ArrayList(), DateTime(), 0,0)) }
+            if(gotcha){ mush.myHistory.add(MushHistory(mush, ArrayList(), DateTime(), 0,0)) }
             return mush
         }
     }
@@ -52,13 +49,15 @@ data class Mushroom (
 class MushDataBindingAdapter{
     companion object{
         @JvmStatic
-        @BindingAdapter("imageFromUrl")
+        @BindingAdapter("imageFromUrlIntoMushPreview")
         fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
             if (!imageUrl.isNullOrEmpty()) {
                 Glide.with(view.context)
                     .load(imageUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(view)
+            }else{
+                //Default
             }
         }
 
@@ -82,12 +81,5 @@ class MushDataBindingAdapter{
                 MushType.POISON-> view.setText(R.string.typePoison)
             }
         }
-
-        @JvmStatic
-        @BindingAdapter("picturedAt")
-        fun bindDate(view : TextView, date : DateTime){
-            view.text = date.toString("yyyy년\nM월 d일")
-        }
     }
-
 }

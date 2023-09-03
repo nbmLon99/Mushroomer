@@ -71,7 +71,7 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    setNew="@{result.isNew}"
+                    app:setNew="@{result.isNew}"
                     />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -120,7 +120,7 @@
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        setMushType="@{result.mushroom.type}"
+                        app:setMushType="@{result.mushroom.type}"
                         />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

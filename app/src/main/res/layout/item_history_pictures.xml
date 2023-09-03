@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
     <data>
@@ -9,6 +10,7 @@
             type="com.nbmlon.mushroomer.model.MushHistory"/>
     </data>
     <FrameLayout
+        android:id="@+id/frame"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:padding="10dp"
@@ -17,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitXY"
-            imageFromUrl="@{mushHistory.picPath[0]}"
+            app:imageFromUrlIntoMushPreview="@{mushHistory.picPath[0]}"
 
             />
         <TextView
@@ -31,7 +33,7 @@
             android:letterSpacing="0.2"
             android:lineSpacingExtra="10dp"
 
-            picturedAt="@{mushHistory.date}"
+            app:picturedAt="@{mushHistory.date}"
             />
     </FrameLayout>
 
