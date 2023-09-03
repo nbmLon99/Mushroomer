@@ -63,6 +63,7 @@ class CommuFragment_history private constructor():  Fragment(), PostClickListene
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             boardTitle.text = resources.getString(mBoardType.boardNameResId)
+            btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
             historyRV.adapter = myPostAdpater
         }
     }

@@ -53,149 +53,157 @@
                 />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:padding="20dp"
-            >
-            <!-- 포스팅 -->
+            android:layout_weight="1">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
+                android:padding="20dp"
                 >
+                <!-- 포스팅 -->
                 <LinearLayout
-                    android:layout_marginRight="10dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    >
-                    <ImageView
-                        android:id="@+id/writer_icon"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:src="@drawable/icons_profile"
-                        setUserIcon="@{post.writer.icon}"
-                        />
-                    <TextView
-                        android:id="@+id/writer_nickname"
-                        android:layout_width="50dp"
-                        android:layout_height="wrap_content"
-                        android:text="@{post.writer.nickname}"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:textAlignment="center"
-                        android:textSize="@dimen/text_small"
-                        />
-                </LinearLayout>
-
-                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="10dp"
-                    app:cardCornerRadius="10dp"
-                    android:background="@color/bgGray"
+                    android:orientation="horizontal"
                     >
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_marginRight="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="10dp"
+                        >
+                        <ImageView
+                            android:id="@+id/writer_icon"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:src="@drawable/icons_profile"
+                            setUserIcon="@{post.writer.icon}"
+                            />
+                        <TextView
+                            android:id="@+id/writer_nickname"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:text="@{post.writer.nickname}"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/text_small"
+                            />
+                    </LinearLayout>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="10dp"
+                        app:cardCornerRadius="10dp"
+                        android:background="@color/bgGray"
                         >
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginBottom="5dp"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:padding="10dp"
                             >
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginBottom="5dp"
+                                >
+                                <TextView
+                                    android:id="@+id/post_title"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+
+                                    android:text="@{post.title}"
+                                    android:textStyle="bold"
+                                    />
+
+                                <ImageView
+                                    android:id="@+id/btn_postMore"
+                                    android:layout_width="30dp"
+                                    android:layout_height="match_parent"
+                                    android:padding="1dp"
+                                    android:src="@drawable/icons_more" />
+                            </LinearLayout>
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <com.smarteist.autoimageslider.SliderView
+                                    android:id="@+id/imageSlider"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp"
+                                    app:layout_constraintDimensionRatio="1"
+                                    app:layout_constraintTop_toTopOf="parent"
+
+                                    app:sliderAnimationDuration="600"
+                                    app:sliderAutoCycleDirection="back_and_forth"
+                                    app:sliderAutoCycleEnabled="true"
+                                    app:sliderIndicatorAnimationDuration="600"
+                                    app:sliderIndicatorGravity="center_horizontal|bottom"
+                                    app:sliderIndicatorMargin="15dp"
+                                    app:sliderIndicatorOrientation="horizontal"
+                                    app:sliderIndicatorPadding="3dp"
+                                    app:sliderIndicatorRadius="2dp"
+                                    app:sliderIndicatorSelectedColor="#5A5A5A"
+                                    app:sliderIndicatorUnselectedColor="#FFF"
+                                    app:sliderStartAutoCycle="false"
+                                    />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
                             <TextView
-                                android:id="@+id/post_title"
-                                android:layout_width="0dp"
-                                android:layout_weight="1"
+                                android:id="@+id/post_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
 
-                                android:text="@{post.title}"
-                                android:textStyle="bold"
+                                android:text="@{post.content}"
+                                android:paddingVertical="10dp"
+                                android:textSize="12sp"
                                 />
-
-                            <ImageView
-                                android:id="@+id/btn_postMore"
-                                android:layout_width="30dp"
-                                android:layout_height="match_parent"
-                                android:padding="1dp"
-                                android:src="@drawable/icons_more" />
-                        </LinearLayout>
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <com.smarteist.autoimageslider.SliderView
-                                android:id="@+id/imageSlider"
+                            <TextView
+                                android:id="@+id/post_time"
                                 android:layout_width="match_parent"
-                                android:layout_height="0dp"
-                                app:layout_constraintDimensionRatio="1"
-                                app:layout_constraintTop_toTopOf="parent"
-                                
-                                app:sliderAnimationDuration="600"
-                                app:sliderAutoCycleDirection="back_and_forth"
-                                app:sliderAutoCycleEnabled="true"
-                                app:sliderIndicatorAnimationDuration="600"
-                                app:sliderIndicatorGravity="center_horizontal|bottom"
-                                app:sliderIndicatorMargin="15dp"
-                                app:sliderIndicatorOrientation="horizontal"
-                                app:sliderIndicatorPadding="3dp"
-                                app:sliderIndicatorRadius="2dp"
-                                app:sliderIndicatorSelectedColor="#5A5A5A"
-                                app:sliderIndicatorUnselectedColor="#FFF"
-                                app:sliderStartAutoCycle="false"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:textSize="10sp"
+                                android:textFontWeight="300"
+                                app:setTimeRelatively="@{post.time}"
                                 />
 
-                        </androidx.constraintlayout.widget.ConstraintLayout>
+                        </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/post_content"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
 
-                            android:text="@{post.content}"
-                            android:paddingVertical="10dp"
-                            android:textSize="12sp"
-                            />
-                        <TextView
-                            android:id="@+id/post_time"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="right"
-                            android:textSize="10sp"
-                            android:text="@{post.time.toString()}"
-                            android:textFontWeight="300"
-                            />
+                <!-- 댓글 -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:padding="10dp"
+                    android:id="@+id/commentRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
 
-                    </LinearLayout>
-
-                </androidx.cardview.widget.CardView>
+                    android:nestedScrollingEnabled="false"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_post_comment"
+                    />
             </LinearLayout>
 
-            <!-- 댓글 -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:padding="10dp"
-                android:id="@+id/commentRV"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:orientation="vertical"
-                tools:listitem="@layout/item_post_comment"
-                />
-        </LinearLayout>
+
+
+        </androidx.core.widget.NestedScrollView>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginTop="10dp"
             >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_comment"

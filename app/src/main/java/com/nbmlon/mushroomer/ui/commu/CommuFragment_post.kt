@@ -60,6 +60,7 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             post = targetPost
+
             boardType.text = resources.getString(post?.boardType!!.boardNameResId)
             targetPost?.comments?.let{comments ->
                 commentRV.adapter = AdapterPostComment(this@CommuFragment_post as PopupMenuClickListener).apply { submitList(comments) }
