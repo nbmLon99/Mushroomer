@@ -81,11 +81,5 @@ class MushDataBindingAdapter{
                 MushType.POISON-> view.setText(R.string.typePoison)
             }
         }
-
-        @JvmStatic
-        @BindingAdapter("picturedAt")
-        fun bindDate(view : TextView, date : DateTime){
-            view.text = date.toString("yyyy년\nM월 d일")
-        }
     }
 }

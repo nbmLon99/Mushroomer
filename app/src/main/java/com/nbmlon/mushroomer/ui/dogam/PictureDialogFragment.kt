@@ -7,13 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.nbmlon.mushroomer.R
-import com.nbmlon.mushroomer.data.posts.CommuHomeRepository
 import com.nbmlon.mushroomer.databinding.FragmentPictureDialogBinding
 import com.nbmlon.mushroomer.model.MushHistory
-import com.nbmlon.mushroomer.ui.commu.BoardType
-import com.nbmlon.mushroomer.ui.commu.CommuFragmentBoard_img
-import com.nbmlon.mushroomer.ui.commu.CommuFragment_home
-import com.nbmlon.mushroomer.ui.commu.CommuFragment_write
 import com.nbmlon.mushroomer.ui.map.MapFragment
 
 private const val TARGET_MUSH_HISTORY = "target_mush_history"
@@ -42,8 +37,10 @@ class PictureDialogFragment private constructor(): DialogFragment() {
     private lateinit var mMushHistory : MushHistory
     private lateinit var callFrom : PictureDialogFrom
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        dialog?.window?.setBackgroundDrawableResource(R.color.trans)
         arguments?.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 mMushHistory = it.getSerializable(TARGET_MUSH_HISTORY, MushHistory::class.java)!!
@@ -67,6 +64,7 @@ class PictureDialogFragment private constructor(): DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
+            history = mMushHistory
             btnGoAnother.setOnClickListener { goAnother(); this@PictureDialogFragment.dismiss() }
             btnGoBoard.setOnClickListener { goPicBoard(); this@PictureDialogFragment.dismiss() }
             btnClose.setOnClickListener { this@PictureDialogFragment.dismiss() }
@@ -95,12 +93,9 @@ class PictureDialogFragment private constructor(): DialogFragment() {
     }
 
     private fun goPicBoard(){
-        val picBoard_idx = BoardType.PicBoard.ordinal
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.FragmentContainer, CommuFragment_home())
-            .add(CommuFragmentBoard_img.getInstance(picBoard_idx), CommuFragmentBoard_img.TAG)
-            .add(CommuFragment_write.getInstance(picBoard_idx,mushHistory = mMushHistory), CommuFragment_write.TAG)
-            .commit()
+        if (requireActivity() is goPicBoardBtnClickListener) {
+            (requireActivity() as goPicBoardBtnClickListener).goPicBoardBtnClicked(mMushHistory)
+        }
     }
 
 }
@@ -108,4 +103,8 @@ class PictureDialogFragment private constructor(): DialogFragment() {
 enum class PictureDialogFrom{
     MapFrag,
     DogamFrag
+}
+
+fun interface goPicBoardBtnClickListener {
+    fun goPicBoardBtnClicked(mushHistory: MushHistory)
 }

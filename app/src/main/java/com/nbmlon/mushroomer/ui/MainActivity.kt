@@ -1,23 +1,22 @@
 package com.nbmlon.mushroomer.ui
 
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Base64
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentManager
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.ActivityMainBinding
+import com.nbmlon.mushroomer.model.MushHistory
 import com.nbmlon.mushroomer.ui.camera.CameraFragment
+import com.nbmlon.mushroomer.ui.commu.BoardType
+import com.nbmlon.mushroomer.ui.commu.CommuFragmentBoard_img
 import com.nbmlon.mushroomer.ui.commu.CommuFragment_home
-import com.nbmlon.mushroomer.ui.commu.CommuFragment_search
+import com.nbmlon.mushroomer.ui.commu.CommuFragment_write
 import com.nbmlon.mushroomer.ui.dogam.DogamFragment
+import com.nbmlon.mushroomer.ui.dogam.goPicBoardBtnClickListener
 import com.nbmlon.mushroomer.ui.map.MapFragment
 import com.nbmlon.mushroomer.ui.profile.ProfileFragment
-import java.security.MessageDigest
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), goPicBoardBtnClickListener {
     private lateinit var binding: ActivityMainBinding // 뷰 바인딩 변수
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,5 +82,20 @@ class MainActivity : AppCompatActivity() {
                 transaction.commitNow() // 또는 commit()
             }
         }
+    }
+
+    override fun goPicBoardBtnClicked(mushHistory: MushHistory) {
+        binding.bottomNavigationView.selectedItemId = R.id.community
+        val picBoard_idx = BoardType.PicBoard.ordinal
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.FragmentContainer, CommuFragmentBoard_img.getInstance(picBoard_idx), CommuFragmentBoard_img.TAG)
+            .addToBackStack(null)
+            .commit()
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.FragmentContainer, CommuFragment_write.getInstance(picBoard_idx, mushHistory = mushHistory), CommuFragment_write.TAG)
+            .addToBackStack(null)
+            .commit()
     }
 }

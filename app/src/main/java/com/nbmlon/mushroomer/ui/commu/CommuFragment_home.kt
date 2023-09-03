@@ -30,6 +30,7 @@ class CommuFragment_home : Fragment(), PostClickListener {
     private lateinit var adapterPic : AdapterHomePost
 
     private val viewModel : CommuHomeViewModel by viewModels()
+    private var loading : Sweetalert? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,8 +46,7 @@ class CommuFragment_home : Fragment(), PostClickListener {
         adapterPic =  AdapterHomePost(this@CommuFragment_home::openPost)
         adapterQnA =  AdapterHomePost(this@CommuFragment_home::openPost)
 
-        val loading = Sweetalert(requireActivity(),Sweetalert.PROGRESS_TYPE)
-        loading.apply {
+        loading = Sweetalert(requireActivity(),Sweetalert.PROGRESS_TYPE).apply {
             setTitleText(R.string.loading)
             setCancelable(false)
             show()
@@ -56,7 +56,8 @@ class CommuFragment_home : Fragment(), PostClickListener {
             adapterFree.submitList(item.newFreePosts)
             adapterPic.submitList(item.newPicPosts)
             adapterQnA.submitList(item.newQnAPosts)
-            loading.dismissWithAnimation()
+            loading?.dismissWithAnimation()
+            loading = null
         }
         CoroutineScope(Dispatchers.Main).launch {
             viewModel.loadRecentPosts()
@@ -102,6 +103,7 @@ class CommuFragment_home : Fragment(), PostClickListener {
 
     override fun onDestroyView() {
         _binding = null
+        loading?.let { it.dismissWithAnimation() }
         super.onDestroyView()
     }
 
