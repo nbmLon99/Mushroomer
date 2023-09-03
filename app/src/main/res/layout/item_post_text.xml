@@ -50,7 +50,7 @@
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="8dp"
 
-                    android:text="@{post.content[0]}"
+                    android:text="@{post.content}"
                     android:textSize="@dimen/text_sub"
                     android:textFontWeight="300"
                     android:ellipsize="end"

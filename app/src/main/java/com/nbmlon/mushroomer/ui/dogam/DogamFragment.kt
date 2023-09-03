@@ -315,7 +315,8 @@ class DogamFragment : Fragment(), DogamItemClickListner {
     override fun onDogamItemClicked(clickedMushroom: Mushroom) {
         /** 도감 상세보기 화면 넘기기 **/
         requireActivity().supportFragmentManager.beginTransaction()
-            .add(R.id.FragmentContainer, DogamFragment_detail.newInstance(clickedMushroom), DogamFragment_detail.TAG)
+            .replace(R.id.FragmentContainer, DogamFragment_detail.newInstance(clickedMushroom), DogamFragment_detail.TAG)
+            .addToBackStack(null)
             .commit()
     }
 

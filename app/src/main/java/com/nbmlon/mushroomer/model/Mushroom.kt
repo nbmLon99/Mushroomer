@@ -9,9 +9,6 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.nbmlon.mushroomer.R
 import org.joda.time.DateTime
 import java.io.Serializable
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 enum class MushType{
     EDIBLE,
@@ -50,6 +47,8 @@ data class Mushroom (
 }
 
 class MushDataBindingAdapter{
+    companion object{
+        @JvmStatic
         @BindingAdapter("imageFromUrlIntoMushPreview")
         fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
             if (!imageUrl.isNullOrEmpty()) {
@@ -62,6 +61,7 @@ class MushDataBindingAdapter{
             }
         }
 
+        @JvmStatic
         @BindingAdapter("isDiscovered")
         fun bindIsGone(view: ImageView, gotcha: Boolean) {
             if (gotcha) {
@@ -73,6 +73,7 @@ class MushDataBindingAdapter{
 
 
 
+        @JvmStatic
         @BindingAdapter("setMushType")
         fun bindMushType(view: TextView, type: MushType) {
             when(type){
@@ -81,8 +82,10 @@ class MushDataBindingAdapter{
             }
         }
 
+        @JvmStatic
         @BindingAdapter("picturedAt")
         fun bindDate(view : TextView, date : DateTime){
             view.text = date.toString("yyyy년\nM월 d일")
         }
+    }
 }

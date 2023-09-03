@@ -1,11 +1,5 @@
 package com.nbmlon.mushroomer.model
 
-import android.graphics.drawable.Drawable
-import android.text.Html
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.style.ImageSpan
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -14,9 +8,6 @@ import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
-import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.ui.commu.BoardType
 import org.joda.time.DateTime
@@ -78,6 +69,8 @@ data class Post(
 }
 
 class PostDataBindingAdapter{
+    companion object {
+        @JvmStatic
         @BindingAdapter("imageFromUrlArrayIntoPicPostPreview")
         fun bindImageFromUrlArray(view: ImageView, imageUrl: ArrayList<String>?) {
             if (!imageUrl.isNullOrEmpty()) {
@@ -88,6 +81,7 @@ class PostDataBindingAdapter{
             }
         }
 
+        @JvmStatic
         @BindingAdapter("setImageIntoPreview")
         fun bindImageIntoTextPost(view: ImageView, imageUrl: ArrayList<String>?) {
             if (!imageUrl.isNullOrEmpty()) {
@@ -95,16 +89,22 @@ class PostDataBindingAdapter{
                     .load(imageUrl[0])
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(view)
-            }
-            else{
+            } else {
                 view.visibility = View.GONE
             }
         }
+
+        @JvmStatic
         @BindingAdapter("checkMyLove")
-        fun checkMyLoveFromPost(view: ImageView, myLove : Boolean) {
-            if( myLove ){
-                view.setImageDrawable(ContextCompat.getDrawable(view.context, R.drawable.icons_love))
-            }else{
+        fun checkMyLoveFromPost(view: ImageView, myLove: Boolean) {
+            if (myLove) {
+                view.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        view.context,
+                        R.drawable.icons_love
+                    )
+                )
+            } else {
                 view.setImageDrawable(
                     ContextCompat.getDrawable(
                         view.context,
@@ -113,11 +113,18 @@ class PostDataBindingAdapter{
                 )
             }
         }
+
+        @JvmStatic
         @BindingAdapter("checkMyLike")
-        fun checkMyLikeFromPost(view: ImageView, myLike : Boolean) {
-            if( myLike ){
-                view.setImageDrawable(ContextCompat.getDrawable(view.context, R.drawable.icons_like))
-            }else{
+        fun checkMyLikeFromPost(view: ImageView, myLike: Boolean) {
+            if (myLike) {
+                view.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        view.context,
+                        R.drawable.icons_like
+                    )
+                )
+            } else {
                 view.setImageDrawable(
                     ContextCompat.getDrawable(
                         view.context,
@@ -128,8 +135,9 @@ class PostDataBindingAdapter{
         }
 
 
+        @JvmStatic
         @BindingAdapter("setTimeRelatively")
-        fun setTimeRelatively(view: TextView, dateAt : DateTime) {
+        fun setTimeRelatively(view: TextView, dateAt: DateTime) {
             val currentTime = DateTime()
             val duration = Duration(dateAt, currentTime)
 
@@ -138,20 +146,20 @@ class PostDataBindingAdapter{
                     currentTime.year == dateAt.year &&
                             currentTime.dayOfYear == dateAt.dayOfYear
                     )
-            if( minutesDifference <= 0L ){
+            if (minutesDifference <= 0L) {
                 view.text = "지금"
-            }
-            else if( minutesDifference < 60){
+            } else if (minutesDifference < 60) {
                 view.text = "${minutesDifference}분 전"
 
-            }else if( !equalDay ){
+            } else if (!equalDay) {
                 view.text = SimpleDateFormat("yy.MM.dd").format(dateAt)
 
-            }else{
+            } else {
                 view.text = SimpleDateFormat("HH:mm").format(dateAt)
 
             }
         }
+    }
 }
 
 

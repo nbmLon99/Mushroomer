@@ -231,7 +231,8 @@ class CommuFragment_search private constructor(): Fragment(), PostClickListener 
 
     override fun openPost(post: Post) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .add(R.id.FragmentContainer, CommuFragment_post.getInstance(post),CommuFragment_post.TAG)
+            .replace(R.id.FragmentContainer, CommuFragment_post.getInstance(post),CommuFragment_post.TAG)
+            .addToBackStack(null)
             .commit()
     }
 }

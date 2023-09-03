@@ -75,14 +75,16 @@ class CommuFragmentBoard_img private constructor(): CommuBoardFragment() {
             //검색버튼
             btnSearch.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .add(R.id.FragmentContainer, CommuFragment_search.getInstance(board_typd_idx!!), CommuFragment_search.TAG)
+                    .replace(R.id.FragmentContainer, CommuFragment_search.getInstance(board_typd_idx!!), CommuFragment_search.TAG)
+                    .addToBackStack(null)
                     .commit()
             }
 
             //글쓰기 버튼
             btnWrite.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .add(R.id.FragmentContainer, CommuFragment_write.getInstance(board_typd_idx ?: 1), CommuFragment_write.TAG)
+                    .replace(R.id.FragmentContainer, CommuFragment_write.getInstance(board_typd_idx ?: 1), CommuFragment_write.TAG)
+                    .addToBackStack(null)
                     .commit()
             }
         }

@@ -28,6 +28,8 @@ data class User(
 
 
 class UserDataBindingAdapter{
+    companion object{
+        @JvmStatic
         @BindingAdapter("setUserIcon")
         fun bindReply(view: ImageView, url: String) {
             if (url.isNotBlank()) {
@@ -38,4 +40,5 @@ class UserDataBindingAdapter{
                     .into(view)
             }
         }
+    }
 }
