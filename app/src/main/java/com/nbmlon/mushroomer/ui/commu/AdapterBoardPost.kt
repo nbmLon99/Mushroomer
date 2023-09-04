@@ -17,7 +17,7 @@ import com.nbmlon.mushroomer.model.PostDiffCallback
 class AdapterBoardPost(
     val boardType: BoardType,
     val cl : PostClickListener
-) : PagingDataAdapter<Post, RecyclerView.ViewHolder>(PostDiffCallback()) {
+) : PagingDataAdapter<Post, RecyclerView.ViewHolder>(PostDiffCallback) {
     inner class TextPostViewHolder(private val itemBinding: ItemPostTextBinding) : RecyclerView.ViewHolder(itemBinding.root), HomeAdapterHolder {
         override fun bind(pos : Int){
             itemBinding.apply {

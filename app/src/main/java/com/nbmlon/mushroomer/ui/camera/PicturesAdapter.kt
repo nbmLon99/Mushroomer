@@ -11,7 +11,11 @@ import com.nbmlon.mushroomer.ui.camera.PicturesAdapter.PictureViewHolder
 import com.nbmlon.mushroomer.utils.GlideApp
 
 
-class PicturesAdapter(im: ImageDeleteListner) : ListAdapter<Bitmap,PictureViewHolder>(MyDiffCallback){
+/**
+ * 홈 화면 찍은 사진
+ * 커뮤니티 글 작성시 카메라 업로드
+ */
+class PicturesAdapter(im: ImageDeleteListner) : ListAdapter<Bitmap,PictureViewHolder>(BitmapDiffCallback){
     private lateinit var itemBinding: ItemPhotoCheckingBinding
     private var imageManager: ImageDeleteListner = im
 
@@ -38,7 +42,7 @@ class PicturesAdapter(im: ImageDeleteListner) : ListAdapter<Bitmap,PictureViewHo
 }
 
 
-object MyDiffCallback : DiffUtil.ItemCallback<Bitmap>() {
+object BitmapDiffCallback : DiffUtil.ItemCallback<Bitmap>() {
     override fun areItemsTheSame(oldItem: Bitmap, newItem: Bitmap): Boolean {
         return oldItem == newItem
     }

@@ -4,18 +4,24 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
 import androidx.core.widget.doAfterTextChanged
-import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.ActivityLoginBinding
+import com.nbmlon.mushroomer.databinding.DialogFindIdBinding
+import com.nbmlon.mushroomer.databinding.DialogFindPwBinding
+import com.nbmlon.mushroomer.databinding.DialogRegisterBinding
 import com.nbmlon.mushroomer.model.User
 import com.nbmlon.mushroomer.ui.MainActivity
 import com.nbmlon.mushroomer.utils.CryptographyManager
+import taimoor.sultani.sweetalert2.Sweetalert
 
 class LoginActivity : AppCompatActivity() {
    companion object{
@@ -34,14 +40,26 @@ class LoginActivity : AppCompatActivity() {
             Context.MODE_PRIVATE,
             CIPHERTEXT_WRAPPER
         )
-
+    private lateinit var loading :Sweetalert
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupForLoginWithPassword()
+
+        loading= Sweetalert(this,Sweetalert.PROGRESS_TYPE).apply {
+            setTitleText(R.string.loading)
+            setCancelable(false)
+        }
+        binding.apply {
+            btnRegister.setOnClickListener { openRegisterDialog() }
+            btnFindID.setOnClickListener { openFindIdDialog() }
+            btnFindPW.setOnClickListener { openFindPwDialog() }
+        }
     }
+
+
 
     /**
      * The logic is kept inside onResume instead of onCreate so that authorizing biometrics takes
@@ -61,10 +79,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-// USERNAME + PASSWORD SECTION
-
-
-
+    // USERNAME + PASSWORD SECTION
     private fun setupForLoginWithPassword() {
         loginViewModel.loginWithPasswordFormState.observe(this, Observer { formState ->
             val loginState = formState ?: return@Observer
@@ -110,7 +125,8 @@ class LoginActivity : AppCompatActivity() {
         binding.login.setOnClickListener {
             loginViewModel.login(
                 binding.username.text.toString(),
-                binding.password.text.toString()
+                binding.password.text.toString(),
+                binding.ckboxAutoLogin.isChecked
             )
             Log.d(TAG, "Username ${AppUser.user?.email}; fake token ${AppUser.token}")
         }
@@ -163,6 +179,102 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
+    private fun openFindIdDialog(){
+        val dialog = Sweetalert(this, Sweetalert.NORMAL_TYPE)
+        val dialogBinding = DialogFindIdBinding.inflate(layoutInflater).apply {
+            btnFindId.setOnClickListener {
+                loginViewModel.findIDinResult.observeOnce(this@LoginActivity, Observer { result ->
+                    if(result.success){
 
+                    }
+                    else{
+
+                    }
+                })
+//                    loading.show()
+//                    loginViewModel.requestFindID()
+                dialog.dismissWithAnimation()
+            }
+        }
+        dialog.apply {
+            setCustomView(dialogBinding.root)
+            show()
+        }
+    }
+
+    private fun openFindPwDialog(){
+
+
+        val dialog = Sweetalert(this, Sweetalert.NORMAL_TYPE)
+        val dialogBinding = DialogFindPwBinding.inflate(layoutInflater).apply {
+            btnFindPw.setOnClickListener {
+                loginViewModel.findPWResult.observeOnce(this@LoginActivity, Observer { result ->
+                    if(result.success){
+
+                    }
+                    else{
+
+                    }
+                })
+//                    loading.show()
+//                    loginViewModel.requestFindPW()
+                dialog.dismissWithAnimation()
+            }
+        }
+        dialog.apply {
+            setCustomView(dialogBinding.root)
+            show()
+        }
+    }
+
+    private fun openRegisterDialog(){
+        val dialog = Sweetalert(this, Sweetalert.NORMAL_TYPE)
+        val dialogBinding = DialogRegisterBinding.inflate(layoutInflater).apply {
+            //회원가입 시도
+            btnRegister.setOnClickListener {
+                loginViewModel.registerResult.observeOnce(this@LoginActivity, Observer { result ->
+                    if(result.success){
+
+                    }
+                    else{
+
+                    }
+                })
+//                    loading.show()
+//                    loginViewModel.requesRegister()
+                dialog.dismissWithAnimation()
+            }
+            
+            //닉네임 중복 검사
+            btnNicknameCheck.setOnClickListener {
+                loginViewModel.registerResult.observeOnce(this@LoginActivity, Observer { result ->
+                    //중복없음 -> 사용가능
+                    if(result.success){
+                        etNickname.error = null
+                        Toast.makeText(this@LoginActivity,"사용 가능한 닉네임입니다.", Toast.LENGTH_SHORT).show()
+                    }
+                    //중복 -> 사용불가
+                    else{
+                        etNickname.error = "중복된 닉네임입니다."
+                    }
+                })
+//                    loginViewModel.requesNickNameCheck()
+            }
+        }
+        dialog.apply {
+            setCustomView(dialogBinding.root)
+            show()
+        }
+    }
+
+
+    private fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: Observer<T>) {
+        observe(lifecycleOwner, object : Observer<T> {
+            override fun onChanged(t: T) {
+                observer.onChanged(t)
+                removeObserver(this) // 옵저버를 한 번 호출한 후 제거
+            }
+        })
+    }
 
 }

@@ -163,7 +163,7 @@ class PostDataBindingAdapter{
 }
 
 
-class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
+object PostDiffCallback : DiffUtil.ItemCallback<Post>() {
     override fun areItemsTheSame(oldItem: Post, newItem: Post): Boolean {
         return oldItem == newItem
     }

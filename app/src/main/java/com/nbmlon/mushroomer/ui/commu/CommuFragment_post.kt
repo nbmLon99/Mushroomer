@@ -36,7 +36,7 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
     private var targetPost: Post? = null
     private var _binding: FragmentCommuPostBinding? = null
     private val binding get() = _binding!!
-    private val viewModel by viewModels<BoardViewModel>()
+    private val viewModel by viewModels<ViewModelBoard>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {

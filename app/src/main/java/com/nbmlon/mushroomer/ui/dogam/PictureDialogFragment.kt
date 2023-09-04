@@ -40,7 +40,8 @@ class PictureDialogFragment private constructor(): DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dialog?.window?.setBackgroundDrawableResource(R.color.trans)
+        setStyle(STYLE_NO_FRAME, R.style.TransparentDialog)
+
         arguments?.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 mMushHistory = it.getSerializable(TARGET_MUSH_HISTORY, MushHistory::class.java)!!
@@ -78,6 +79,9 @@ class PictureDialogFragment private constructor(): DialogFragment() {
 
 
     private fun goAnother(){
+        if (requireActivity() is pictureDialogListener) {
+            (requireActivity() as pictureDialogListener).goAnotherBtnClicked(callFrom)
+        }
         when (callFrom){
             PictureDialogFrom.DogamFrag->{
                 requireActivity().supportFragmentManager.beginTransaction()
@@ -93,8 +97,8 @@ class PictureDialogFragment private constructor(): DialogFragment() {
     }
 
     private fun goPicBoard(){
-        if (requireActivity() is goPicBoardBtnClickListener) {
-            (requireActivity() as goPicBoardBtnClickListener).goPicBoardBtnClicked(mMushHistory)
+        if (requireActivity() is pictureDialogListener) {
+            (requireActivity() as pictureDialogListener).goPicBoardBtnClicked(mMushHistory)
         }
     }
 
@@ -105,6 +109,8 @@ enum class PictureDialogFrom{
     DogamFrag
 }
 
-fun interface goPicBoardBtnClickListener {
+interface pictureDialogListener {
     fun goPicBoardBtnClicked(mushHistory: MushHistory)
+    fun goAnotherBtnClicked(from : PictureDialogFrom)
+
 }

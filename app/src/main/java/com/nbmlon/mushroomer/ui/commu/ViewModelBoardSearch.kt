@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 
 
 /** 게시판 검색을 위한 Viewmodel **/
-class BoardSearchViewModel(
+class ViewModelBoardSearch(
     private val repository : PostsSearchRepository,
     private val savedStateHandle: SavedStateHandle,
     private val boardType: BoardType
