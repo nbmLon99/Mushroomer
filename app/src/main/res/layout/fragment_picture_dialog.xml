@@ -98,6 +98,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
+                android:clickable="true"
+                android:background="@drawable/click_effect_background"
 
                 android:text="@string/pic_goDogam"
                 android:textAlignment="center"
@@ -116,6 +118,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
+                android:clickable="true"
+                android:background="@drawable/click_effect_background"
                 android:text="@string/pic_goBoard"
                 android:textAlignment="center"
                 android:textSize="@dimen/text_sub"
@@ -132,7 +136,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/close"
-
+                android:clickable="true"
+                android:background="@drawable/click_effect_background"
                 android:textAlignment="center"
                 android:textSize="@dimen/text_sub"
                 android:padding="15dp"

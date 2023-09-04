@@ -87,7 +87,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_gravity="left"
+            android:layout_gravity="right"
             android:gravity="center_vertical"
             >
             <CheckBox
@@ -107,15 +107,6 @@
                 />
         </LinearLayout>
 
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|right"
-            android:text="@string/otherLogin"
-            android:textStyle="bold"
-            android:textSize="@dimen/text_sub"
-            />
     </FrameLayout>
 
     <Button
@@ -138,6 +129,7 @@
         >
 
         <TextView
+            android:id="@+id/btnFindID"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
@@ -159,6 +151,7 @@
             />
 
         <TextView
+            android:id="@+id/btnFindPW"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
@@ -177,6 +170,7 @@
 
             />
         <TextView
+            android:id="@+id/btnRegister"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
@@ -195,6 +189,7 @@
 
 
     <Button
+        android:id="@+id/btn_kakao_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="70dp"

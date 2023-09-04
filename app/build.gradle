@@ -139,4 +139,8 @@ dependencies {
 
     //joda-time
     implementation 'joda-time:joda-time:2.12.5'
+
+    //coil
+    implementation("io.coil-kt:coil:2.4.0")
+
 }

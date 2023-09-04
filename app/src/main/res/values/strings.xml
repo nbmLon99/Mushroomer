@@ -3,7 +3,6 @@
     <string name="loading">로드 중</string>
 
 
-
     <string name="app_name">버섯 모야</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -42,7 +41,6 @@
     <string name="pic_goMap">지도에서 위치 확인하기</string>
     <string name="pic_goDogam">도감에서 정보 확인하기</string>
     <string name="pic_goBoard">내가 찍은 버섯 자랑하러가기</string>
-
 
 
     <!-- 카메라 프래그먼트 -->
@@ -93,8 +91,6 @@
     <string name="dialog_content_withdrawal">회원 탈퇴시 복구할 수 없습니다.\n탈퇴를 원하신다면\n가입했던 이메일을 입력해주세요.\n</string>
     <string name="dialog_btnText_withdrawal">회원 탈퇴</string>
 
-    
-
 
     <!--커뮤 프래그먼트 -->
     <string name="QnABoard">버섯 Q&amp;A</string>
@@ -128,20 +124,20 @@
     <string name="no_results">현재 발견한 버섯이 없습니다.\n사진을 찍어 버섯을 발견해보세요!</string>
     <string name="retry">재시도</string>
 
-    <string-array name="sorting_item">
-        <item>도감넘버</item>
-        <item>희귀도</item>
-        <item>이름</item>
-    </string-array>
+    <string name="invalid_username">이메일 형식을 확인하세요!</string>
 
     <!-- Login Activity -->
-    <string name="invalid_username">이메일 형식을 확인하세요!</string>
     <string name="invalid_password">패스워드는 최소 6글자 이상입니다.</string>
     <string name="secret_key_name">biometric_encryption_key</string>
     <string name="prompt_info_title">지문인증</string>
     <string name="prompt_info_subtitle">기기에 등록된 지문을 이용하여 지문을 인증해주세요</string>
     <string name="cancel">취소</string>
     <string name="no_search_result">검색결과가 없습니다!</string>
+    <string-array name="sorting_item">
+        <item>도감넘버</item>
+        <item>희귀도</item>
+        <item>이름</item>
+    </string-array>
 
 
 </resources>

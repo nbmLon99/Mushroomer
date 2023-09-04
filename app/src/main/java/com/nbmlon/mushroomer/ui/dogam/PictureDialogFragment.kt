@@ -40,7 +40,8 @@ class PictureDialogFragment private constructor(): DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dialog?.window?.setBackgroundDrawableResource(R.color.trans)
+        setStyle(STYLE_NO_FRAME, R.style.TransparentDialog)
+
         arguments?.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 mMushHistory = it.getSerializable(TARGET_MUSH_HISTORY, MushHistory::class.java)!!

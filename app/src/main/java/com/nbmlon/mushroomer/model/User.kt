@@ -7,7 +7,7 @@ import com.nbmlon.mushroomer.utils.GlideApp
 
 /**
  * @param userIdx           user 구분자
- * @param icon      프로필 이미지
+ * @param icon              프로필 이미지
  * @param name              이름
  * @param nickname          닉네임
  * @param email             이메일
@@ -24,7 +24,6 @@ data class User(
         }
     }
 }
-
 
 
 class UserDataBindingAdapter{
