@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:clickable="true"
         android:background="@drawable/click_effect_background"
         >
         <TextView

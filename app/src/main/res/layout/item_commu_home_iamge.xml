@@ -104,6 +104,7 @@
                 android:id="@+id/frame"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:clickable="true"
                 android:background="@drawable/click_effect_background"
                 />
         </androidx.cardview.widget.CardView>
