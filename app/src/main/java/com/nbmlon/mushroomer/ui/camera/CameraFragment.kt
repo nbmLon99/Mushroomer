@@ -1,9 +1,7 @@
 package com.nbmlon.mushroomer.ui.camera
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -36,7 +34,8 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
         private val REQUIRED_PERMISSIONS =
             mutableListOf (
                 Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_FINE_LOCATION
             ).toTypedArray()
     }
     private var _binding: FragmentCameraBinding? = null
