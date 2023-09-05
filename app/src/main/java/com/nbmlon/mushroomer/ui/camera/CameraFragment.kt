@@ -1,12 +1,15 @@
 package com.nbmlon.mushroomer.ui.camera
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -17,7 +20,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.RequestCodeConstants
+import com.nbmlon.mushroomer.RequestCodeConstants.CAMERA_PERMISSION_REQUEST_CODE
 import com.nbmlon.mushroomer.databinding.FragmentCameraBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +37,6 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
     companion object {
         const val TAG = "CameraFragment"
         private const val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
-        private const val CAMERA_PERMISSION_REQUEST_CODE = 100
         private val REQUIRED_PERMISSIONS =
             mutableListOf (
                 Manifest.permission.CAMERA,
@@ -40,13 +46,12 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
     }
     private var _binding: FragmentCameraBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var picturesAdapter: PicturesAdapter
     private lateinit var cameraExecutor: ExecutorService
     private var imageCapture: ImageCapture? = null
-
-
     private val cameraViewModel: CameraViewModel by viewModels()
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var lat : Double? = null; private var lon : Double? = null;
 
 
     override fun onCreateView(
@@ -55,6 +60,18 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCameraBinding.inflate(inflater, container, false)
+
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
+        if (!checkLocationPermission()) {
+            // 위치 권한을 요청합니다.
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                RequestCodeConstants.LOCATION_PERMISSION_REQUEST_CODE
+            )
+        }
         return binding.root
     }
 
@@ -243,11 +260,41 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
 
 
     override fun startAnalyze() {
+        // 위치 권한이 이미 허용된 경우 위치 정보 업데이트
+        if (checkLocationPermission()) {
+            requestLocationUpdates()
+        }
         cameraViewModel.startAnalysis()
         Sweetalert(requireActivity(),Sweetalert.PROGRESS_TYPE).apply {
             titleText = resources.getString(R.string.ANLAYZE_IN_PROGRESS)
             setCancelable(false)
             show()
         }
+    }
+
+
+
+    private fun checkLocationPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            requireActivity(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun requestLocationUpdates()  {
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                location?.let {
+                    this@CameraFragment.lat = location.latitude
+                    this@CameraFragment.lon = location.longitude
+                    // 여기에서 위도와 경도를 사용하세요.
+                    //카메라 중심점 이동
+                }
+            }
+            .addOnFailureListener {
+                // 위치 정보를 가져오는 데 실패한 경우 처리하세요.
+                Toast.makeText(requireActivity(),"위치 정보를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
+            }
     }
 }

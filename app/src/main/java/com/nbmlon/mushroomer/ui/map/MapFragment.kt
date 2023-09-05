@@ -25,6 +25,7 @@ import com.kakao.vectormap.label.Label
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import com.nbmlon.mushroomer.RequestCodeConstants.LOCATION_PERMISSION_REQUEST_CODE
 import com.nbmlon.mushroomer.databinding.FragmentMapBinding
 import com.nbmlon.mushroomer.model.MushHistory
 import com.nbmlon.mushroomer.ui.dogam.PictureDialogFragment
@@ -37,12 +38,12 @@ import com.nbmlon.mushroomer.ui.dogam.PictureDialogFrom
 class MapFragment() : Fragment() {
     companion object {
         const val TAG = "MapFragment"
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
 
         @JvmStatic
         fun getFocusedFor(mushHistory: MushHistory) =
             MapFragment().apply {
                 arguments = Bundle().apply {
+                    putSerializable(MUSH_HISTORY_FOR_FOCUS, mushHistory)
                 }
             }
     }
@@ -52,10 +53,8 @@ class MapFragment() : Fragment() {
     private val binding get() = _binding!!
     var target_history : MushHistory? = null
     private var kakaoMap : KakaoMap? = null
-
     // 라벨과 연관된 mushHistory를 저장하는 맵
     val labelToMushHistoryMap = mutableMapOf<Label, MushHistory>()
-
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
 
