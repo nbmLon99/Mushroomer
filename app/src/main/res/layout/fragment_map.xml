@@ -6,15 +6,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.map.MapFragment">
 
-    <RelativeLayout
-        android:id="@+id/mapView"
+    <com.kakao.vectormap.MapView
+        android:id="@+id/map_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <Button
-            android:id="@+id/btn_test"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-    </RelativeLayout>
-
+        android:layout_height="match_parent" />
+    <Button
+        android:id="@+id/btn_test"
+        android:text="다이얼로그 테스트 버튼"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
