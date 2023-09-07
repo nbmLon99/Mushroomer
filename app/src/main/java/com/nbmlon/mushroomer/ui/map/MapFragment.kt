@@ -18,7 +18,6 @@ import androidx.fragment.app.viewModels
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.kakao.vectormap.KakaoMap
-import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.Label
@@ -87,42 +86,42 @@ class MapFragment() : Fragment() {
     ): View? {
         _binding = FragmentMapBinding.inflate(layoutInflater)
         val viewModel by viewModels<MapViewModel>()
-
-        binding.mapView.start( object : KakaoMapReadyCallback() {
-            override fun onMapReady(kakaoMap: KakaoMap) {
-                // 인증 후 API가 정상적으로 실행될 때 호출됨
-                this@MapFragment.kakaoMap = kakaoMap
-                viewModel.markers.observe(viewLifecycleOwner){histories ->
-                    histories.forEach{
-                        binding.setMarker(it)
-                    }
-                }
-                kakaoMap.setOnLabelClickListener { _, _, label ->
-                    labelToMushHistoryMap[label]?.let {
-                        PictureDialogFragment.getInstance(target= it,callFrom= PictureDialogFrom.DogamFrag)
-                            .show(requireActivity().supportFragmentManager,PictureDialogFragment.TAG)
-                    }
-                }
-            }
-
-            override fun getPosition(): LatLng {
-                target_history?.let {
-                    return LatLng.from(it.lat, it.lon);
-                }
-
-                if (checkLocationPermission()) {
-                    // 위치 권한이 이미 허용된 경우 위치 정보를 요청할 수 있습니다.
-                    requestLocationUpdates()
-                }
-                return super.getPosition()
-            }
-
-            override fun getZoomLevel(): Int {
-                return 12
-            }
-        })
-
-
+//
+//        binding.mapView.start( object : KakaoMapReadyCallback() {
+//            override fun onMapReady(kakaoMap: KakaoMap) {
+//                // 인증 후 API가 정상적으로 실행될 때 호출됨
+//                this@MapFragment.kakaoMap = kakaoMap
+//                viewModel.markers.observe(viewLifecycleOwner){histories ->
+//                    histories.forEach{
+//                        binding.setMarker(it)
+//                    }
+//                }
+//                kakaoMap.setOnLabelClickListener { _, _, label ->
+//                    labelToMushHistoryMap[label]?.let {
+//                        PictureDialogFragment.getInstance(target= it,callFrom= PictureDialogFrom.DogamFrag)
+//                            .show(requireActivity().supportFragmentManager,PictureDialogFragment.TAG)
+//                    }
+//                }
+//            }
+//
+//            override fun getPosition(): LatLng {
+//                target_history?.let {
+//                    return LatLng.from(it.lat, it.lon);
+//                }
+//
+//                if (checkLocationPermission()) {
+//                    // 위치 권한이 이미 허용된 경우 위치 정보를 요청할 수 있습니다.
+//                    requestLocationUpdates()
+//                }
+//                return super.getPosition()
+//            }
+//
+//            override fun getZoomLevel(): Int {
+//                return 12
+//            }
+//        })
+//
+//
 
 
         return binding.root

@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +14,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.databinding.FragmentCommuWriteBinding
@@ -32,6 +32,7 @@ import org.joda.time.DateTime
 class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner {
     companion object {
         const val TAG = "CommuFragment_write"
+        private val maxImageCount = 5 // 최대 이미지 개수 (예시: 5개)
         private val REQUIRED_PERMISSIONS = Manifest.permission.READ_EXTERNAL_STORAGE
         private const val GALLERY_PERMISSION_REQUEST_CODE = 700
         @JvmStatic
@@ -65,7 +66,7 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 mushHistoryForWriting = it.getSerializable(CALL_HISTORY_WRITING, MushHistory::class.java)
             }else{
-                mushHistoryForWriting = it.getSerializable(CALL_HISTORY_WRITING) as MushHistory
+                mushHistoryForWriting = it.getSerializable(CALL_HISTORY_WRITING) as? MushHistory
             }
         }
         getPermission()
@@ -119,11 +120,6 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
                 }
             }
             btnAddPic.setOnClickListener {
-//                if (ContextCompat.checkSelfPermission(
-//                        requireContext(), REQUIRED_PERMISSIONS) != PackageManager.PERMISSION_GRANTED
-//                ){
-//                    //Toast.makeText(requireActivity(),"사진 등록을 위해서는 권한이 필요합니다.",Toast.LENGTH_SHORT).show()
-//                }
                 galleryLauncher.launch(
                     Intent(Intent.ACTION_GET_CONTENT).apply {
                         type = "image/*"
@@ -159,9 +155,21 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
                     // 다중 이미지 선택 시
                     val count = data.clipData!!.itemCount
                     val imageUris = arrayListOf<Uri>()
-                    for (i in 0 until count) {
-                        val imageUri = data.clipData!!.getItemAt(i).uri
-                        imageUris.add(imageUri)
+
+                    // 이미지 개수 체크
+                    if (count > maxImageCount) {
+                        // 너무 많은 이미지가 선택되었음을 사용자에게 알림
+                        // 예: Toast 메시지 표시
+                        Toast.makeText( requireActivity(),"최대 ${maxImageCount}개까지 선택 가능합니다.", Toast.LENGTH_SHORT).show()
+                        for (i in 0 until maxImageCount) {
+                            val imageUri = data.clipData!!.getItemAt(i).uri
+                            imageUris.add(imageUri)
+                        }
+                    }else{
+                        for (i in 0 until count) {
+                            val imageUri = data.clipData!!.getItemAt(i).uri
+                            imageUris.add(imageUri)
+                        }
                     }
                     viewModel.addUris(imageUris)
 

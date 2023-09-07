@@ -39,7 +39,7 @@ data class Mushroom (
         fun getDummy(n :Int, gotcha : Boolean, name: String? = null) : Mushroom{
             val mushName = name ?: "${n}번쨰 버섯"
             val mush = Mushroom(n,"", mushName,"설명입니다.", MushType.EDIBLE,20L,ArrayList())
-            if(gotcha){ mush.myHistory.add(MushHistory(mush, ArrayList(), DateTime(), 0,0)) }
+            if(gotcha){ mush.myHistory.add(MushHistory(mush, ArrayList(), DateTime(), 0.0,0.0)) }
             return mush
         }
     }
