@@ -6,7 +6,7 @@
         android:name="android.hardware.camera"
         android:required="false" />
     <meta-data
-        android:name="com.kakao.vectormap.AppKey"
+        android:name="com.kakao.vectormap.APP_KEY"
         android:value="ee06907dfd525f5ad06617a3e8416617" />
     <uses-feature android:name="android.hardware.camera.any" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />

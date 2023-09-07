@@ -1,5 +1,7 @@
 package com.nbmlon.mushroomer.api
 
+import com.google.gson.annotations.SerializedName
+import com.nbmlon.mushroomer.model.Mushroom
 import okhttp3.Call
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -11,8 +13,7 @@ interface DogamService {
 
     @GET()
     suspend fun getDogam(
-        query: String,
-        pageNumber : Int
+        query: String?
     ) : DogamResponse
 
     companion object {
@@ -36,3 +37,10 @@ interface DogamService {
         }
     }
 }
+
+
+
+data class DogamResponse(
+    @SerializedName("items") val items : ArrayList<Mushroom> = ArrayList(),
+)
+

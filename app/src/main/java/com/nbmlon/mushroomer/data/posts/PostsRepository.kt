@@ -4,11 +4,13 @@ package com.nbmlon.mushroomer.data.posts
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.nbmlon.mushroomer.AppUser
+import com.nbmlon.mushroomer.api.BoardService
+import com.nbmlon.mushroomer.api.CommentService
 import com.nbmlon.mushroomer.model.Post
 import com.nbmlon.mushroomer.ui.commu.BoardType
 import com.nbmlon.mushroomer.ui.commu.PostSortingOption
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 
 /** 홈화면 저장소 **/
@@ -49,13 +51,16 @@ fun CommuHistoryRepository() : CommuHistoryRepository = CommuHistoryRepositoryIm
 
 
 class CommuHistoryRepositoryImpl : CommuHistoryRepository {
+    @Inject private lateinit var boardBackend : BoardService
+    @Inject private lateinit var commentBackend : CommentService
+
     override fun getPostHistoryStream(): Flow<PagingData<Post>> {
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { PostPagingSource(PostsService.create(), BoardType.MyPosts) }
+            pagingSourceFactory = { PostPagingSource(boardBackend, BoardType.MyPosts) }
         ).flow
     }
 
@@ -65,7 +70,7 @@ class CommuHistoryRepositoryImpl : CommuHistoryRepository {
                 pageSize = NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { PostPagingSource(PostsService.create(), BoardType.MyComments) }
+            pagingSourceFactory = { PostPagingSource(boardBackend, BoardType.MyComments) }
         ).flow
     }
 
@@ -74,6 +79,9 @@ class CommuHistoryRepositoryImpl : CommuHistoryRepository {
 
 class PostsSearchRepositoryImpl : PostsSearchRepository {
     /** query를 통해 검색된 값 가져오기 **/
+    @Inject
+    private lateinit var backend : BoardService
+
 
     override fun getSearchedPostStream(
         boardType: BoardType,
@@ -84,7 +92,7 @@ class PostsSearchRepositoryImpl : PostsSearchRepository {
                 pageSize = NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { PostPagingSource(PostsService.create(), boardType, searchKeyword) }
+            pagingSourceFactory = { PostPagingSource(backend, boardType, searchKeyword) }
         ).flow
     }
 
@@ -92,20 +100,8 @@ class PostsSearchRepositoryImpl : PostsSearchRepository {
 
 
 private class PostsRepositoryImpl: PostsRepository {
-//
-//    private val baseUrl : String = ""
-//    private val retrofit: Retrofit = Retrofit.Builder()
-//        .baseUrl(baseUrl)
-//        .addConverterFactory(GsonConverterFactory.create())
-//        .build()
-
-//    private val postsService: PostsService = retrofit.create(PostsService::class.java)
-//
-//    fun fetchData(): Call<Post> {
-//        return postsService.getPostsByIdx()
-//    }
-//
-//
+    @Inject
+    private lateinit var backend : BoardService
 
     override fun getPostStream(boardType: BoardType, sortOpt : PostSortingOption, isHotBoard : Boolean): Flow<PagingData<Post>> {
         return Pager(
@@ -113,7 +109,7 @@ private class PostsRepositoryImpl: PostsRepository {
                 pageSize = NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { PostPagingSource(PostsService.create(), boardType, isHotBoard = isHotBoard) }
+            pagingSourceFactory = { PostPagingSource(backend, boardType, isHotBoard = isHotBoard) }
         ).flow
     }
 }

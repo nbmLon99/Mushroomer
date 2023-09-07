@@ -11,6 +11,7 @@ class MapViewModel : ViewModel() {
             loadHistories()
         }
     }
+
     val markers : LiveData<ArrayList<MushHistory>> get() = _markers
 
 

@@ -2,12 +2,11 @@ package com.nbmlon.mushroomer.data.dogam
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.nbmlon.mushroomer.api.DogamResponse
-import com.nbmlon.mushroomer.api.DogamService
-import com.nbmlon.mushroomer.model.Dogam
+import com.nbmlon.mushroomer.api.MushroomService
 import com.nbmlon.mushroomer.model.Mushroom
 import com.nbmlon.mushroomer.ui.dogam.DogamSortingOption
 import retrofit2.HttpException
+import retrofit2.await
 import java.io.IOException
 import kotlin.math.max
 
@@ -18,10 +17,11 @@ private const val STARTING_KEY = 0
  * @param sortingOption : 정렬 기준
  */
 class DogamPagingSource(
-    val backend: DogamService,
+    val backend : MushroomService,
     val query : String?,
     val sortingOption: DogamSortingOption
 ) : PagingSource<Int, Mushroom>() {
+
     override suspend fun load(
         params: LoadParams<Int>
     ): LoadResult<Int, Mushroom> {
@@ -29,8 +29,10 @@ class DogamPagingSource(
             // Start refresh at page 1 if undefined.
             val startKey = params.key ?: STARTING_KEY
             val range = startKey.until(startKey + params.loadSize)
-            //val response = backend.getDogam(query, nextPageNumber)
-            val response = DogamResponse(Dogam.getDummy(3,query) )
+            // 비동기로 호출하고 응답을 받기 위한 Deferred 객체를 생성
+            val response = backend.getMushrooms(query).await()
+
+            //val response = DogamResponse(Dogam.getDummy(3,query) )
             return LoadResult.Page(
                 data = response.items,
                 prevKey = when (startKey) {
@@ -57,13 +59,6 @@ class DogamPagingSource(
     }
 
     override fun getRefreshKey(state: PagingState<Int, Mushroom>): Int? {
-        // Try to find the page key of the closest page to anchorPosition, from
-        // either the prevKey or the nextKey, but you need to handle nullability
-        // here:
-        //  * prevKey == null -> anchorPage is the first page.
-        //  * nextKey == null -> anchorPage is the last page.
-        //  * both prevKey and nextKey null -> anchorPage is the initial page, so
-        //    just return null.
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
             ensureValidKey( anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1) ?: STARTING_KEY )

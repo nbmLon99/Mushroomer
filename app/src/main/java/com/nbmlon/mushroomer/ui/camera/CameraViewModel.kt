@@ -21,7 +21,7 @@ import java.util.Locale
 
 class CameraViewModel : ViewModel() {
     // MutableLiveData를 사용하여 분석 결과를 저장할 변수를 선언합니다.
-    //    private val _analysisRequest = MutableLiveData<>
+    // private val _analysisRequest = MutableLiveData<>
     private val _analysisResult = MutableLiveData<String>()
     private val _capturedImages: MutableLiveData<ArrayList<Bitmap>> = MutableLiveData(arrayListOf())
 

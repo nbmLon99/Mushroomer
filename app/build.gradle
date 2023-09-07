@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id("com.google.dagger.hilt.android") version "2.44" apply false
 }
 
 
@@ -63,6 +64,12 @@ ext {
     okhttpLoggingInterceptorVersion = '4.9.0'
     retrofitVersion = '2.9.0'
 }
+
+
+kapt {
+    correctErrorTypes = true
+}
+
 
 dependencies {
 
@@ -147,4 +154,9 @@ dependencies {
 
     //kakao Map
     implementation 'com.kakao.maps.open:android:2.5.0'
+
+
+    //hilt-dagger
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
 }
