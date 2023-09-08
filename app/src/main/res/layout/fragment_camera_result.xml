@@ -6,17 +6,19 @@
     >
     <data>
         <variable
-            name="result"
+            name="analyze_result"
             type="com.nbmlon.mushroomer.model.Analyze.AnalyzeResponse" />
+
     </data>
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cardCornerRadius="10dp"
-        android:layout_margin="10dp"
+        android:layout_margin="30dp"
         >
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/successFrame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="15dp"
@@ -36,7 +38,7 @@
                     android:padding="10dp"
 
                     android:textAlignment="center"
-                    android:text="@{result.mushroom.name}"
+                    android:text="@{analyze_result.mushroom.name}"
                     android:textSize="@dimen/text_big"
                     android:textStyle="bold"
 
@@ -48,7 +50,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
-                    android:text='@{"No." + String.valueOf(result.mushroom.dogamNo)}'
+                    android:text='@{"No." + String.valueOf(analyze_result.mushroom.dogamNo)}'
                     android:textSize="@dimen/text_sub"
                     android:textStyle="italic|bold"
                     android:layout_marginLeft="10dp"
@@ -71,7 +73,7 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:setNew="@{result.isNew}"
+                    app:setNew="@{analyze_result.isNew}"
                     />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -94,12 +96,12 @@
                     >
 
                     <TextView
-                        android:id="@+id/accuracy"
+                        android:id="@+id/accuracy_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
 
-                        android:text='@{"정확도 : " + String.valueOf(result.accuracy)}%'
-                        android:textSize="@dimen/text_big"
+                        android:text='@{"정확도 : " + String.valueOf(analyze_result.accuracy) + "%"}'
+                        android:textSize="@dimen/text_main"
                         android:textStyle="italic|bold"
 
                         android:layout_marginLeft="10dp"
@@ -120,7 +122,7 @@
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:setMushType="@{result.mushroom.type}"
+                        app:setMushType="@{analyze_result.mushroom.type}"
                         />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -146,17 +148,22 @@
                         android:textSize="@dimen/text_main"
                         android:textStyle="bold"
                         />
-
-                    <TextView
-                        android:id="@+id/content"
-                        android:padding="16dp"
-                        android:text="@{result.mushroom.feature}"
-                        android:textSize="@dimen/text_sub"
-                        android:scrollbars="vertical"
-
+                    <ScrollView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        />
+                        android:scrollbars="vertical"
+                        >
+                        <TextView
+                            android:id="@+id/content"
+                            android:padding="16dp"
+                            android:text="@{analyze_result.mushroom.feature}"
+                            android:textSize="@dimen/text_sub"
+
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            />
+
+                    </ScrollView>
                 </LinearLayout>
 
 
@@ -167,7 +174,7 @@
                     android:paddingTop="10dp"
                     android:paddingBottom="5dp"
 
-                    android:text='@{"전체 사용자 중" + String.valueOf(result.mushroom.rarity) + "%만이 이 버섯을 발견하였습니다!" }'
+                    android:text='@{"전체 사용자 중" + String.valueOf(analyze_result.mushroom.rarity) + "%만이 이 버섯을 발견하였습니다!" }'
                     android:textAlignment="center"
                     />
             </LinearLayout>
@@ -183,6 +190,27 @@
                 android:background="@color/mainGreen"
                 />
 
-         </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/fail_frame"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            >
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icons_fail"
+                android:layout_margin="20dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="결과를 불러오는 데 실패하였습니다."
+                />
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
 </layout>

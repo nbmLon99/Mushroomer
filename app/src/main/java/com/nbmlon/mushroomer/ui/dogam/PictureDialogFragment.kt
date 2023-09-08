@@ -16,7 +16,7 @@ private const val DIALOG_CALL_FROM = "dialog_call_from"
 
 
 /**
- * 작업 요함
+ * 사진 띄우는 다이얼로그 -> 사진 어댑터 작업요함
  */
 class PictureDialogFragment private constructor(): DialogFragment() {
     companion object {

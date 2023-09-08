@@ -11,7 +11,12 @@ import androidx.camera.core.ImageProxy
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.nbmlon.mushroomer.data.mushrooms.AnalyzeMushroomPictures
+import com.nbmlon.mushroomer.model.Analyze
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
@@ -22,11 +27,10 @@ import java.util.Locale
 class CameraViewModel : ViewModel() {
     // MutableLiveData를 사용하여 분석 결과를 저장할 변수를 선언합니다.
     //    private val _analysisRequest = MutableLiveData<>
-    private val _analysisResult = MutableLiveData<String>()
+    private val _analysisResult = MutableLiveData<Analyze.AnalyzeResponse>()
     private val _capturedImages: MutableLiveData<ArrayList<Bitmap>> = MutableLiveData(arrayListOf())
 
-
-    val analysisResult: LiveData<String>
+    val analysisResult: LiveData<Analyze.AnalyzeResponse>
         get() = _analysisResult
 
     val capturedImages : LiveData<ArrayList<Bitmap>>
@@ -35,10 +39,13 @@ class CameraViewModel : ViewModel() {
 
     // 분석 작업을 수행하는 함수입니다.
     fun startAnalysis() {
-        // 여기서 실제 데이터 분석 작업을 수행하고 결과를 _analysisResult에 저장합니다.
-        // 결과를 LiveData에 전달하여 UI에 반영될 수 있도록 합니다.
-        val data = "테스트결과"
-        _analysisResult.value = "분석 결과: $data"
+        viewModelScope.launch(Dispatchers.IO){
+            val result = AnalyzeMushroomPictures(capturedImages.value!!).analyzeMushroomPictures()
+            delay(1000)
+            withContext(Dispatchers.Main){
+                _analysisResult.value = result
+            }
+        }
     }
 
     @SuppressLint("UnsafeOptInUsageError")

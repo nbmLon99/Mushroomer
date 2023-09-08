@@ -265,10 +265,16 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
             requestLocationUpdates()
         }
         cameraViewModel.startAnalysis()
-        Sweetalert(requireActivity(),Sweetalert.PROGRESS_TYPE).apply {
+        val loading = Sweetalert(requireActivity(),Sweetalert.PROGRESS_TYPE).apply {
             titleText = resources.getString(R.string.ANLAYZE_IN_PROGRESS)
             setCancelable(false)
             show()
+        }
+
+        cameraViewModel.analysisResult.observe(viewLifecycleOwner){response ->
+            loading.dismissWithAnimation()
+            CameraFragment_result.getInstance(response = response)
+                .show(requireActivity().supportFragmentManager, CameraFragment_result.TAG)
         }
     }
 
