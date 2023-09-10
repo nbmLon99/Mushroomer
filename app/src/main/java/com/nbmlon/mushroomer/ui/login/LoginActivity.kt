@@ -5,16 +5,15 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
 import androidx.core.widget.doAfterTextChanged
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.api.dto.UserRequestDTO.LoginRequestDTO
+import com.nbmlon.mushroomer.api.dto.UserRequestDTO.TokenLoginRequestDTO
 import com.nbmlon.mushroomer.databinding.ActivityLoginBinding
 import com.nbmlon.mushroomer.databinding.DialogFindIdBinding
 import com.nbmlon.mushroomer.databinding.DialogFindPwBinding
@@ -40,7 +39,6 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private val loginViewModel by viewModels<LoginViewModel>()
 
-    private lateinit var biometricPrompt: BiometricPrompt
     private val cryptographyManager = CryptographyManager()
     private val ciphertextWrapper
         get() = cryptographyManager.getCiphertextWrapperFromSharedPrefs(
@@ -65,6 +63,7 @@ class LoginActivity : AppCompatActivity() {
             Context.MODE_PRIVATE    // 모드
         )
 
+        loginViewModel.response.observe(this, ::responseObserver )
 
 
         loading= Sweetalert(this,Sweetalert.PROGRESS_TYPE).apply {
@@ -86,6 +85,8 @@ class LoginActivity : AppCompatActivity() {
      */
     override fun onResume() {
         super.onResume()
+
+
         val autoLoginEnabled = sharedPrefs.getBoolean("autoLoginEnabled", false)
         //자동로그인
         if(ciphertextWrapper != null && !autoLoginEnabled){
@@ -108,6 +109,38 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+    private fun responseObserver(response : LoginResponse){
+        when(response){
+            is LoginResponse.Login ->{
+                val dto = response.dto
+                if(dto.success){
+                    AppUser.refreshToken = dto.refreshToken
+                    AppUser.token = dto.token
+                    AppUser.user = dto.loginUser
+                    AppUser.percent = dto.percentage
+
+                    //자동로그인 토큰 저장
+                    if(sharedPrefs.getBoolean("autoLoginEnabled", false)){
+                        encryptAndStoreServerTokenForAutoLogin()
+                    }
+                    updateApp()
+                }
+            }
+            is LoginResponse.FindIdPw ->{
+                val dto = response.dto
+                if(dto.success) {
+                }
+
+            }
+            is LoginResponse.Register ->{
+                val dto = response.dto
+                if(dto.success) {
+                }
+            }
+        }
+
+
+    }
 
     // USERNAME + PASSWORD SECTION
     private fun setupForLoginWithPassword() {
@@ -119,26 +152,6 @@ class LoginActivity : AppCompatActivity() {
                     loginState.usernameError?.let { binding.username.error = getString(it) }
                     loginState.passwordError?.let { binding.password.error = getString(it) }
                 }
-            }
-        })
-
-        loginViewModel.loginResult.observe(this, Observer {
-            val loginResult = it ?: return@Observer
-            if (loginResult.success) {
-                TODO("로그인 REsult Appuser에 저장")
-                AppUser.refreshToken = loginResult.refreshToken
-                AppUser.token = loginResult.token
-                AppUser.user = loginResult.loginUser
-                AppUser.percent = loginResult.percentage
-
-                if(sharedPrefs.getBoolean("autoLoginEnabled", false)){
-                    //자동로그인 토큰 저장
-                    encryptAndStoreServerTokenForAutoLogin()
-                }
-                Log.d(TAG,
-                    "You successfully signed up using password as: user " +
-                            "${AppUser.user?.email} with fake token ${AppUser.token}")
-                updateApp()
             }
         })
         binding.username.doAfterTextChanged {
@@ -161,10 +174,15 @@ class LoginActivity : AppCompatActivity() {
                 .apply()
 
 
+            //라이브데이터로 변경된 부분
+            loginViewModel.request(
+                LoginRequest.Login(
+                    LoginRequestDTO(
+                        email =    binding.username.text.toString(),
+                        password = binding.password.text.toString()
+                    )
+                )
 
-            loginViewModel.login(
-                binding.username.text.toString(),
-                binding.password.text.toString(),
             )
             Log.d(TAG, "Username ${AppUser.user?.email}; fake token ${AppUser.token}")
         }
@@ -204,7 +222,14 @@ class LoginActivity : AppCompatActivity() {
                 authResult.cryptoObject?.cipher?.let {
                     val plaintext =
                         cryptographyManager.decryptData(textWrapper.ciphertext, it)
-                    loginViewModel.loginWithToken(plaintext)
+
+                    //라이브 데이터로 변경된 내용
+                    loginViewModel.request(
+                        LoginRequest.LoginWithToken(
+                            TokenLoginRequestDTO(plaintext)
+                        )
+                    )
+                    //----------------------
                     loading.show()
                 }
             }
@@ -223,7 +248,12 @@ class LoginActivity : AppCompatActivity() {
                 val plaintext =
                     cryptographyManager.decryptData(textWrapper.ciphertext, cipher)
 
-                loginViewModel.loginWithToken(plaintext)
+                //라이브 데이터로 변경된 내용
+                loginViewModel.request(
+                    LoginRequest.LoginWithToken(
+                        TokenLoginRequestDTO(plaintext))
+                )
+                //----------------------
                 loading.show()
             }
         }
@@ -257,17 +287,7 @@ class LoginActivity : AppCompatActivity() {
         val dialog = Sweetalert(this, Sweetalert.NORMAL_TYPE)
         val dialogBinding = DialogFindIdBinding.inflate(layoutInflater).apply {
             btnFindId.setOnClickListener {
-                loginViewModel.findIDinResult.observeOnce(this@LoginActivity, Observer { result ->
-                    if(result.success){
 
-                    }
-                    else{
-
-                    }
-                })
-//                    loading.show()
-//                    loginViewModel.requestFindID()
-                dialog.dismissWithAnimation()
             }
         }
         dialog.apply {
@@ -282,16 +302,7 @@ class LoginActivity : AppCompatActivity() {
         val dialog = Sweetalert(this, Sweetalert.NORMAL_TYPE)
         val dialogBinding = DialogFindPwBinding.inflate(layoutInflater).apply {
             btnFindPw.setOnClickListener {
-                loginViewModel.findPWResult.observeOnce(this@LoginActivity, Observer { result ->
-                    if(result.success){
 
-                    }
-                    else{
-
-                    }
-                })
-//                    loading.show()
-//                    loginViewModel.requestFindPW()
                 dialog.dismissWithAnimation()
             }
         }
@@ -306,57 +317,14 @@ class LoginActivity : AppCompatActivity() {
         val dialogBinding = DialogRegisterBinding.inflate(layoutInflater).apply {
             //회원가입 시도
             btnRegister.setOnClickListener {
-                if(loginViewModel.nicknameUsable.value?.isSuccess == true){
-                    loginViewModel.registerResult.observeOnce(this@LoginActivity, Observer { result ->
-                        if(result.isSuccess){
 
-                        }
-                        else{
 
-                        }
-                    })
-//                    loading.show()
-//                    loginViewModel.requesRegister()
-                    dialog.dismissWithAnimation()
-                }
-                else{
-                    Toast.makeText(this@LoginActivity,"닉네임 중복을 확인하세요!",Toast.LENGTH_SHORT).show()
-                }
-
-            }
-            
-            //닉네임 중복 검사
-            btnNicknameCheck.setOnClickListener {
-                loginViewModel.registerResult.observeOnce(this@LoginActivity, Observer { result ->
-                    //중복없음 -> 사용가능
-                    if(result.isSuccess){
-                        etNickname.error = null
-                        Toast.makeText(this@LoginActivity,"사용 가능한 닉네임입니다.", Toast.LENGTH_SHORT).show()
-                    }
-                    //중복 -> 사용불가
-                    else{
-                        etNickname.error = "중복된 닉네임입니다."
-                    }
-                })
-//                    loginViewModel.requesNickNameCheck()
             }
         }
         dialog.apply {
             setCustomView(dialogBinding.root)
             show()
         }
-    }
-
-
-
-
-    private fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: Observer<T>) {
-        observe(lifecycleOwner, object : Observer<T> {
-            override fun onChanged(t: T) {
-                observer.onChanged(t)
-                removeObserver(this) // 옵저버를 한 번 호출한 후 제거
-            }
-        })
     }
 
 }

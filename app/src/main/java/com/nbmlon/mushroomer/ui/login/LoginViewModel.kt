@@ -6,16 +6,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nbmlon.mushroomer.R
-import com.nbmlon.mushroomer.api.dto.LoginResponse
-import com.nbmlon.mushroomer.api.dto.RegisterRequest
-import com.nbmlon.mushroomer.api.dto.SuccessResponse
+import com.nbmlon.mushroomer.api.dto.UserRequestDTO
+import com.nbmlon.mushroomer.api.dto.UserRequestDTO.FindIdRequestDTO
+import com.nbmlon.mushroomer.api.dto.UserRequestDTO.FindPwRequestDTO
+import com.nbmlon.mushroomer.api.dto.UserRequestDTO.LoginRequestDTO
+import com.nbmlon.mushroomer.api.dto.UserRequestDTO.RegisterRequestDTO
+import com.nbmlon.mushroomer.api.dto.UserRequestDTO.TokenLoginRequestDTO
+import com.nbmlon.mushroomer.api.dto.UserResponseDTO
+import com.nbmlon.mushroomer.api.dto.UserResponseDTO.FindResponseDTO
+import com.nbmlon.mushroomer.api.dto.UserResponseDTO.LoginResponseDTO
+import com.nbmlon.mushroomer.api.dto.UserResponseDTO.SuccessResponse
 import com.nbmlon.mushroomer.data.user.UserRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class LoginViewModel : ViewModel() {
     private val repository = UserRepository()
@@ -23,17 +25,43 @@ class LoginViewModel : ViewModel() {
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginWithPasswordFormState: LiveData<LoginFormState> = _loginForm
 
-    private val _loginResult = MutableLiveData<LoginResponse>()               //로그인
-    val loginResult: LiveData<LoginResponse> = _loginResult
-    private val _registerResult = MutableLiveData<SuccessResponse>()            //회원가입
-    val registerResult: LiveData<SuccessResponse> = _registerResult
-    private val _nicknameUsable = MutableLiveData<SuccessResponse>()            //닉네임 중복 검사
-    val nicknameUsable: LiveData<SuccessResponse> = _nicknameUsable
+    val _response = MutableLiveData<LoginResponse>()
+    val response : LiveData<LoginResponse> = _response
+    val request : (LoginRequest) -> Unit
 
-    private val _findIDinResult = MutableLiveData<CallResult>()
-    val findIDinResult: LiveData<CallResult> = _findIDinResult             //ID찾기
-    private val _findPWResult = MutableLiveData<CallResult>()
-    val findPWResult: LiveData<CallResult> = _findPWResult                 //PW찾기
+    init {
+        request = { requestType ->
+            val dto = requestType.dto
+            viewModelScope.launch {
+                when(requestType){
+                    //로그인
+                    is LoginRequest.Login -> {
+                        if ((isUserNameValid(requestType.dto.email) && isPasswordValid(requestType.dto.password))) {
+                            _response.value = LoginResponse.Login(repository.login(dto))
+                        }
+                    }
+                    //토큰로그인
+                    is LoginRequest.LoginWithToken -> {
+                        _response.value = LoginResponse.Login(repository.loginWithToken(dto))
+                    }
+
+                    //회원가입
+                    is LoginRequest.Register -> {
+                        _response.value = LoginResponse.Register( repository.register(dto))
+                    }
+                    //아이디찾기
+                    is LoginRequest.FindPW -> {
+                        _response.value = LoginResponse.FindIdPw(repository.findID(dto))
+                    };
+                    //비밀번호찾기
+                    is LoginRequest.FindID -> {
+                        _response.value = LoginResponse.FindIdPw( repository.findPW(dto) )
+                    };
+                }
+            }
+
+        }
+    }
 
     fun onLoginDataChanged(username: String, password: String) {
         if (!isUserNameValid(username)) {
@@ -59,90 +87,22 @@ class LoginViewModel : ViewModel() {
     private fun isPasswordValid(password: String): Boolean {
         return password.length > 5
     }
+}
 
-    fun requestFindID(){
-        // 성공
-        if(TODO("아이디찾기")){
-            _findIDinResult.value = CallResult(true)
-        } else {
-            _findIDinResult.value = CallResult(false)
-        }
-    }
-    fun requestFindPW(){
-        //실패
-        if(TODO("비밀번호찾기")){
-            _findPWResult.value = CallResult(true)
-        } else {
-            _findPWResult.value = CallResult(false)
-        }
+sealed class LoginRequest() {
+    abstract val dto: UserRequestDTO
+    data class Login(override val dto : LoginRequestDTO) : LoginRequest()
+    data class LoginWithToken(override val dto : TokenLoginRequestDTO) : LoginRequest()
 
-    }
+    data class FindPW(override val dto : FindPwRequestDTO) : LoginRequest()
+    data class FindID(override val dto : FindIdRequestDTO) : LoginRequest()
+    data class Register(override val dto : RegisterRequestDTO) : LoginRequest()
+}
 
+sealed class LoginResponse{
+    abstract val dto : UserResponseDTO
+    data class Login(override val dto : LoginResponseDTO) : LoginResponse()
 
-    /** 회원가입 호출 이전에 반드시 닉네임 중복 검사 실시할것  **/
-    fun requestRegister(request : RegisterRequest){
-        viewModelScope.launch {
-            repository.register(request).enqueue(object : Callback<SuccessResponse>{
-                override fun onResponse(
-                    call: Call<SuccessResponse>,
-                    response: Response<SuccessResponse>
-                ) {
-                    _registerResult.value = response.body()
-                }
-
-                override fun onFailure(call: Call<SuccessResponse>, t: Throwable) {
-                    _registerResult.value = SuccessResponse(false, 200, "")
-                }
-
-            })
-        }
-        if(TODO("회원가입")){
-        } else {
-        }
-    }
-
-
-
-    suspend fun loginWithToken(refreshToken : String){
-        val call = withContext(Dispatchers.IO){
-            repository.loginWithToken(refreshToken)
-        }
-
-        withContext(Dispatchers.Main){
-            call.enqueue(object : Callback<LoginResponse>{
-                override fun onResponse(
-                    call: Call<LoginResponse>,
-                    response: Response<LoginResponse>
-                ) {
-                    _loginResult.value = response.body()
-                }
-                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                    _loginResult.value = LoginResponse(false)
-                }
-            })
-        }
-    }
-
-
-    /** id / 비밀번호 / 자동로그인 check -> Login**/
-    fun login(username: String, password: String) {
-        if((isUserNameValid(username) && isPasswordValid(password))){
-            viewModelScope.launch{
-                    repository.login(username,password).enqueue(object : Callback<LoginResponse>{
-                        override fun onResponse(
-                            call: Call<LoginResponse>,
-                            response: Response<LoginResponse>
-                        ) {
-                            _loginResult.value = response.body()
-                        }
-                        override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                            _loginResult.value = LoginResponse(false)
-                        }
-                    })
-            }
-        }
-    }
-
-
-
+    data class FindIdPw(override val dto : FindResponseDTO) : LoginResponse()
+    data class Register(override val dto : SuccessResponse) : LoginResponse()
 }

@@ -1,44 +1,57 @@
 package com.nbmlon.mushroomer.api.dto
 
-import com.google.gson.annotations.SerializedName
 import com.nbmlon.mushroomer.model.User
 
-data class LoginRequest(
-    val email: String,
-    val password: String
-)
 
-data class RegisterRequest(
-    val name : String,
-    val email : String,
-    val password : String,
-    val nickname : String,
-    val cellphone : String
-)
+sealed class UserRequestDTO{
+    data class LoginRequestDTO(
+        val email: String,
+        val password: String
+    ): UserRequestDTO()
 
-data class FindIdRequest(
-    val name : String,
-    val cellphone: String
-)
+    data class TokenLoginRequestDTO(
+        val token : String
+    ) : UserRequestDTO()
 
-data class FindPwRequest(
-    val name : String,
-    val email : String
-)
+    data class RegisterRequestDTO(
+        val name : String,
+        val email : String,
+        val password : String,
+        val nickname : String,
+        val cellphone : String
+    ): UserRequestDTO()
 
-data class LoginResponse(
-    val success: Boolean = false,
-    val refreshToken : String? = null,
-    val token : String? = null,
-    val loginUser : User? = null,
-    val percentage : Int? = null
-){
+    data class FindIdRequestDTO(
+        val name : String,
+        val cellphone: String
+    ): UserRequestDTO()
 
+    data class FindPwRequestDTO(
+        val name : String,
+        val email : String
+    ) : UserRequestDTO()
 }
 
-data class UserResponse(
-    @SerializedName("") val items : User,
-    @SerializedName("tokens") val token : String,
-    @SerializedName("isSuccess") val isSuccess : Boolean
-)
+
+
+sealed class UserResponseDTO{
+    data class LoginResponseDTO(
+        val success: Boolean = false,
+        val refreshToken : String? = null,
+        val token : String? = null,
+        val loginUser : User? = null,
+        val percentage : Int? = null
+    ) : UserResponseDTO()
+
+    data class FindResponseDTO(
+        val success: Boolean = false,
+        val hint : String = ""
+    ) : UserResponseDTO()
+
+    data class SuccessResponse(
+        val success: Boolean,
+        val code: Int = -1,
+        val message: String = ""
+    ) : UserResponseDTO()
+}
 

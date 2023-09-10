@@ -1,10 +1,9 @@
 package com.nbmlon.mushroomer.api.service
 
-import com.nbmlon.mushroomer.api.dto.LoginRequest
-import com.nbmlon.mushroomer.api.dto.LoginResponse
-import com.nbmlon.mushroomer.api.dto.RegisterRequest
-import com.nbmlon.mushroomer.api.dto.SuccessResponse
-import com.nbmlon.mushroomer.api.dto.UserResponse
+import com.nbmlon.mushroomer.api.dto.UserResponseDTO.SuccessResponse
+import com.nbmlon.mushroomer.api.dto.UserRequestDTO.LoginRequestDTO
+import com.nbmlon.mushroomer.api.dto.UserRequestDTO.RegisterRequestDTO
+import com.nbmlon.mushroomer.api.dto.UserResponseDTO
 import dagger.Module
 import dagger.Provides
 import retrofit2.Call
@@ -18,27 +17,27 @@ import retrofit2.http.Path
 interface UserService {
     //로그인
     @POST("/login")
-    suspend fun login(@Body request: LoginRequest) : Call<LoginResponse>
+    suspend fun login(@Body request: LoginRequestDTO) : Call<UserResponseDTO>
 
     //토큰 재발급
     @POST("/users/token/generateToken")
-    suspend fun generateToken() : Call<UserResponse>
+    suspend fun generateToken() : Call<UserResponseDTO>
 
     //소셜 로그인
     @POST("/api/users/oauth2/login")
-    suspend fun kakaoLogin() : Call<UserResponse>
+    suspend fun kakaoLogin() : Call<UserResponseDTO>
 
     //유저 정보 변경
     @PUT("/users/{userId}")
-    suspend fun modifyUser(@Path("userId")id:Int, @Body request : RegisterRequest) : Call<UserResponse>
+    suspend fun modifyUser(@Path("userId")id:Int, @Body request : RegisterRequestDTO) : Call<UserResponseDTO>
 
     //회원 탈퇴
     @DELETE("/users/{userId}")
-    suspend fun withdrawal(@Path("userId")id : Int) : Call<UserResponse>
+    suspend fun withdrawal(@Path("userId")id : Int) : Call<SuccessResponse>
 
     //회원가입
     @POST("/users/join")
-    suspend fun signUp(@Body request : RegisterRequest) : Call<SuccessResponse>
+    suspend fun signUp(@Body request : RegisterRequestDTO) : Call<SuccessResponse>
 
 
 }
