@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.commu.CommuFragment_report"
+    >
+    <data>
+        <variable
+            name="post"
+            type="com.nbmlon.mushroomer.model.Post" />
+        <variable
+            name="comment"
+            type="com.nbmlon.mushroomer.model.Comment" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+        <!-- 제목 영역 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/titleFrame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+            <ImageView
+                android:id="@+id/btn_back"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:padding="10dp"
+                android:layout_marginLeft="10dp"
+
+                android:src="@drawable/icons_left_arrow"
+
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+
+                android:text="@string/Reporting"
+                android:textStyle="bold"
+                android:textSize="25sp"
+
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="20dp"
+            android:background="@color/bgGray"
+            >
+            <!-- 신고 내용 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textGray"
+                android:padding="20dp"
+
+
+                android:text="@{post != null ? post.title : comment.content}"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="textEnd"
+                android:layout_marginRight="20dp"
+
+                android:text="@{post != null ? post.writer.nickname : comment.writer.nickname}"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="25dp"
+            android:orientation="vertical"
+
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ReportingReasonText"
+                android:padding="8dp"
+                />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/black"
+                android:layout_marginBottom="10dp"
+                />
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                >
+                <RadioButton
+                    android:id="@+id/radio_reporting1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ReportingReason1"
+                    android:padding="10dp"
+                    />
+
+                <RadioButton
+                    android:id="@+id/radio_reporting2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ReportingReason2"
+                    android:padding="10dp"
+                    />
+
+                <RadioButton
+                    android:id="@+id/radio_reporting3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ReportingReason3"
+                    android:padding="10dp"
+                    />
+                <RadioButton
+                    android:id="@+id/radio_reporting4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ReportingReason4"
+                    android:padding="10dp"
+                    />
+                <RadioButton
+                    android:id="@+id/radio_reporting5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ReportingReason5"
+                    android:padding="10dp"
+                    />
+                <RadioButton
+                    android:id="@+id/radio_reporting6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ReportingReason6"
+                    android:padding="10dp"
+                    />
+            </RadioGroup>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_report"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@string/Reporting"
+            android:background="@color/secondGreen"
+            />
+    </LinearLayout>
+
+
+</layout>

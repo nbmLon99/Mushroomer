@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="error_text_size">12sp</dimen>
+    <dimen name="text_big">25sp</dimen>
+    <dimen name="text_main">20sp</dimen>
+    <dimen name="text_sub">15sp</dimen>
+    <dimen name="text_small">12sp</dimen>
+
+</resources>

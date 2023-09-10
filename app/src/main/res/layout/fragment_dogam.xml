@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.dogam.DogamFragment"
+    android:orientation="vertical"
+    >
+
+    <!-- 제목 영역 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/titleFrame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+
+            android:text="@string/title_dogam"
+            android:textStyle="bold"
+            android:textSize="25sp"
+
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            />
+        <ImageView
+            android:id="@+id/btn_search"
+
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:padding="10dp"
+            android:layout_marginRight="10dp"
+
+            android:src="@drawable/icons_search"
+
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 설정 부분 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:paddingHorizontal="20dp"
+        >
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical|left"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:textSize="11sp"
+                android:text="@string/sorting"
+                android:padding="5dp"
+                />
+
+            <Spinner
+                android:id="@+id/sortingWay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/sorting_item"
+                />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            >
+            <CheckBox
+                android:id="@+id/undiscoverDisplayCkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:checked="true"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="11sp"
+                android:text="@string/undiscoverDisplay"
+                />
+
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <!-- 도감 영역 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        >
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/dogamRV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:paddingHorizontal="10dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2"
+            android:orientation="vertical"
+            android:scrollbars="vertical"
+
+            tools:listitem="@layout/item_dogam"
+            />
+        <TextView android:id="@+id/emptyList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/no_results"
+            android:textSize="20sp"
+            android:textAlignment="center"
+            android:background="@color/bgGray"
+            android:visibility="gone"
+
+            />
+        <ProgressBar
+            android:id="@+id/progress_spinner"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            />
+
+        <Button
+            android:id="@+id/retry_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/retry"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            />
+
+    </FrameLayout>
+
+    <!-- 프로그래스 바 영역 -->
+    <LinearLayout
+        android:id="@+id/progressFrame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingHorizontal="20dp"
+
+            style="?android:attr/progressBarStyleHorizontal"
+            android:progressTint="@color/progressBar"
+
+            android:progress="50"
+            android:max="100"
+            />
+        <TextView
+            android:id="@+id/progressText"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+
+            android:text="87%"
+            android:textSize="15sp"
+            android:padding="10dp"
+
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <data>
+        <variable
+            name="mushHistory"
+            type="com.nbmlon.mushroomer.model.MushHistory"/>
+    </data>
+    <FrameLayout
+        android:id="@+id/frame"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:padding="10dp"
+        >
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            app:imageFromUrlIntoMushPreview="@{mushHistory.picPath[0]}"
+
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bgDark"
+
+            android:textSize="@dimen/text_small"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:letterSpacing="0.2"
+            android:lineSpacingExtra="10dp"
+
+            app:picturedAt="@{mushHistory.date}"
+            />
+    </FrameLayout>
+
+</layout>

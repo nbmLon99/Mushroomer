@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <data>
+        <variable
+            name="comment"
+            type="com.nbmlon.mushroomer.model.Comment" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        >
+
+
+        <ImageView
+            android:id="@+id/replyIcon"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+
+            android:src="@drawable/icons_reply"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="10dp"
+            />
+
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="10dp"
+            app:cardCornerRadius="10dp"
+            android:background="@color/bgGray"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:background="@color/CommentBg"
+                app:checkMyComment = "@{comment.isMine}"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+                    <TextView
+                        android:id="@+id/post_title"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+
+                        android:textSize="@dimen/text_sub"
+                        android:text="@{comment.content}"
+                        />
+
+                    <ImageView
+                        android:id="@+id/btn_commentMore"
+                        android:layout_width="30dp"
+                        android:layout_height="20dp"
+                        android:padding="1dp"
+                        android:src="@drawable/icons_more" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/post_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="right|bottom"
+                    android:textSize="@dimen/text_small"
+                    android:textFontWeight="300"
+                    app:setTimeRelatively="@{comment.time}"
+                    />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_marginLeft="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            <ImageView
+                android:id="@+id/iv_user"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/icons_profile"
+                app:setUserIcon="@{comment.writer.icon}"
+                />
+            <TextView
+                android:id="@+id/tv_user"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:text="@{comment.writer.nickname}"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAlignment="center"
+                android:textSize="@dimen/text_small"
+                />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</layout>

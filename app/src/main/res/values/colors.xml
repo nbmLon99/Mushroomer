@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="trans">#00000000</color>
+
+    <color name="mainGreen">#8BB868</color>
+    <color name="textGreen">#006644</color>
+    <color name="secondGreen">#33003E0E</color>
+    <color name="titleGreen">#33003E0E</color>
+
+    <color name="likeRed">#FF0000</color>
+    <color name="chatPurple">#501DBD</color>
+    <color name="textGray">#333</color>
+    <color name="bgGray">#0F000000</color>
+
+
+    <color name="bgWhite">#AFFF</color>
+    <color name="bgDark">#BB000000</color>
+    <color name="negativeRed">#B85050</color>
+
+    <color name="progressBar">#CCC077</color>
+
+
+    <color name="CommentBg">#3CD9D9D9</color>
+    <color name="myCommentBg">#3C003E0E</color>
+
+    <color name="unclickedOptionGray">#999999</color>
+    <color name="clickedButtonGreen">#33003E0E</color>
+
+
+</resources>

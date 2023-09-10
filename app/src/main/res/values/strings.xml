@@ -1,0 +1,142 @@
+<resources>
+    <!-- 공통 -->
+    <string name="loading">로드 중</string>
+
+
+    <string name="app_name">버섯 모야</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="title_dogam">버섯 도감</string>
+    <string name="close">닫기</string>
+
+    <!-- 로그인 액티비티 -->
+    <string name="hint_id">아이디</string>
+    <string name="hint_pwd">비밀번호</string>
+    <string name="auto_login">자동 로그인</string>
+    <string name="otherLogin"><u>다른 로그인 방법 ></u></string>
+    <string name="login">로그인</string>
+
+    <string name="lost_id"><u>아이디 찾기</u></string>
+    <string name="lost_pwd"><u>비밀번호 찾기</u></string>
+    <string name="sign_up"><u>회원가입</u></string>
+    <string name="or">or</string>
+
+
+    <!-- 도감 프래그먼트 -->
+    <string name="sorting">정렬 기준</string>
+    <string name="undiscoverDisplay">발견 못한 버섯도 함께 보기</string>
+    <string name="content">특징</string>
+
+    <string name="myMushPictures">나의 발견</string>
+
+
+    <!-- 도감 디테일 -->
+    <string name="typeEat">식용 버섯</string>
+    <string name="typePoison">독버섯</string>
+    <string name="startCheck">검사시작!</string>
+    <string name="closeCheck">취소</string>
+
+    <!-- 사진 다이얼로그 -->
+    <string name="pic_goMap">지도에서 위치 확인하기</string>
+    <string name="pic_goDogam">도감에서 정보 확인하기</string>
+    <string name="pic_goBoard">내가 찍은 버섯 자랑하러가기</string>
+
+
+    <!-- 카메라 프래그먼트 -->
+    <string name="positiveBtn">네, 이대로 검사를 진행하겠습니다!</string>
+    <string name="negativeBtn">아니요, 추가 촬영 후 진행하겠습니다!</string>
+    <string name="title_profile">내 정보</string>
+    <string name="subtitle_id">계정</string>
+    <string name="new_mush">NEW!!</string>
+    <string name="TOAST_pictureMaximum">검사할 수 있는 최대 사진은 5장입니다!</string>
+    <string name="TOAST_pictureMinimum">촬영버튼을 통해 검사할 사진을 등록하세요!</string>
+    <string name="TOAST_FAIL_TO_SAVE">사진 저장이 실패했습니다. 권한을 확인해주세요</string>
+    <string name="TOAST_CANCEL_IMPOSSIBLE">진행중인 검사가 없습니다!</string>
+    <string name="TOAST_CANCEL_IMPOSSIBLE_SUB">촬영버튼을 통해 검사를 진행합니다.</string>
+    <string name="ANLAYZE_IN_PROGRESS">검사 진행중..</string>
+
+
+    <string name="ALERT_CANCEL_TITLE">검사를 종료하시겠습니까?</string>
+    <string name="ALERT_CANCEL_CONTENT">촬영된 사진은 저장되지 않습니다.</string>
+    <string name="YES">네</string>
+    <string name="NO">아니요</string>
+    <string name="CONFIRM">확인</string>
+
+    <string name="alert_pictureSize">현재 %1$d장의 사진이 촬영되었습니다!\n 정확한 검사를 위해 %2$d장 이상의 촬영이 권장됩니다.\n 이대로 검사를 진행하시겠습니까?</string>
+
+
+    <!-- 프로필 프래그먼트 -->
+    <string name="subtitle_app">앱 설정</string>
+
+    <string name="subtitle_other">기타</string>
+    <string name="chg_id_pwd">비밀번호 변경</string>
+    <string name="chg_id_email">이메일 변경</string>
+
+
+    <string name="chg_id_nickname">닉네임 변경</string>
+    <string name="chg_id_exit">회원 탈퇴</string>
+    <string name="chg_app_login">로그인 방법 변경</string>
+    <string name="chg_oth_logout">로그아웃</string>
+
+    <string name="dialog_title_modify_nickname">닉네임 변경</string>
+    <string name="dialog_content_modify_nickname">변경할 닉네임을 입력해주세요\n</string>
+    <string name="dialog_btnText_modify_nickname">변경</string>
+
+    <string name="dialog_title_modify_password">비밀번호 변경</string>
+    <string name="dialog_content_modify_password">변경할 비밀번호를 입력해주세요\n</string>
+    <string name="dialog_btnText_modify_password">변경</string>
+
+    <string name="dialog_title_withdrawal">회원 탈퇴</string>
+    <string name="dialog_content_withdrawal">회원 탈퇴시 복구할 수 없습니다.\n탈퇴를 원하신다면\n가입했던 이메일을 입력해주세요.\n</string>
+    <string name="dialog_btnText_withdrawal">회원 탈퇴</string>
+
+
+    <!--커뮤 프래그먼트 -->
+    <string name="QnABoard">버섯 Q&amp;A</string>
+    <string name="PicBoard">사진게시판</string>
+    <string name="FreeBoard">자유게시판</string>
+    <string name="HotBoard">인기게시판</string>
+    <string name="HotRules">추천수  <b>%1$d</b>개 이상의 게시글들입니다.</string>
+    <string name="sort_time">최신순</string>
+    <string name="myPosts">내가 쓴 글</string>
+    <string name="myComment">댓글 단 글</string>
+    <string name="Reporting">신고</string>
+    <string name="ReportingReasonText">신고하려는 이유를 선택해주세요.</string>
+
+
+    <string name="ReportingReason1">1. 스팸 또는 광고</string>
+    <string name="ReportingReason2">2. 음란물</string>
+    <string name="ReportingReason3">3. 과도한 욕설</string>
+    <string name="ReportingReason4">4. 잘못된 정보</string>
+    <string name="ReportingReason5">5. 유해하거나 위험한 행위</string>
+    <string name="ReportingReason6">6. 권리 침해</string>
+    <string name="showMorePosts">더 보기</string>
+
+    <string name="writing">글 쓰기</string>
+    <string name="uploading">등록</string>
+
+    <string name="showDetails"><u><b>자세히 보기</b></u></string>
+    <string name="CommuRules"><u><b>커뮤니티 이용 규칙</b></u></string>
+
+
+    <string name="sort_like">추천순</string>
+    <string name="no_results">현재 발견한 버섯이 없습니다.\n사진을 찍어 버섯을 발견해보세요!</string>
+    <string name="retry">재시도</string>
+
+    <string name="invalid_username">이메일 형식을 확인하세요!</string>
+
+    <!-- Login Activity -->
+    <string name="invalid_password">패스워드는 최소 6글자 이상입니다.</string>
+    <string name="prompt_info_title">지문인증</string>
+    <string name="prompt_info_subtitle">기기에 등록된 지문을 이용하여 지문을 인증해주세요</string>
+    <string name="cancel">취소</string>
+    <string name="no_search_result">검색결과가 없습니다!</string>
+    <string-array name="sorting_item">
+        <item>도감넘버</item>
+        <item>희귀도</item>
+        <item>이름</item>
+    </string-array>
+
+
+</resources>

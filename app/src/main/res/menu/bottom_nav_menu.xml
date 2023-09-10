@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/dogam"
+        android:icon="@drawable/icons_dogam"
+        android:title="도감"
+        />
+    <item
+        android:id="@+id/map"
+        android:icon="@drawable/icons_map"
+        android:title="지도"
+        />
+    <item
+        android:id="@+id/camera"
+        android:icon="@drawable/icons_home"
+        android:title="홈"
+        />
+    <item
+        android:id="@+id/community"
+        android:icon="@drawable/icons_commu"
+        android:title="커뮤니티"
+        />
+    <item
+        android:id="@+id/profile"
+        android:icon="@drawable/icons_profile"
+        android:title="프로필"
+        />
+
+</menu>
