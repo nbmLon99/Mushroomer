@@ -25,9 +25,9 @@ class LoginViewModel : ViewModel() {
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginWithPasswordFormState: LiveData<LoginFormState> = _loginForm
 
-    val _response = MutableLiveData<LoginResponse>()
-    val response : LiveData<LoginResponse> = _response
-    val request : (LoginRequest) -> Unit
+    val _response = MutableLiveData<UserResponse>()
+    val response : LiveData<UserResponse> = _response
+    val request : (UserRequest) -> Unit
 
     init {
         request = { requestType ->
@@ -35,27 +35,27 @@ class LoginViewModel : ViewModel() {
             viewModelScope.launch {
                 when(requestType){
                     //로그인
-                    is LoginRequest.Login -> {
+                    is UserRequest.Login -> {
                         if ((isUserNameValid(requestType.dto.email) && isPasswordValid(requestType.dto.password))) {
-                            _response.value = LoginResponse.Login(repository.login(dto))
+                            _response.value = repository.login(dto)
                         }
                     }
                     //토큰로그인
-                    is LoginRequest.LoginWithToken -> {
-                        _response.value = LoginResponse.Login(repository.loginWithToken(dto))
+                    is UserRequest.LoginWithToken -> {
+                        _response.value = repository.loginWithToken(dto)
                     }
 
                     //회원가입
-                    is LoginRequest.Register -> {
-                        _response.value = LoginResponse.Register( repository.register(dto))
+                    is UserRequest.Register -> {
+                        _response.value =  repository.register(dto)
                     }
                     //아이디찾기
-                    is LoginRequest.FindPW -> {
-                        _response.value = LoginResponse.FindIdPw(repository.findID(dto))
+                    is UserRequest.FindPW -> {
+                        _response.value = repository.findID(dto)
                     };
                     //비밀번호찾기
-                    is LoginRequest.FindID -> {
-                        _response.value = LoginResponse.FindIdPw( repository.findPW(dto) )
+                    is UserRequest.FindID -> {
+                        _response.value = repository.findPW(dto)
                     };
                 }
             }
@@ -89,20 +89,18 @@ class LoginViewModel : ViewModel() {
     }
 }
 
-sealed class LoginRequest() {
+sealed class UserRequest() {
     abstract val dto: UserRequestDTO
-    data class Login(override val dto : LoginRequestDTO) : LoginRequest()
-    data class LoginWithToken(override val dto : TokenLoginRequestDTO) : LoginRequest()
-
-    data class FindPW(override val dto : FindPwRequestDTO) : LoginRequest()
-    data class FindID(override val dto : FindIdRequestDTO) : LoginRequest()
-    data class Register(override val dto : RegisterRequestDTO) : LoginRequest()
+    data class Login(override val dto : LoginRequestDTO) : UserRequest()
+    data class LoginWithToken(override val dto : TokenLoginRequestDTO) : UserRequest()
+    data class FindPW(override val dto : FindPwRequestDTO) : UserRequest()
+    data class FindID(override val dto : FindIdRequestDTO) : UserRequest()
+    data class Register(override val dto : RegisterRequestDTO) : UserRequest()
 }
 
-sealed class LoginResponse{
+sealed class UserResponse{
     abstract val dto : UserResponseDTO
-    data class Login(override val dto : LoginResponseDTO) : LoginResponse()
-
-    data class FindIdPw(override val dto : FindResponseDTO) : LoginResponse()
-    data class Register(override val dto : SuccessResponse) : LoginResponse()
+    data class Login(override val dto : LoginResponseDTO) : UserResponse()
+    data class FindIdPw(override val dto : FindResponseDTO) : UserResponse()
+    data class Register(override val dto : SuccessResponse) : UserResponse()
 }

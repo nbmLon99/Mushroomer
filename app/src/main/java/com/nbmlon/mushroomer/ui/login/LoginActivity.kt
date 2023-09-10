@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
@@ -47,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
             Context.MODE_PRIVATE,               // 모드
             CIPHERTEXT_WRAPPER                  // 프리퍼런스 키
         )
-    private lateinit var loading :Sweetalert
+    private lateinit var loading : Sweetalert
     private lateinit var sharedPrefs : SharedPreferences
 
 
@@ -109,9 +108,11 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
-    private fun responseObserver(response : LoginResponse){
+    private fun responseObserver(response : UserResponse){
+        if( loading.isShowing )
+            loading.dismissWithAnimation()
         when(response){
-            is LoginResponse.Login ->{
+            is UserResponse.Login ->{
                 val dto = response.dto
                 if(dto.success){
                     AppUser.refreshToken = dto.refreshToken
@@ -126,15 +127,17 @@ class LoginActivity : AppCompatActivity() {
                     updateApp()
                 }
             }
-            is LoginResponse.FindIdPw ->{
+            is UserResponse.FindIdPw ->{
                 val dto = response.dto
                 if(dto.success) {
+                    TODO("아이디 비번 찾기 결과값 표시")
                 }
 
             }
-            is LoginResponse.Register ->{
+            is UserResponse.Register ->{
                 val dto = response.dto
                 if(dto.success) {
+                    TODO("회원가입")
                 }
             }
         }
@@ -176,17 +179,18 @@ class LoginActivity : AppCompatActivity() {
 
             //라이브데이터로 변경된 부분
             loginViewModel.request(
-                LoginRequest.Login(
+                UserRequest.Login(
                     LoginRequestDTO(
                         email =    binding.username.text.toString(),
                         password = binding.password.text.toString()
                     )
                 )
-
             )
-            Log.d(TAG, "Username ${AppUser.user?.email}; fake token ${AppUser.token}")
+            loading.show()
+
+
+
         }
-        Log.d(TAG, "Username ${AppUser.user?.email}; fake token ${AppUser.token}")
     }
 
     private fun updateApp() {
@@ -225,7 +229,7 @@ class LoginActivity : AppCompatActivity() {
 
                     //라이브 데이터로 변경된 내용
                     loginViewModel.request(
-                        LoginRequest.LoginWithToken(
+                        UserRequest.LoginWithToken(
                             TokenLoginRequestDTO(plaintext)
                         )
                     )
@@ -250,7 +254,7 @@ class LoginActivity : AppCompatActivity() {
 
                 //라이브 데이터로 변경된 내용
                 loginViewModel.request(
-                    LoginRequest.LoginWithToken(
+                    UserRequest.LoginWithToken(
                         TokenLoginRequestDTO(plaintext))
                 )
                 //----------------------
