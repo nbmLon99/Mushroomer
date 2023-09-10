@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.ui.commu
+package com.nbmlon.mushroomer.ui.commu.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -6,10 +6,15 @@ import androidx.lifecycle.ViewModel
 import com.nbmlon.mushroomer.data.posts.CommuHomeRepository
 import com.nbmlon.mushroomer.model.Commu
 import com.nbmlon.mushroomer.model.Post
+import com.nbmlon.mushroomer.ui.commu.board.BoardType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
+
+/**
+ * 커뮤 홈 화면을 위한 뷰모델
+ * **/
 class ViewModelCommuHome(
 ) : ViewModel() {
     val repository = CommuHomeRepository()

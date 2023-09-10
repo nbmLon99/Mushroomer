@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.ui.commu
+package com.nbmlon.mushroomer.ui.commu.board
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -75,7 +75,10 @@ class CommuFragmentBoard_img private constructor(): CommuBoardFragment() {
             //검색버튼
             btnSearch.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_search.getInstance(board_typd_idx!!), CommuFragment_search.TAG)
+                    .replace(R.id.FragmentContainer,
+                        CommuFragment_search.getInstance(board_typd_idx!!),
+                        CommuFragment_search.TAG
+                    )
                     .addToBackStack(null)
                     .commit()
             }
@@ -83,7 +86,10 @@ class CommuFragmentBoard_img private constructor(): CommuBoardFragment() {
             //글쓰기 버튼
             btnWrite.setOnClickListener {
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.FragmentContainer, CommuFragment_write.getInstance(board_typd_idx ?: 1), CommuFragment_write.TAG)
+                    .replace(R.id.FragmentContainer,
+                        CommuFragment_write.getInstance(board_typd_idx ?: 1),
+                        CommuFragment_write.TAG
+                    )
                     .addToBackStack(null)
                     .commit()
             }

@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.ui.commu
+package com.nbmlon.mushroomer.ui.commu.board
 
 import android.widget.RadioGroup
 import androidx.fragment.app.Fragment
@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.model.Post
+import com.nbmlon.mushroomer.ui.commu.post.CommuFragment_post
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.Flow
@@ -22,14 +23,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 
-open abstract class CommuBoardFragment : Fragment(), PostClickListener{
+open abstract class CommuBoardFragment : Fragment(), PostClickListener {
     companion object{
         const val TAG = "CommuBoardFragment"
     }
 
     private lateinit var boardType: BoardType
     private lateinit var list : RecyclerView
-    private lateinit var adapter : AdapterBoardPost
+    private lateinit var adapter : AdapterBoardPaging
     private var sortGroup : RadioGroup? = null
     private var boardGroup : RadioGroup? = null
 
@@ -42,7 +43,7 @@ open abstract class CommuBoardFragment : Fragment(), PostClickListener{
         boardGroup : RadioGroup?
     ){
         this.boardType = boardType
-        this.adapter = AdapterBoardPost(boardType, this@CommuBoardFragment::openPost)
+        this.adapter = AdapterBoardPaging(boardType, this@CommuBoardFragment::openPost)
         this.sortGroup = sortGroup
         this.boardGroup = boardGroup
         this.list = list
@@ -80,7 +81,7 @@ open abstract class CommuBoardFragment : Fragment(), PostClickListener{
         var currentJob : Job? = null // 페이징 데이터 collectLatest 작업을 추적하는 Job 객체
         list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy != 0) onScrollChanged(CommuUiAction.Scroll( currentSort = uiState.value.sort))
+                if (dy != 0) onScrollChanged(CommuUiAction.Scroll(currentSort = uiState.value.sort))
             }
         })
 
@@ -92,7 +93,7 @@ open abstract class CommuBoardFragment : Fragment(), PostClickListener{
                     // 이전 어댑터에서 수행하던 작업 취소
                     currentJob?.cancelChildren()
 
-                    adapter = AdapterBoardPost(type, this@CommuBoardFragment::openPost)
+                    adapter = AdapterBoardPaging(type, this@CommuBoardFragment::openPost)
                     list.adapter = adapter
 
                     val layoutManager = when (type) {
@@ -228,13 +229,16 @@ open abstract class CommuBoardFragment : Fragment(), PostClickListener{
 
     override fun openPost(post: Post) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.FragmentContainer, CommuFragment_post.getInstance(post),CommuFragment_post.TAG)
+            .replace(R.id.FragmentContainer,
+                CommuFragment_post.getInstance(post),
+                CommuFragment_post.TAG
+            )
             .addToBackStack(null)
             .commit()
     }
 }
 
-fun getBoardFragment(boardType: BoardType) : CommuBoardFragment{
+fun getBoardFragment(boardType: BoardType) : CommuBoardFragment {
     return when(boardType){
         BoardType.FreeBoard -> CommuFragmentBoard_text.getInstance(boardType.ordinal)
         BoardType.PicBoard -> CommuFragmentBoard_img.getInstance(boardType.ordinal)

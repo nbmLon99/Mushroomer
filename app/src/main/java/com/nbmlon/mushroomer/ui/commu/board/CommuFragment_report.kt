@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.ui.commu
+package com.nbmlon.mushroomer.ui.commu.board
 
 import android.os.Build
 import android.os.Bundle
@@ -14,11 +14,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val TARGET_POST = "target_post"
-private const val TARGET_COMMENT = "target_comment"
-
 /**
  * 게시글 / 댓글 신고 Fragment
  */
@@ -33,10 +28,10 @@ class CommuFragment_report private constructor() : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                targetPost = it.getSerializable(TARGET_POST , Post::class.java)
+                targetPost = it.getSerializable(TARGET_POST, Post::class.java)
                 targetComment = it.getSerializable(TARGET_COMMENT, Comment::class.java)
             }else{
-                targetPost = it.getSerializable(TARGET_POST ) as Post?
+                targetPost = it.getSerializable(TARGET_POST) as Post?
                 targetComment = it.getSerializable(TARGET_COMMENT) as Comment?
             }
         }
@@ -64,7 +59,7 @@ class CommuFragment_report private constructor() : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance( postToReport : Post?, commentToReport: Comment?) =
+        fun newInstance(postToReport : Post?, commentToReport: Comment?) =
             CommuFragment_report().apply {
                 arguments = Bundle().apply {
                     putSerializable(TARGET_POST, postToReport)
@@ -79,3 +74,7 @@ class CommuFragment_report private constructor() : Fragment() {
     }
 
 }
+
+private const val TARGET_POST = "target_post"
+private const val TARGET_COMMENT = "target_comment"
+

@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.ui.commu
+package com.nbmlon.mushroomer.ui.commu.board
 
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData

@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.ui.commu
+package com.nbmlon.mushroomer.ui.commu.board
 
 import android.Manifest
 import android.app.Activity
@@ -22,7 +22,6 @@ import com.nbmlon.mushroomer.model.MushHistory
 import com.nbmlon.mushroomer.model.Post
 import com.nbmlon.mushroomer.ui.camera.ImageDeleteListner
 import org.joda.time.DateTime
-
 
 /**
  * 게시판 글 쓰기 화면
@@ -84,7 +83,7 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val imageAdapter =PicturesAdapterForWriting(this@CommuFragment_write as ImageDeleteListner)
+        val imageAdapter = PicturesAdapterForWriting(this@CommuFragment_write as ImageDeleteListner)
 
         //이미지 반영
         viewModel.images.observe(viewLifecycleOwner){ items->
@@ -113,7 +112,7 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
                     boardType = mBoardType,
                     updated = false
                 )
-                if(newPostWrited.images!!.size <= 0 && mBoardType == BoardType.PicBoard ){
+                if(newPostWrited.images!!.size <= 0 && mBoardType == BoardType.PicBoard){
                     TODO("사진 하나이상등록하라고 alert")
                 }else{
                     TODO("등록")
@@ -139,10 +138,13 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
     private fun getPermission(){
         //읽기 권한 있음
         if(ContextCompat.checkSelfPermission(
-            requireContext(), REQUIRED_PERMISSIONS) == PackageManager.PERMISSION_GRANTED)
+                requireContext(), REQUIRED_PERMISSIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        )
         else{
             ActivityCompat.requestPermissions(
-                requireActivity(), arrayOf(REQUIRED_PERMISSIONS), GALLERY_PERMISSION_REQUEST_CODE)
+                requireActivity(), arrayOf(REQUIRED_PERMISSIONS), GALLERY_PERMISSION_REQUEST_CODE
+            )
         }
     }
 
@@ -160,7 +162,11 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
                     if (count > maxImageCount) {
                         // 너무 많은 이미지가 선택되었음을 사용자에게 알림
                         // 예: Toast 메시지 표시
-                        Toast.makeText( requireActivity(),"최대 ${maxImageCount}개까지 선택 가능합니다.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            requireActivity(),
+                            "최대 ${maxImageCount}개까지 선택 가능합니다.",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         for (i in 0 until maxImageCount) {
                             val imageUri = data.clipData!!.getItemAt(i).uri
                             imageUris.add(imageUri)
@@ -187,6 +193,5 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
     }
 
 }
-
 
 private const val CALL_HISTORY_WRITING = "call_history_writing"

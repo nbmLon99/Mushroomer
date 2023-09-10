@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.ui.commu;
+package com.nbmlon.mushroomer.ui.commu.board;
 
 import android.net.Uri
 import android.view.LayoutInflater
@@ -10,7 +10,9 @@ import com.nbmlon.mushroomer.databinding.ItemPhotoCheckingBinding;
 import com.nbmlon.mushroomer.ui.camera.ImageDeleteListner;
 import com.nbmlon.mushroomer.utils.GlideApp
 
-class PicturesAdapterForWriting(im:ImageDeleteListner) : ListAdapter<Uri, PicturesAdapterForWriting.PictureViewHolder>(UriDiffCallback){
+class PicturesAdapterForWriting(im:ImageDeleteListner) : ListAdapter<Uri, PicturesAdapterForWriting.PictureViewHolder>(
+    UriDiffCallback
+){
         private lateinit var itemBinding: ItemPhotoCheckingBinding
         private var imageManager: ImageDeleteListner = im
 

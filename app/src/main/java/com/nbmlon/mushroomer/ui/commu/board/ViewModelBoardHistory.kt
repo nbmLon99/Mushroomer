@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.ui.commu
+package com.nbmlon.mushroomer.ui.commu.board
 
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagingData

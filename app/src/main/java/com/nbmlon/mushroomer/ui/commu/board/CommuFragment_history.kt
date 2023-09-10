@@ -1,5 +1,4 @@
-package com.nbmlon.mushroomer.ui.commu
-
+package com.nbmlon.mushroomer.ui.commu.board
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCommuHistoryBinding
 import com.nbmlon.mushroomer.model.Post
+import com.nbmlon.mushroomer.ui.commu.post.CommuFragment_post
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -34,7 +34,7 @@ class CommuFragment_history private constructor():  Fragment(), PostClickListene
     var _binding : FragmentCommuHistoryBinding? = null
     val binding get() = _binding!!
 
-    private lateinit var myPostAdpater : AdapterBoardPost
+    private lateinit var myPostAdpater : AdapterBoardPaging
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +51,7 @@ class CommuFragment_history private constructor():  Fragment(), PostClickListene
     ): View? {
         _binding = FragmentCommuHistoryBinding.inflate(layoutInflater)
         val viewModel = ViewModelBoardHistory(forMyPost)
-        myPostAdpater = AdapterBoardPost(mBoardType, this@CommuFragment_history::openPost)
+        myPostAdpater = AdapterBoardPaging(mBoardType, this@CommuFragment_history::openPost)
 
         lifecycleScope.launch{
             viewModel.pagingDataFlow.collectLatest{myPostAdpater.submitData(it)}
@@ -75,10 +75,13 @@ class CommuFragment_history private constructor():  Fragment(), PostClickListene
 
     override fun openPost(post: Post) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.FragmentContainer, CommuFragment_post.getInstance(post),CommuFragment_post.TAG)
+            .replace(
+                R.id.FragmentContainer,
+                CommuFragment_post.getInstance(post),
+                CommuFragment_post.TAG
+            )
             .addToBackStack(null)
             .commit()
     }
 }
-
 private const val HISTORY_FOR_MY_POST = "for_my_post"

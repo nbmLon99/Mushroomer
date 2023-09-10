@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.ui.commu
+package com.nbmlon.mushroomer.ui.commu.board
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -22,7 +22,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 
-/** 게시판 검색을 위한 Viewmodel **/
+/**
+ * 게시판 검색을 위한 Viewmodel
+ * **/
 class ViewModelBoardSearch(
     private val repository : PostsSearchRepository,
     private val savedStateHandle: SavedStateHandle,

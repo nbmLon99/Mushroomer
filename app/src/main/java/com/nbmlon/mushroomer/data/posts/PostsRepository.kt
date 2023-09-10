@@ -7,8 +7,8 @@ import androidx.paging.PagingData
 import com.nbmlon.mushroomer.api.service.BoardService
 import com.nbmlon.mushroomer.api.service.CommentService
 import com.nbmlon.mushroomer.model.Post
-import com.nbmlon.mushroomer.ui.commu.BoardType
-import com.nbmlon.mushroomer.ui.commu.PostSortingOption
+import com.nbmlon.mushroomer.ui.commu.board.BoardType
+import com.nbmlon.mushroomer.ui.commu.board.PostSortingOption
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -23,7 +23,7 @@ interface CommuHomeRepository {
 /** 게시판 별 저장소 **/
 interface PostsRepository {
     //** 게시판 페이징 데이터 가져옴 **/
-    fun getPostStream(boardType: BoardType, sortOpt : PostSortingOption , isHotBoard : Boolean = false): Flow<PagingData<Post>>
+    fun getPostStream(boardType: BoardType, sortOpt : PostSortingOption, isHotBoard : Boolean = false): Flow<PagingData<Post>>
 }
 /** 게시판별 검색 화면 저장소 **/
 interface PostsSearchRepository {

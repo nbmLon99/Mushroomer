@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.ui.commu
+package com.nbmlon.mushroomer.ui.commu.post
 
 import com.nbmlon.mushroomer.model.Comment
 import com.nbmlon.mushroomer.model.Post

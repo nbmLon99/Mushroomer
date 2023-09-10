@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.ui.commu
+package com.nbmlon.mushroomer.ui.commu.board
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,16 +9,18 @@ import com.nbmlon.mushroomer.databinding.ItemPostImageBinding
 import com.nbmlon.mushroomer.databinding.ItemPostTextBinding
 import com.nbmlon.mushroomer.model.Post
 import com.nbmlon.mushroomer.model.PostDiffCallback
+import com.nbmlon.mushroomer.ui.commu.home.HomeAdapterHolder
 
 
 /**
  * 게시판 상세 화면에서 페이징 데이터를 보여줄 어댑터
  * **/
-class AdapterBoardPost(
+class AdapterBoardPaging(
     val boardType: BoardType,
     val cl : PostClickListener
 ) : PagingDataAdapter<Post, RecyclerView.ViewHolder>(PostDiffCallback) {
-    inner class TextPostViewHolder(private val itemBinding: ItemPostTextBinding) : RecyclerView.ViewHolder(itemBinding.root), HomeAdapterHolder {
+    inner class TextPostViewHolder(private val itemBinding: ItemPostTextBinding) : RecyclerView.ViewHolder(itemBinding.root),
+        HomeAdapterHolder {
         override fun bind(pos : Int){
             itemBinding.apply {
                 post = getItem(pos)
@@ -34,7 +36,8 @@ class AdapterBoardPost(
         }
     }
 
-    inner class PhotoPostViewHolder(private val itemBinding: ItemPostImageBinding) : RecyclerView.ViewHolder(itemBinding.root), HomeAdapterHolder{
+    inner class PhotoPostViewHolder(private val itemBinding: ItemPostImageBinding) : RecyclerView.ViewHolder(itemBinding.root),
+        HomeAdapterHolder {
         override fun bind(pos : Int){
             itemBinding.apply {
                 post = getItem(pos)

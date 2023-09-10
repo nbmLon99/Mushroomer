@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.ui.commu
+package com.nbmlon.mushroomer.ui.commu.board
 
 import android.content.Context
 import android.os.Bundle
@@ -20,6 +20,7 @@ import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.data.posts.PostsSearchRepository
 import com.nbmlon.mushroomer.databinding.FragmentCommuSearchBinding
 import com.nbmlon.mushroomer.model.Post
+import com.nbmlon.mushroomer.ui.commu.post.CommuFragment_post
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -28,10 +29,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
 /**
  * 게시글 검색
@@ -73,7 +70,7 @@ class CommuFragment_search private constructor(): Fragment(), PostClickListener 
         val viewModelFactory = SearchViewModelFactory(
             owner = this,
             repository = PostsSearchRepository(),
-            boardType =  mBoardType
+            boardType = mBoardType
         )
         val viewModel: ViewModelBoardSearch by viewModels { viewModelFactory }
 
@@ -111,7 +108,8 @@ class CommuFragment_search private constructor(): Fragment(), PostClickListener 
         pagingData: Flow<PagingData<Post>>,
         uiActions: (SearchUiAction) -> Unit,
     ){
-        val searchAdapter = AdapterBoardPost(boardType = mBoardType, cl = this@CommuFragment_search::openPost)
+        val searchAdapter =
+            AdapterBoardPaging(boardType = mBoardType, cl = this@CommuFragment_search::openPost)
         val layoutManager = when (mBoardType) {
             BoardType.PicBoard -> StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
             else -> LinearLayoutManager(requireContext())
@@ -135,13 +133,13 @@ class CommuFragment_search private constructor(): Fragment(), PostClickListener 
 
     private fun FragmentCommuSearchBinding.bindList(
         uiState: StateFlow<SearchUiState>,
-        adapter : AdapterBoardPost,
+        adapter : AdapterBoardPaging,
         pagingData: Flow<PagingData<Post>>,
         onScrollChanged: (SearchUiAction.Scroll) -> Unit
     ){
         postRV.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy != 0) onScrollChanged(SearchUiAction.Scroll( uiState.value.query))
+                if (dy != 0) onScrollChanged(SearchUiAction.Scroll(uiState.value.query))
             }
         })
         //Flow 생성
@@ -150,7 +148,8 @@ class CommuFragment_search private constructor(): Fragment(), PostClickListener 
             .distinctUntilChangedBy { it.source.refresh }
             // Only react to cases where REFRESH completes i.e., NotLoading.
             .map {
-                it.source.refresh is LoadState.NotLoading }
+                it.source.refresh is LoadState.NotLoading
+            }
 
         //Flow 생성
         val hasNotScrolledForCurrentSort = uiState
@@ -189,7 +188,7 @@ class CommuFragment_search private constructor(): Fragment(), PostClickListener 
                 }else{
                     emptyList.isVisible = isListEmpty
                 }
-                
+
                 // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
                 val errorState = loadState.source.append as? LoadState.Error
                     ?: loadState.source.prepend as? LoadState.Error
@@ -231,7 +230,11 @@ class CommuFragment_search private constructor(): Fragment(), PostClickListener 
 
     override fun openPost(post: Post) {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.FragmentContainer, CommuFragment_post.getInstance(post),CommuFragment_post.TAG)
+            .replace(
+                R.id.FragmentContainer,
+                CommuFragment_post.getInstance(post),
+                CommuFragment_post.TAG
+            )
             .addToBackStack(null)
             .commit()
     }

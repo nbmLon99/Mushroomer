@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.ui.commu
+package com.nbmlon.mushroomer.ui.commu.board
 
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
@@ -53,12 +53,6 @@ enum class ResponseCode{
     FAIL
 }
 
-sealed class CommuRequest{
-    data class ForReport(val post : Post?, val comment : Comment?) : CommuRequest()
-    data class ForDelete(val post : Post?, val comment : Comment?) : CommuRequest()
-    data class ForUpload(val post : Post?, val comment : Comment?) : CommuRequest()
-    data class ForModify(val post : Post?, val comment : Comment?) : CommuRequest()
-}
 
 
 sealed class CommuResponse{

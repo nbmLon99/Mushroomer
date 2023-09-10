@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.ui.commu
+package com.nbmlon.mushroomer.ui.commu.board
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -23,15 +23,17 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+
+/**
+ *  게시판 페이징 데이터를 위한 viewModel
+ *  **/
 class ViewModelBoard(
     private val repository : PostsRepository,
     private val savedStateHandle: SavedStateHandle,
     boardType: BoardType
 ) : ViewModel() {
 
-    //요청 후 take(1) 하여 반영
-    val responseFlow = MutableSharedFlow<CommuResponse>()
-    val request : (CommuRequest) -> Unit
+
     val pagingDataFlow: Flow<PagingData<Post>>
     var isHotBoard : Boolean = false
 
@@ -51,8 +53,12 @@ class ViewModelBoard(
                 isHotBoard = true
                 BoardType.QnABoard
             } else { boardType }
-        val initialSorting : PostSortingOption = savedStateHandle.get<PostSortingOption>(LAST_SORTING_OPTION) ?: DEFAULT_SORTING
-        val lastSortingScrolled : PostSortingOption = savedStateHandle.get<PostSortingOption>(LAST_SORTING_SCROLLED) ?: DEFAULT_SORTING
+        val initialSorting : PostSortingOption = savedStateHandle.get<PostSortingOption>(
+            LAST_SORTING_OPTION
+        ) ?: DEFAULT_SORTING
+        val lastSortingScrolled : PostSortingOption = savedStateHandle.get<PostSortingOption>(
+            LAST_SORTING_SCROLLED
+        ) ?: DEFAULT_SORTING
 
         val actionStateFlow = MutableSharedFlow<CommuUiAction>()
 
@@ -117,36 +123,7 @@ class ViewModelBoard(
         accept = { action ->
             viewModelScope.launch { actionStateFlow.emit(action) }
         }
-        request = { commuRequest ->
-            viewModelScope.launch{
-                when( commuRequest ) {
-                    is CommuRequest.ForReport -> {
-                        val post = commuRequest.post
-                        val comment = commuRequest.comment
-                        // ForReport 처리 로직
-                        responseFlow.emit(CommuResponse.ForReport(code = ResponseCode.SUCCESS))
-                    }
-                    is CommuRequest.ForDelete -> {
-                        val post = commuRequest.post
-                        val comment = commuRequest.comment
-                        // ForDelete 처리 로직
-                        responseFlow.emit(CommuResponse.ForDelete(code = ResponseCode.SUCCESS))
-                    }
-                    is CommuRequest.ForUpload -> {
-                        val post = commuRequest.post
-                        val comment = commuRequest.comment
-                        // ForUpload 처리 로직
-                        responseFlow.emit(CommuResponse.ForUpload(code = ResponseCode.SUCCESS))
-                    }
-                    is CommuRequest.ForModify -> {
-                        val post = commuRequest.post
-                        val comment = commuRequest.comment
-                        // ForModify 처리 로직
-                        responseFlow.emit(CommuResponse.ForModify(code = ResponseCode.SUCCESS))
-                    }
-                }
-            }
-        }
+
     }
 
 

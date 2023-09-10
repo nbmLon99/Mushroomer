@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.ui.commu
+package com.nbmlon.mushroomer.ui.commu.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,13 +8,16 @@ import com.nbmlon.mushroomer.databinding.ItemCommuHomeIamgeBinding
 import com.nbmlon.mushroomer.databinding.ItemCommuHomeTextBinding
 import com.nbmlon.mushroomer.model.Post
 import com.nbmlon.mushroomer.model.PostDiffCallback
+import com.nbmlon.mushroomer.ui.commu.board.BoardType
+import com.nbmlon.mushroomer.ui.commu.board.PostClickListener
 
 
 /**
  * 커뮤니티 탭을 처음 클릭했을 떄 표시할 최시글들을 담을 ListAdpater
  * **/
 class AdapterHomePost(val cl : PostClickListener) : ListAdapter<Post, RecyclerView.ViewHolder>(PostDiffCallback) {
-    inner class TextPostViewHolder(private val itemBinding: ItemCommuHomeTextBinding) : RecyclerView.ViewHolder(itemBinding.root), HomeAdapterHolder {
+    inner class TextPostViewHolder(private val itemBinding: ItemCommuHomeTextBinding) : RecyclerView.ViewHolder(itemBinding.root),
+        HomeAdapterHolder {
         override fun bind(pos : Int){
             itemBinding.apply {
                 post = getItem(pos)
@@ -24,7 +27,8 @@ class AdapterHomePost(val cl : PostClickListener) : ListAdapter<Post, RecyclerVi
         }
     }
 
-    inner class PhotoPostViewHolder(private val itemBinding: ItemCommuHomeIamgeBinding) : RecyclerView.ViewHolder(itemBinding.root), HomeAdapterHolder{
+    inner class PhotoPostViewHolder(private val itemBinding: ItemCommuHomeIamgeBinding) : RecyclerView.ViewHolder(itemBinding.root),
+        HomeAdapterHolder {
         override fun bind(pos : Int){
             itemBinding.apply {
                 post = getItem(pos)

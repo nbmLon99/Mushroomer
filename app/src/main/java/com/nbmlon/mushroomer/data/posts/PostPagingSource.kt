@@ -4,8 +4,8 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.nbmlon.mushroomer.api.service.BoardService
 import com.nbmlon.mushroomer.model.Post
-import com.nbmlon.mushroomer.ui.commu.BoardType
-import com.nbmlon.mushroomer.ui.commu.PostSortingOption
+import com.nbmlon.mushroomer.ui.commu.board.BoardType
+import com.nbmlon.mushroomer.ui.commu.board.PostSortingOption
 import retrofit2.HttpException
 import retrofit2.await
 import java.io.IOException

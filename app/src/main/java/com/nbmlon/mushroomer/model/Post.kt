@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.nbmlon.mushroomer.R
-import com.nbmlon.mushroomer.ui.commu.BoardType
+import com.nbmlon.mushroomer.ui.commu.board.BoardType
 import org.joda.time.DateTime
 import org.joda.time.Duration
 import java.io.Serializable

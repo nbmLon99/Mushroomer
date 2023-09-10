@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.commu.CommuFragment_home"
+    tools:context=".ui.commu.home.CommuFragment_home"
     >
     <data>
         <variable

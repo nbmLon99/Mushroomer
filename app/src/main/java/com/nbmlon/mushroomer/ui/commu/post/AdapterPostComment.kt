@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.ui.commu
+package com.nbmlon.mushroomer.ui.commu.post
 
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +11,8 @@ import com.nbmlon.mushroomer.databinding.ItemPostCommentBinding
 import com.nbmlon.mushroomer.databinding.ItemPostReplyBinding
 import com.nbmlon.mushroomer.model.Comment
 import com.nbmlon.mushroomer.model.CommentDiffCallback
-import com.nbmlon.mushroomer.ui.commu.AdapterPostComment.CommentReplyAdapter.ReplyViewHolder
-import com.nbmlon.mushroomer.ui.commu.AdapterPostComment.CommentViewHolder
+import com.nbmlon.mushroomer.ui.commu.post.AdapterPostComment.CommentReplyAdapter.ReplyViewHolder
+import com.nbmlon.mushroomer.ui.commu.post.AdapterPostComment.CommentViewHolder
 
 
 /** 상세 포스트에 댓글 어댑터 **/
