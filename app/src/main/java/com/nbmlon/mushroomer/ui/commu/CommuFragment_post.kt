@@ -162,7 +162,6 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
 
         }
         TODO("서버 수정 구현")
-        
         CoroutineScope(Dispatchers.Main).launch {
             viewModel.requestModify(null, target_comment)
         }
