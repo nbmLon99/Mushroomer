@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.ui.commu
+package com.nbmlon.mushroomer.ui.commu.post
 
 import android.os.Build
 import android.os.Bundle
@@ -13,6 +13,8 @@ import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentCommuPostBinding
 import com.nbmlon.mushroomer.model.Comment
 import com.nbmlon.mushroomer.model.Post
+import com.nbmlon.mushroomer.ui.commu.board.CommuFragment_report
+import com.nbmlon.mushroomer.ui.commu.board.ViewModelBoard
 import com.nbmlon.mushroomer.ui.dialog_picture.ImageSliderAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,9 +23,8 @@ import taimoor.sultani.sweetalert2.Sweetalert
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val TARGET_POST = "target_post_display"
 
-class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListener{
+class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListener {
     companion object {
         const val TAG= "CommuFragment_post"
         @JvmStatic
@@ -175,5 +176,16 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
         }
     }
 
+
+    /** 서버 요청에 대한 결과값 처리 **/
+    private fun responseObserver(){
+        val loading = Sweetalert(context, Sweetalert.PROGRESS_TYPE)
+            .setCancelable(false)
+        viewmo
+    }
+
 }
 
+
+
+private const val TARGET_POST = "target_post_display"

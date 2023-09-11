@@ -4,14 +4,12 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
-import com.nbmlon.mushroomer.data.posts.PostsRepository
+import com.nbmlon.mushroomer.data.posts.BoardPostsRepository
 import com.nbmlon.mushroomer.data.posts.PostsSearchRepository
-import com.nbmlon.mushroomer.model.Comment
-import com.nbmlon.mushroomer.model.Post
 
 class BoardViewModelFactory(
     owner: SavedStateRegistryOwner,
-    private val repository: PostsRepository,
+    private val repository: BoardPostsRepository,
     private val boardType: BoardType
 ) : AbstractSavedStateViewModelFactory(owner, null) {
 
@@ -46,18 +44,4 @@ class SearchViewModelFactory(
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
-}
-
-enum class ResponseCode{
-    SUCCESS,
-    FAIL
-}
-
-
-
-sealed class CommuResponse{
-    data class ForReport(val code : ResponseCode) : CommuResponse()
-    data class ForDelete(val code : ResponseCode) : CommuResponse()
-    data class ForUpload(val code : ResponseCode) : CommuResponse()
-    data class ForModify(val code : ResponseCode) : CommuResponse()
 }

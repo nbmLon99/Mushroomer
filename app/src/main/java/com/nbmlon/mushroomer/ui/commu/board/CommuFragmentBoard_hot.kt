@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.R
-import com.nbmlon.mushroomer.data.posts.PostsRepository
+import com.nbmlon.mushroomer.data.posts.BoardPostsRepository
 import com.nbmlon.mushroomer.databinding.FragmentCommuHotBinding
 
 /**
@@ -48,7 +48,7 @@ class CommuFragmentBoard_hot private constructor(): CommuBoardFragment() {
         _binding = FragmentCommuHotBinding.inflate(layoutInflater)
         val viewModelFactory = BoardViewModelFactory(
             owner = this,
-            repository = PostsRepository(),
+            repository = BoardPostsRepository(),
             boardType =  mBoardType
         )
 

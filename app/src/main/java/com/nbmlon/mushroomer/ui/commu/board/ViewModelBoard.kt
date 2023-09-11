@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.nbmlon.mushroomer.R
-import com.nbmlon.mushroomer.data.posts.PostsRepository
+import com.nbmlon.mushroomer.data.posts.BoardPostsRepository
 import com.nbmlon.mushroomer.model.Comment
 import com.nbmlon.mushroomer.model.Post
 import kotlinx.coroutines.flow.Flow
@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
  *  게시판 페이징 데이터를 위한 viewModel
  *  **/
 class ViewModelBoard(
-    private val repository : PostsRepository,
+    private val repository : BoardPostsRepository,
     private val savedStateHandle: SavedStateHandle,
     boardType: BoardType
 ) : ViewModel() {

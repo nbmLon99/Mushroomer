@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.R
-import com.nbmlon.mushroomer.data.posts.PostsRepository
+import com.nbmlon.mushroomer.data.posts.BoardPostsRepository
 import com.nbmlon.mushroomer.databinding.FragmentCommuImageBinding
 
 // TODO: Rename parameter arguments, choose names that match
@@ -45,7 +45,7 @@ class CommuFragmentBoard_img private constructor(): CommuBoardFragment() {
         _binding = FragmentCommuImageBinding.inflate(layoutInflater)
         val viewModelFactory = BoardViewModelFactory(
             owner = this,
-            repository = PostsRepository(),
+            repository = BoardPostsRepository(),
             boardType =  mBoardType
         )
 
