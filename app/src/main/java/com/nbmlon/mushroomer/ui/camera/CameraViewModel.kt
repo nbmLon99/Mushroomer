@@ -11,7 +11,12 @@ import androidx.camera.core.ImageProxy
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.nbmlon.mushroomer.api.dto.AnalyzeResponse
+import com.nbmlon.mushroomer.data.mushrooms.AnalyzeMushroomPictures
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
@@ -22,11 +27,10 @@ import java.util.Locale
 class CameraViewModel : ViewModel() {
     // MutableLiveData를 사용하여 분석 결과를 저장할 변수를 선언합니다.
     //    private val _analysisRequest = MutableLiveData<>
-    private val _analysisResult = MutableLiveData<String>()
+    private val _analysisResult = MutableLiveData<AnalyzeResponse>()
     private val _capturedImages: MutableLiveData<ArrayList<Bitmap>> = MutableLiveData(arrayListOf())
 
-
-    val analysisResult: LiveData<String>
+    val analysisResult: LiveData<AnalyzeResponse>
         get() = _analysisResult
 
     val capturedImages : LiveData<ArrayList<Bitmap>>
@@ -35,10 +39,13 @@ class CameraViewModel : ViewModel() {
 
     // 분석 작업을 수행하는 함수입니다.
     fun startAnalysis() {
-        // 여기서 실제 데이터 분석 작업을 수행하고 결과를 _analysisResult에 저장합니다.
-        // 결과를 LiveData에 전달하여 UI에 반영될 수 있도록 합니다.
-        val data = "테스트결과"
-        _analysisResult.value = "분석 결과: $data"
+        viewModelScope.launch(Dispatchers.IO){
+            val result = AnalyzeMushroomPictures(capturedImages.value!!).analyzeMushroomPictures()
+            delay(1000)
+            withContext(Dispatchers.Main){
+                _analysisResult.value = result
+            }
+        }
     }
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -48,12 +55,18 @@ class CameraViewModel : ViewModel() {
         bitmap?.let { currentList.add(0, it) }
         _capturedImages.value = currentList
     }
-    fun delPicture(idx : Int){
-        val currentList = _capturedImages.value ?: arrayListOf()
-        currentList.removeAt(idx)
-        _capturedImages.value = currentList
-    }
 
+    fun delPicture(id : Int){
+        val currentList = _capturedImages.value ?: arrayListOf()
+        try{
+            currentList.removeAt(id)
+            _capturedImages.value = currentList
+        }catch (e : IndexOutOfBoundsException){
+            e.printStackTrace()
+        }catch (e : Exception){
+            e.printStackTrace()
+        }
+    }
 
     suspend fun savePictureFromBitmaps(context: Context) : Boolean{
         val timestampFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())

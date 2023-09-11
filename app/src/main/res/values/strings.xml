@@ -128,7 +128,6 @@
 
     <!-- Login Activity -->
     <string name="invalid_password">패스워드는 최소 6글자 이상입니다.</string>
-    <string name="secret_key_name">biometric_encryption_key</string>
     <string name="prompt_info_title">지문인증</string>
     <string name="prompt_info_subtitle">기기에 등록된 지문을 이용하여 지문을 인증해주세요</string>
     <string name="cancel">취소</string>

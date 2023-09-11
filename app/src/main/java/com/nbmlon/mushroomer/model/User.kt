@@ -17,10 +17,11 @@ data class User(
     val email : String,
     val nickname : String,
     val icon : String,
+    val phone_number : String
 ){
     companion object {
         fun getDummy() : User {
-            return User(-1L,"rhfwleowkd77@naver.com","nbmlon99","")
+            return User(-1L,"rhfwleowkd77@naver.com","nbmlon99","","010-2222-3333")
         }
     }
 }

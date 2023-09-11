@@ -23,8 +23,8 @@ import androidx.fragment.app.viewModels
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.nbmlon.mushroomer.R
-import com.nbmlon.mushroomer.RequestCodeConstants
-import com.nbmlon.mushroomer.RequestCodeConstants.CAMERA_PERMISSION_REQUEST_CODE
+import com.nbmlon.mushroomer.api.RequestCodeConstants
+import com.nbmlon.mushroomer.api.RequestCodeConstants.CAMERA_PERMISSION_REQUEST_CODE
 import com.nbmlon.mushroomer.databinding.FragmentCameraBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +52,7 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
     private val cameraViewModel: CameraViewModel by viewModels()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var lat : Double? = null; private var lon : Double? = null;
-
+    private var pictureAdded = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -87,7 +87,10 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
 
         cameraViewModel.capturedImages.observe(viewLifecycleOwner) { itemList ->
             picturesAdapter.submitList(itemList.toList())
-            binding.pictureRV.smoothScrollToPosition(0)
+            if(pictureAdded){
+                binding.pictureRV.smoothScrollToPosition(0)
+                pictureAdded = false
+            }
         }
 
         binding.apply {
@@ -207,6 +210,7 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
                 ContextCompat.getMainExecutor(requireContext()),
                 object : ImageCapture.OnImageCapturedCallback() {
                     override fun onCaptureSuccess(image: ImageProxy) {
+                        pictureAdded = true
                         cameraViewModel.addPicture(image)
                         image.close()
                         Log.d("CAMERA_TEST",cameraViewModel.capturedImages.value!!.size.toString())
@@ -230,19 +234,14 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
 
 
 
-    override fun deleteImage(idx : Int) {
-        cameraViewModel.delPicture(idx)
+    override fun deleteImage(id : Int) {
+        cameraViewModel.delPicture(id)
     }
 
 
     private fun showAlertForAdditionalPicture(){
         cameraViewModel.capturedImages.value?.let {
-            val dialogFragment = CameraFragment_alert().apply {
-                arguments = Bundle().apply {
-                    putInt(CameraFragment_alert.ITEM_COUNT, cameraViewModel.capturedImages.value!!.size)
-                    putSerializable(CameraFragment_alert.START_ANALYZE_LISTENER, this@CameraFragment as AnalyzeStartListener )
-                }
-            }
+            val dialogFragment = CameraFragment_alert.getInstance(cameraViewModel.capturedImages.value!!.size,  this@CameraFragment as AnalyzeStartListener)
             dialogFragment.show(parentFragmentManager, CameraFragment_alert.TAG)
         }
     }
@@ -265,10 +264,16 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
             requestLocationUpdates()
         }
         cameraViewModel.startAnalysis()
-        Sweetalert(requireActivity(),Sweetalert.PROGRESS_TYPE).apply {
+        val loading = Sweetalert(requireActivity(),Sweetalert.PROGRESS_TYPE).apply {
             titleText = resources.getString(R.string.ANLAYZE_IN_PROGRESS)
             setCancelable(false)
             show()
+        }
+
+        cameraViewModel.analysisResult.observe(viewLifecycleOwner){response ->
+            loading.dismissWithAnimation()
+            CameraFragment_result.getInstance(response = response)
+                .show(requireActivity().supportFragmentManager, CameraFragment_result.TAG)
         }
     }
 

@@ -141,6 +141,7 @@ private class CryptographyManagerImpl : CryptographyManager {
         val json = context.getSharedPreferences(filename, mode).getString(prefKey, null)
         return Gson().fromJson(json, CiphertextWrapper::class.java)
     }
+
 }
 
 

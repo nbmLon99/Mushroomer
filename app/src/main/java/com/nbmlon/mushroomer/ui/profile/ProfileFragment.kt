@@ -17,11 +17,12 @@ import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.DialogEdittextBinding
 import com.nbmlon.mushroomer.databinding.DialogLoginMethodBinding
 import com.nbmlon.mushroomer.databinding.FragmentProfileBinding
-import com.nbmlon.mushroomer.ui.login.BiometricPromptUtils
-import com.nbmlon.mushroomer.ui.login.CIPHERTEXT_WRAPPER
 import com.nbmlon.mushroomer.ui.login.LoginActivity
-import com.nbmlon.mushroomer.ui.login.SHARED_PREFS_FILENAME
+import com.nbmlon.mushroomer.utils.BiometricPromptUtils
+import com.nbmlon.mushroomer.utils.CIPHERTEXT_WRAPPER
 import com.nbmlon.mushroomer.utils.CryptographyManager
+import com.nbmlon.mushroomer.utils.REFRESH_TOKEN_ENCRYPTION_KEY
+import com.nbmlon.mushroomer.utils.SHARED_PREFS_FILENAME
 import taimoor.sultani.sweetalert2.Sweetalert
 
 
@@ -170,11 +171,12 @@ class ProfileFragment : Fragment(), DialogListener {
         return ;
 
         radioCheckedId?.let { id->
+            deleteServerToken()
             when(id){
-                R.id.login_biometric -> TODO("지문인증") ;
+                R.id.login_biometric -> showBiometricPromptForEncryption() ;
                 R.id.login_pattern-> TODO("패턴인증") ;
                 R.id.login_password-> TODO("로그인") ;
-                else -> error("잘못된 아이디")
+                else -> error("잘못된 인증 방식 선택")
             }
         }
     }
@@ -186,7 +188,7 @@ class ProfileFragment : Fragment(), DialogListener {
     fun showBiometricPromptForEncryption() {
         val canAuthenticate = BiometricManager.from(requireActivity().applicationContext).canAuthenticate()
         if (canAuthenticate == BiometricManager.BIOMETRIC_SUCCESS) {
-            val secretKeyName = "biometric_sample_encryption_key"
+            val secretKeyName = REFRESH_TOKEN_ENCRYPTION_KEY
             val cipher = cryptographyManager.getInitializedCipherForEncryption(secretKeyName)
             val biometricPrompt =
                 BiometricPromptUtils.createBiometricPrompt(requireActivity()as AppCompatActivity, ::encryptAndStoreServerToken)
@@ -195,6 +197,8 @@ class ProfileFragment : Fragment(), DialogListener {
         }
     }
 
+
+    /** 지문 인증을 위한 서버 토큰 저장 **/
     private fun encryptAndStoreServerToken(authResult: BiometricPrompt.AuthenticationResult) {
         authResult.cryptoObject?.cipher?.apply {
             AppUser.token?.let { token ->
@@ -209,7 +213,16 @@ class ProfileFragment : Fragment(), DialogListener {
                 )
             }
         }
-        //finish()
+    }
+
+
+
+    fun deleteServerToken(){
+        val sharedPreferences = requireActivity().getSharedPreferences(
+            SHARED_PREFS_FILENAME,
+            Context.MODE_PRIVATE
+        )
+        sharedPreferences.edit().remove(CIPHERTEXT_WRAPPER).apply()
     }
 }
 

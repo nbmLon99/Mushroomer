@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.commu.CommuFragment_write"
+    tools:context=".ui.commu.board.CommuFragment_write"
     android:orientation="vertical"
     >
 
@@ -72,9 +72,9 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             >
-            <TextView
+            <EditText
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:hint="제목을 입력하세요"
@@ -83,6 +83,7 @@
                 android:textStyle="bold"
                 />
             <ImageView
+                android:layout_gravity="center"
                 android:id="@+id/btnAddPic"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
@@ -105,14 +106,15 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_photo_checking"
             />
-        <TextView
+        <EditText
+            android:gravity="top"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:layout_marginVertical="10dp"
             android:padding="5dp"
             android:scrollbars="vertical"
-
+            android:backgroundTint="@color/trans"
             android:hint="내용을 입력하세요"
             android:textSize="@dimen/text_sub"
             />
@@ -120,6 +122,7 @@
         <!-- 커뮤니티 이용 규칙 -->
 
         <LinearLayout
+            android:layout_gravity="bottom"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:orientation="vertical"

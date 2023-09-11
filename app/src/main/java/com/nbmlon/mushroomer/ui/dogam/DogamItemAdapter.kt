@@ -52,7 +52,8 @@ class DogamItemAdapter(
             }
 
             override fun areContentsTheSame(oldItem: DogamUiModel, newItem: DogamUiModel): Boolean =
-                oldItem == newItem
+                (oldItem is DogamUiModel.MushItem && newItem is DogamUiModel.MushItem &&
+                        oldItem.mush.dogamNo == newItem.mush.dogamNo)
         }
     }
 }

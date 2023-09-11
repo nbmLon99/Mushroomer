@@ -6,10 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.FragmentDogamDetailBinding
 import com.nbmlon.mushroomer.model.MushHistory
 import com.nbmlon.mushroomer.model.Mushroom
+import com.nbmlon.mushroomer.ui.dialog_picture.PictureDialogFragment
+import com.nbmlon.mushroomer.ui.dialog_picture.PictureDialogFrom
 
 private const val TARGET_MUSH = "mush"
 
@@ -72,7 +73,7 @@ class DogamFragment_detail : Fragment(), DogamHistoryClickListener{
 
     override fun openPictureDialog(clickedMushHistory: MushHistory) {
         PictureDialogFragment.getInstance(target= clickedMushHistory,callFrom= PictureDialogFrom.DogamFrag)
-            .show(requireActivity().supportFragmentManager,PictureDialogFragment.TAG)
+            .show(requireActivity().supportFragmentManager, PictureDialogFragment.TAG)
     }
 
 

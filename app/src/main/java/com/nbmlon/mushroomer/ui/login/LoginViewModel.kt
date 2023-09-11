@@ -1,50 +1,67 @@
 package com.nbmlon.mushroomer.ui.login
 
-import android.provider.ContactsContract.CommonDataKinds.Nickname
-import com.nbmlon.mushroomer.AppUser
-import com.nbmlon.mushroomer.R
-import com.nbmlon.mushroomer.model.User
-
-/*
- * Copyright 2020 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import android.util.Patterns
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import com.nbmlon.mushroomer.model.RegisterRequest
+import androidx.lifecycle.viewModelScope
+import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.api.dto.UserRequestDTO
+import com.nbmlon.mushroomer.api.dto.UserRequestDTO.FindIdRequestDTO
+import com.nbmlon.mushroomer.api.dto.UserRequestDTO.FindPwRequestDTO
+import com.nbmlon.mushroomer.api.dto.UserRequestDTO.LoginRequestDTO
+import com.nbmlon.mushroomer.api.dto.UserRequestDTO.RegisterRequestDTO
+import com.nbmlon.mushroomer.api.dto.UserRequestDTO.TokenLoginRequestDTO
+import com.nbmlon.mushroomer.api.dto.UserResponseDTO
+import com.nbmlon.mushroomer.api.dto.UserResponseDTO.FindResponseDTO
+import com.nbmlon.mushroomer.api.dto.UserResponseDTO.LoginResponseDTO
+import com.nbmlon.mushroomer.api.dto.UserResponseDTO.SuccessResponse
+import com.nbmlon.mushroomer.data.user.UserRepository
+import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
+    private val repository = UserRepository()
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginWithPasswordFormState: LiveData<LoginFormState> = _loginForm
 
-    private val _loginResult = MutableLiveData<LoginResult>()               //로그인
-    val loginResult: LiveData<LoginResult> = _loginResult   
-    private val _registerResult = MutableLiveData<LoginResult>()            //회원가입
-    val registerResult: LiveData<LoginResult> = _registerResult
-    private val _nicknameUsable = MutableLiveData<LoginResult>()            //닉네임 중복 검사
-    val nicknameUsable: LiveData<LoginResult> = _nicknameUsable
+    val _response = MutableLiveData<UserResponse>()
+    val response : LiveData<UserResponse> = _response
+    val request : (UserRequest) -> Unit
 
-    private val _findIDinResult = MutableLiveData<LoginResult>()
-    val findIDinResult: LiveData<LoginResult> = _findIDinResult             //ID찾기
-    private val _findPWResult = MutableLiveData<LoginResult>()
-    val findPWResult: LiveData<LoginResult> = _findPWResult                 //PW찾기
+    init {
+        request = { requestType ->
+            val dto = requestType.dto
+            viewModelScope.launch {
+                when(requestType){
+                    //로그인
+                    is UserRequest.Login -> {
+                        if ((isUserNameValid(requestType.dto.email) && isPasswordValid(requestType.dto.password))) {
+                            _response.value = repository.login(dto)
+                        }
+                    }
+                    //토큰로그인
+                    is UserRequest.LoginWithToken -> {
+                        _response.value = repository.loginWithToken(dto)
+                    }
+
+                    //회원가입
+                    is UserRequest.Register -> {
+                        _response.value =  repository.register(dto)
+                    }
+                    //아이디찾기
+                    is UserRequest.FindPW -> {
+                        _response.value = repository.findID(dto)
+                    };
+                    //비밀번호찾기
+                    is UserRequest.FindID -> {
+                        _response.value = repository.findPW(dto)
+                    };
+                }
+            }
+
+        }
+    }
 
     fun onLoginDataChanged(username: String, password: String) {
         if (!isUserNameValid(username)) {
@@ -70,63 +87,20 @@ class LoginViewModel : ViewModel() {
     private fun isPasswordValid(password: String): Boolean {
         return password.length > 5
     }
+}
 
-    fun requestFindID(){
-        // 성공
-        if(TODO("아이디찾기")){
-            _findIDinResult.value = LoginResult(true)
-        } else {
-            _findIDinResult.value = LoginResult(false)
-        }
-    }
-    fun requestFindPW(){
-        //실패
-        if(TODO("비밀번호찾기")){
-            _findPWResult.value = LoginResult(true)
-        } else {
-            _findPWResult.value = LoginResult(false)
-        }
+sealed class UserRequest() {
+    abstract val dto: UserRequestDTO
+    data class Login(override val dto : LoginRequestDTO) : UserRequest()
+    data class LoginWithToken(override val dto : TokenLoginRequestDTO) : UserRequest()
+    data class FindPW(override val dto : FindPwRequestDTO) : UserRequest()
+    data class FindID(override val dto : FindIdRequestDTO) : UserRequest()
+    data class Register(override val dto : RegisterRequestDTO) : UserRequest()
+}
 
-    }
-    fun requestCheckNickname(nickname: String){
-        if(TODO("회원가입")){
-            _registerResult.value = LoginResult(true)
-        } else {
-            _registerResult.value = LoginResult(false)
-        }
-    }
-    fun requestRegister(request : RegisterRequest){
-        if(TODO("회원가입")){
-            _registerResult.value = LoginResult(true)
-        } else {
-            _registerResult.value = LoginResult(false)
-        }
-    }
-
-
-
-    /** id / 비밀번호 / 자동로그인 check -> Login**/
-    fun login(username: String, password: String, autoLogin : Boolean = false) {
-        if (isUserNameValid(username) && isPasswordValid(password)) {
-            //send And Get Tokens
-            val testUser = User.getDummy()
-
-            // Normally this method would asynchronously send this to your server and your sever
-            // would return a token. For high sensitivity apps such as banking, you would keep that
-            // token in transient memory similar to my SampleAppUser object. This way the user
-            // must login each time they start the app.
-            // In this sample, we don't call a server. Instead we use a fake token that we set
-            // right here:
-
-            AppUser.token = null
-            AppUser.user = testUser
-
-            _loginResult.value = LoginResult(true)
-        } else {
-            _loginResult.value = LoginResult(false)
-        }
-    }
-
-
-
+sealed class UserResponse{
+    abstract val dto : UserResponseDTO
+    data class Login(override val dto : LoginResponseDTO) : UserResponse()
+    data class FindIdPw(override val dto : FindResponseDTO) : UserResponse()
+    data class Register(override val dto : SuccessResponse) : UserResponse()
 }

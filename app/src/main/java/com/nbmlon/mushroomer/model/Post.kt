@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.nbmlon.mushroomer.R
-import com.nbmlon.mushroomer.ui.commu.BoardType
+import com.nbmlon.mushroomer.ui.commu.board.BoardType
 import org.joda.time.DateTime
 import org.joda.time.Duration
 import java.io.Serializable
@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat
  * @param updated       수정 유무 ( 수정됨 )
  */
 data class Post(
+    val id : Int,
     val title: String,
     val images: ArrayList<String>?,
     val content: String,
@@ -39,12 +40,13 @@ data class Post(
     var ThumbsUpCount: Int,
 
     val boardType : BoardType,
-    val myThumbsUp: Boolean,
-    val updated: Boolean
+    val myThumbsUp: Boolean = false,
+    val updated: Boolean = false
     ) :Serializable {
     companion object {
         fun getDummy(type : BoardType, query: String?, writer: User?): Post {
             return Post(
+                id = 0,
                 title = query ?: "제목",
                 images = null,
                 content = "내용",
