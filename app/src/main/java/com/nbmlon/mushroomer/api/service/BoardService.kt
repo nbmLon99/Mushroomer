@@ -1,6 +1,7 @@
 package com.nbmlon.mushroomer.api.service
 
 import com.google.gson.annotations.SerializedName
+import com.nbmlon.mushroomer.api.dto.CommuPostResponseDTO
 import com.nbmlon.mushroomer.model.Comment
 import com.nbmlon.mushroomer.model.Post
 import dagger.Module
@@ -24,7 +25,7 @@ interface BoardService {
 
     //
     @POST("/boards/{userId}")
-    suspend fun writePost(@Path("userId")id : Int, post : Post) : Call<BoardResponse>
+    suspend fun writePost(@Path("userId")id : Int, post : Post) : Call<CommuPostResponseDTO.SuccessResponseDTO>
 
     //유저 게시글 조회
     @GET("/boards/users/{userId}")
@@ -32,11 +33,11 @@ interface BoardService {
 
     //게시글 수정
     @PUT("/boards/{userId}/{boardId}")
-    suspend fun modifyPost(@Path("userId")userId: Int, @Path("boardId")boardId : Int, post : Post) : Call<BoardResponse>
+    suspend fun modifyPost(@Path("userId")userId: Int, @Path("boardId")boardId : Int, post : Post) : Call<CommuPostResponseDTO.SuccessResponseDTO>
 
     //게시글 삭제
     @DELETE("/boards/{userId}/{boardId}")
-    suspend fun deleteBoard(@Path("boardId")id : Int) : Call<BoardResponse>
+    suspend fun deleteBoard(@Path("boardId")id : Int) : Call<CommuPostResponseDTO.SuccessResponseDTO>
 }
 
 

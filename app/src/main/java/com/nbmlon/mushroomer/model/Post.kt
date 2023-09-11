@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat
  * @param updated       수정 유무 ( 수정됨 )
  */
 data class Post(
+    val id : Int,
     val title: String,
     val images: ArrayList<String>?,
     val content: String,
@@ -45,6 +46,7 @@ data class Post(
     companion object {
         fun getDummy(type : BoardType, query: String?, writer: User?): Post {
             return Post(
+                id = 0,
                 title = query ?: "제목",
                 images = null,
                 content = "내용",

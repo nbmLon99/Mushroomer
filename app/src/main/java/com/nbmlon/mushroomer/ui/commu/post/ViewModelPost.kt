@@ -4,23 +4,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nbmlon.mushroomer.api.dto.CommuRequestDTO
-import com.nbmlon.mushroomer.api.dto.CommuRequestDTO.DeleteDTO
-import com.nbmlon.mushroomer.api.dto.CommuRequestDTO.ModifyDTO
-import com.nbmlon.mushroomer.api.dto.CommuRequestDTO.ReportDTO
-import com.nbmlon.mushroomer.api.dto.CommuRequestDTO.UploadDTO
-import com.nbmlon.mushroomer.api.dto.CommuResponseDTO
-import com.nbmlon.mushroomer.api.dto.CommuResponseDTO.SuccessResponseDTO
+import com.nbmlon.mushroomer.api.dto.CommuPostRequestDTO
+import com.nbmlon.mushroomer.api.dto.CommuPostRequestDTO.DeleteDTO
+import com.nbmlon.mushroomer.api.dto.CommuPostRequestDTO.ModifyDTO
+import com.nbmlon.mushroomer.api.dto.CommuPostRequestDTO.ReportDTO
+import com.nbmlon.mushroomer.api.dto.CommuPostRequestDTO.UploadDTO
+import com.nbmlon.mushroomer.api.dto.CommuPostResponseDTO
+import com.nbmlon.mushroomer.api.dto.CommuPostResponseDTO.SuccessResponseDTO
 import com.nbmlon.mushroomer.data.posts.CommuPostRepository
 import kotlinx.coroutines.launch
 
 class ViewModelPost : ViewModel() {
-    val repository = CommuPostRepository()
+    private val repository = CommuPostRepository()
 
-    val _response = MutableLiveData<CommuResponse>()
-    val response : LiveData<CommuResponse> = _response
+    val _response = MutableLiveData<CommuPostResponse>()
+    val response : LiveData<CommuPostResponse> = _response
 
-    val request : (CommuRequest) -> Unit
+    val request : (CommuPostRequest) -> Unit
 
     init{
         request = { request ->
@@ -28,16 +28,16 @@ class ViewModelPost : ViewModel() {
                 val dto = request.dto
                 val type = request.targetType
                 when( request ) {
-                    is CommuRequest.ForReport -> {
+                    is CommuPostRequest.ForReport -> {
                         _response.value =  repository.report(type, dto)
                     }
-                    is CommuRequest.ForDelete -> {
+                    is CommuPostRequest.ForDelete -> {
                         _response.value =  repository.delete(type, dto)
                     }
-                    is CommuRequest.ForUpload -> {
+                    is CommuPostRequest.ForUpload -> {
                         _response.value =  repository.upload(type, dto)
                     }
-                    is CommuRequest.ForModify -> {
+                    is CommuPostRequest.ForModify -> {
                         _response.value =  repository.modify(type, dto)
                     }
                 }
@@ -48,16 +48,16 @@ class ViewModelPost : ViewModel() {
 
 enum class TargetType { POST, COMMENT }
 
-sealed class CommuRequest{
-    abstract val dto : CommuRequestDTO
+sealed class CommuPostRequest{
+    abstract val dto : CommuPostRequestDTO
     abstract val targetType : TargetType
-    data class ForReport(override val targetType: TargetType, override val dto : ReportDTO) : CommuRequest()
-    data class ForDelete(override val targetType: TargetType, override val dto : DeleteDTO) : CommuRequest()
-    data class ForUpload(override val targetType: TargetType, override val dto : UploadDTO) : CommuRequest()
-    data class ForModify(override val targetType: TargetType, override val dto : ModifyDTO) : CommuRequest()
+    data class ForReport(override val targetType: TargetType, override val dto : ReportDTO) : CommuPostRequest()
+    data class ForDelete(override val targetType: TargetType, override val dto : DeleteDTO) : CommuPostRequest()
+    data class ForUpload(override val targetType: TargetType, override val dto : UploadDTO) : CommuPostRequest()
+    data class ForModify(override val targetType: TargetType, override val dto : ModifyDTO) : CommuPostRequest()
 }
 
-sealed class CommuResponse{
-    abstract val dto : CommuResponseDTO
-    data class SuccessResponse(override val dto : SuccessResponseDTO) : CommuResponse()
+sealed class CommuPostResponse{
+    abstract val dto : CommuPostResponseDTO
+    data class SuccessResponse(override val dto : SuccessResponseDTO) : CommuPostResponse()
 }

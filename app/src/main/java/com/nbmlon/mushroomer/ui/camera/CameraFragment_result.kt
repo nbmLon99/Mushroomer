@@ -6,8 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import com.nbmlon.mushroomer.api.dto.AnalyzeResponse
 import com.nbmlon.mushroomer.databinding.FragmentCameraResultBinding
-import com.nbmlon.mushroomer.model.Analyze
 
 private const val ANALYZE_RESULT = "analyze_result"
 
@@ -18,7 +18,7 @@ class CameraFragment_result private constructor(): DialogFragment() {
     companion object {
         const val TAG: String = "CameraFragment_result"
         @JvmStatic
-        fun getInstance(response : Analyze.AnalyzeResponse) =
+        fun getInstance(response : AnalyzeResponse) =
             CameraFragment_result().apply {
                 arguments = Bundle().apply {
                     putSerializable(ANALYZE_RESULT, response)
@@ -26,7 +26,7 @@ class CameraFragment_result private constructor(): DialogFragment() {
             }
     }
 
-    private var response : Analyze.AnalyzeResponse? = null
+    private var response : AnalyzeResponse? = null
 
     private var _binding : FragmentCameraResultBinding? = null
     private val binding get() = _binding!!
@@ -35,9 +35,9 @@ class CameraFragment_result private constructor(): DialogFragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                response = it.getSerializable(ANALYZE_RESULT, Analyze.AnalyzeResponse::class.java)
+                response = it.getSerializable(ANALYZE_RESULT, AnalyzeResponse::class.java)
             }else{
-                response = it.getSerializable(ANALYZE_RESULT) as? Analyze.AnalyzeResponse
+                response = it.getSerializable(ANALYZE_RESULT) as? AnalyzeResponse
             }
         }
     }

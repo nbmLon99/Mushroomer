@@ -241,12 +241,7 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
 
     private fun showAlertForAdditionalPicture(){
         cameraViewModel.capturedImages.value?.let {
-            val dialogFragment = CameraFragment_alert().apply {
-                arguments = Bundle().apply {
-                    putInt(CameraFragment_alert.ITEM_COUNT, cameraViewModel.capturedImages.value!!.size)
-                    putSerializable(CameraFragment_alert.START_ANALYZE_LISTENER, this@CameraFragment as AnalyzeStartListener )
-                }
-            }
+            val dialogFragment = CameraFragment_alert.getInstance(cameraViewModel.capturedImages.value!!.size,  this@CameraFragment as AnalyzeStartListener)
             dialogFragment.show(parentFragmentManager, CameraFragment_alert.TAG)
         }
     }

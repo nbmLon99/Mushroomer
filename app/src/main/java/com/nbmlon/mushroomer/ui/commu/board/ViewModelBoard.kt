@@ -7,7 +7,6 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.data.posts.BoardPostsRepository
-import com.nbmlon.mushroomer.model.Comment
 import com.nbmlon.mushroomer.model.Post
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -136,38 +135,6 @@ class ViewModelBoard(
             isHotBoard = isHotBoard
         )
 
-
-    /** 서버에 수정 요청 **/
-    fun requestModify(targetPost : Post?, targetComment : Comment?){
-        if (targetPost != null || targetComment == null)
-            //Comment 수정
-            return
-    }
-
-    /** 서버에 등록 요청 **/
-    fun requestUpload(targetPost : Post?, targetComment : Comment?){
-        if (targetPost != null || targetComment == null)
-        //Comment 수정
-            return
-
-    }
-
-    /** 서버에 삭제 요청 **/
-    fun requestDelete(targetPost : Post?, targetComment : Comment?){
-        if (targetPost != null || targetComment == null)
-        //Comment 수정
-            return
-
-    }
-
-
-    /** 서버에 신고 접수 **/
-    suspend fun requestReport(targetPost : Post?, targetComment : Comment?){
-        if (targetPost != null || targetComment == null)
-        //Comment 수정
-            return
-
-    }
 
 
     override fun onCleared() {

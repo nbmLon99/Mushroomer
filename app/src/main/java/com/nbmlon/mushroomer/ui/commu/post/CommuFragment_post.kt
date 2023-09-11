@@ -10,21 +10,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.api.dto.CommuPostRequestDTO
 import com.nbmlon.mushroomer.databinding.FragmentCommuPostBinding
 import com.nbmlon.mushroomer.model.Comment
 import com.nbmlon.mushroomer.model.Post
-import com.nbmlon.mushroomer.ui.commu.board.CommuFragment_report
-import com.nbmlon.mushroomer.ui.commu.board.ViewModelBoard
 import com.nbmlon.mushroomer.ui.dialog_picture.ImageSliderAdapter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import taimoor.sultani.sweetalert2.Sweetalert
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
-class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListener {
+class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListener, ReportDialogClickListener {
     companion object {
         const val TAG= "CommuFragment_post"
         @JvmStatic
@@ -39,7 +35,9 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
     private var targetPost: Post? = null
     private var _binding: FragmentCommuPostBinding? = null
     private val binding get() = _binding!!
-    private val viewModel by viewModels<ViewModelBoard>()
+    private val viewModel by viewModels<ViewModelPost>()
+    private lateinit var loading : Sweetalert
+    private var onResponseSuccess : (() -> Unit)? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -49,6 +47,7 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
                 targetPost = it.getSerializable(TARGET_POST) as Post
             }
         }
+        loading = Sweetalert(context, Sweetalert.PROGRESS_TYPE).apply { setCancelable(false) }
     }
 
     override fun onCreateView(
@@ -97,11 +96,10 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
             setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.report -> {
-                        onClickReport(targetPost,null)
+                        openReportDialog(targetPost,null)
                         true
                     }
                     R.id.modify_post_or_comment -> {
-                        TODO("수정 요구 필요")
                         onClickModify(targetPost,null)
                         true
                     }
@@ -130,59 +128,91 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
     }
 
     /** PopupMenu Listener For Comment **/
-    override fun onClickReport(target_post: Post?, target_comment: Comment?) {
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.FragmentContainer, CommuFragment_report.newInstance(target_post,target_comment))
-            .addToBackStack(null)
-            .commit()
+    override fun openReportDialog(target_post: Post?, target_comment: Comment?) {
+        CommuFragment_report.newInstance(target_post,target_comment).show(
+            requireActivity().supportFragmentManager, TAG
+        )
     }
+    override fun onDialogReportBtnClicked(type: TargetType, dto: CommuPostRequestDTO.ReportDTO) {
+        viewModel.request(
+            CommuPostRequest.ForReport(
+                targetType = type,
+                dto = dto)
+        )
+        loading.show()
+    }
+
 
     override fun onClickDel(target_post: Post?, target_comment: Comment?) {
         //포스트 삭제
         if (target_post != null && target_comment == null){
-
+            viewModel.request(
+                CommuPostRequest.ForDelete(
+                    targetType = TargetType.POST,
+                    dto = dto)
+            )
         }
         //댓글 삭제       
         else if ( target_post == null && target_comment != null ){
-
+            viewModel.request(
+                CommuPostRequest.ForDelete(
+                    targetType = TargetType.COMMENT,
+                    dto = dto)
+            )
         }
-        TODO("서버 삭제 구현")
-        TODO("로딩창 띄우고 플로우 take1해서 결과처리")
-        CoroutineScope(Dispatchers.Main).launch {
-            viewModel.requestDelete(null,target_comment)
-        }
+        loading.show()
     }
 
     override fun onClickModify(target_post: Post?, target_comment: Comment?) {
         //포스트 수정
         if (target_post != null && target_comment == null){
-
+            viewModel.request(
+                CommuPostRequest.ForReport(
+                    targetType = TargetType.POST,
+                    dto = dto)
+            )
         }
         //댓글 수정     
         else if ( target_post == null && target_comment != null ){
-
+            viewModel.request(
+                CommuPostRequest.ForModify(
+                    targetType = TargetType.COMMENT,
+                    dto = target_comment)
+            )
         }
-        TODO("서버 수정 구현")
-        CoroutineScope(Dispatchers.Main).launch {
-            viewModel.requestModify(null, target_comment)
-        }
-
+        loading.show()
     }
 
+    // 
     override fun onClickWriteReply(target_comment: Comment) {
-        TODO("서버 추가 구현")
-        CoroutineScope(Dispatchers.Main).launch {
-            viewModel.requestUpload(null, target_comment)
-        }
+        //TODO : 클릭 -> 댓글 작성 버튼 위에 답글 띄우고 댓글 업로드 버튼을 그걸로 바꿔야함
+        viewModel.request(
+            CommuPostRequest.ForWriteReply(
+                targetType = TargetType.COMMENT,
+                dto = target_comment)
+        )
     }
 
 
     /** 서버 요청에 대한 결과값 처리 **/
-    private fun responseObserver(){
-        val loading = Sweetalert(context, Sweetalert.PROGRESS_TYPE)
-            .setCancelable(false)
-        viewmo
+    private fun responseObserver(response : CommuPostResponse){
+        if(loading.isShowing)
+            loading.dismissWithAnimation()
+        when(response){
+            is CommuPostResponse.SuccessResponse ->{
+                if(response.dto.success)
+                    onResponseSuccess?.let{ it() }
+            }
+        }
     }
+
+    private fun onSuccessReport(){
+        Sweetalert(this@CommuFragment_post.context,Sweetalert.BUTTON_NEUTRAL).apply {
+            titleText = "신고 접수되었습니다!"
+            setNeutralButton("확인"){this.dismissWithAnimation()}
+        }
+    }
+
 
 }
 

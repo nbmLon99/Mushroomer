@@ -12,8 +12,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nbmlon.mushroomer.api.dto.AnalyzeResponse
 import com.nbmlon.mushroomer.data.mushrooms.AnalyzeMushroomPictures
-import com.nbmlon.mushroomer.model.Analyze
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -27,10 +27,10 @@ import java.util.Locale
 class CameraViewModel : ViewModel() {
     // MutableLiveData를 사용하여 분석 결과를 저장할 변수를 선언합니다.
     //    private val _analysisRequest = MutableLiveData<>
-    private val _analysisResult = MutableLiveData<Analyze.AnalyzeResponse>()
+    private val _analysisResult = MutableLiveData<AnalyzeResponse>()
     private val _capturedImages: MutableLiveData<ArrayList<Bitmap>> = MutableLiveData(arrayListOf())
 
-    val analysisResult: LiveData<Analyze.AnalyzeResponse>
+    val analysisResult: LiveData<AnalyzeResponse>
         get() = _analysisResult
 
     val capturedImages : LiveData<ArrayList<Bitmap>>

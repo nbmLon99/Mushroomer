@@ -8,12 +8,21 @@ import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import com.nbmlon.mushroomer.databinding.FragmentCameraAlertBinding
 
-class CameraFragment_alert : DialogFragment() {
+class CameraFragment_alert private constructor(): DialogFragment() {
 
     companion object {
         const val TAG = "CameraFragment_alert"
         const val ITEM_COUNT = "itemCount"
         const val START_ANALYZE_LISTENER = "AnalyzeStartListener"
+
+        @JvmStatic
+        fun getInstance(item_count : Int, sal : AnalyzeStartListener) =
+            CameraFragment_alert().apply {
+                arguments = Bundle().apply {
+                    putInt(ITEM_COUNT, item_count)
+                    putSerializable(START_ANALYZE_LISTENER, sal as AnalyzeStartListener )
+                }
+            }
     }
 
     private var itemCount = -1

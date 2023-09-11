@@ -1,28 +1,30 @@
-package com.nbmlon.mushroomer.ui.commu.board
+package com.nbmlon.mushroomer.ui.commu.post
 
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import com.nbmlon.mushroomer.api.dto.CommuPostRequestDTO
 import com.nbmlon.mushroomer.databinding.FragmentCommuReportBinding
 import com.nbmlon.mushroomer.model.Comment
 import com.nbmlon.mushroomer.model.Post
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.nbmlon.mushroomer.ui.commu.board.ViewModelBoard
 
 /**
  * 게시글 / 댓글 신고 Fragment
  */
-class CommuFragment_report private constructor() : Fragment() {
-    // TODO: Rename and change types of parameters
+
+//  TODO : 다이얼로그 프래그먼트로 바꿔야함
+class CommuFragment_report private constructor() : DialogFragment() {
     private var targetPost: Post? = null
     private var targetComment: Comment? = null
     private var _binding: FragmentCommuReportBinding? = null
     private val binding get() = _binding!!
+    private lateinit var cl : ReportDialogClickListener
+    private lateinit var targetType : TargetType
     private val viewModel by viewModels<ViewModelBoard>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +37,15 @@ class CommuFragment_report private constructor() : Fragment() {
                 targetComment = it.getSerializable(TARGET_COMMENT) as Comment?
             }
         }
+
+        targetType = if (targetPost != null) TargetType.POST else TargetType.COMMENT
+        if (parentFragment is ReportDialogClickListener)
+            cl = parentFragment as ReportDialogClickListener
+    }
+
+    override fun onStart() {
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT)
+        super.onStart()
     }
 
     override fun onCreateView(
@@ -52,7 +63,7 @@ class CommuFragment_report private constructor() : Fragment() {
             comment = targetComment
             btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
             btnReport.setOnClickListener {
-                CoroutineScope(Dispatchers.Main).launch {  viewModel.requestReport(targetPost, targetComment) }
+                cl.onDialogReportBtnClicked(targetType, CommuPostRequestDTO.ReportDTO((post?.id ?: comment?.id)!!))
             }
         }
     }
