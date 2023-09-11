@@ -199,12 +199,35 @@
 
         </androidx.core.widget.NestedScrollView>
 
+
+        <!-- 답글 달기 대상 -->
+        <LinearLayout
+            android:id="@+id/reply_target_frame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:background="@color/bgGray"
+            >
+            <ImageView
+                android:id="@+id/replyIcon"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+
+                android:src="@drawable/icons_reply"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="10dp"
+                />
+
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="10dp"
+            android:layout_margin="10dp"
             >
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_comment"
                 android:layout_width="0dp"
