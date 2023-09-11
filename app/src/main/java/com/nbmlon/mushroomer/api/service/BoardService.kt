@@ -21,7 +21,7 @@ interface BoardService {
 
     //특정 개시글 조회
     @GET("/boards/{boardId}")
-    suspend fun getPost(@Path("boardId")id : Int) : Call<BoardResponse>
+    suspend fun getPost(@Path("boardId")id : Int) : Call<CommuPostResponseDTO.PostDTO>
 
     //
     @POST("/boards/{userId}")

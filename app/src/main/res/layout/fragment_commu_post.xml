@@ -214,11 +214,27 @@
                 android:layout_width="15dp"
                 android:layout_height="15dp"
 
+                android:layout_marginHorizontal="10dp"
                 android:src="@drawable/icons_reply"
                 android:layout_gravity="bottom"
                 android:layout_marginLeft="10dp"
                 />
-
+            <TextView
+                android:id="@+id/reply_target_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="30dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+            />
+            <ImageView
+                android:id="@+id/reply_cancel"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:padding="3dp"
+                android:src="@drawable/icons_close"
+                />
         </LinearLayout>
 
         <LinearLayout

@@ -20,7 +20,7 @@ import java.io.Serializable
 data class Comment(
     val id : Int,
     val writer : User,
-    val content : String,
+    var content : String,
     val time : DateTime,
     val replies : ArrayList<Comment>?
 ): Serializable {

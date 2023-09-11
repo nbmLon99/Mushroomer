@@ -42,7 +42,7 @@ class AdapterPostComment(private val menu_cl: PopupMenuClickListener) : ListAdap
                     // 메뉴 아이템 클릭 시 동작 처리
                     when (menuItem.itemId) {
                         R.id.report -> {
-                            menu_cl.onClickReport(null,targetComment)
+                            menu_cl.openReportDialog(null,targetComment)
                             true
                         }
                         R.id.modify_post_or_comment -> {
@@ -101,7 +101,7 @@ class AdapterPostComment(private val menu_cl: PopupMenuClickListener) : ListAdap
                         // 메뉴 아이템 클릭 시 동작 처리
                         when (menuItem.itemId) {
                             R.id.report -> {
-                                menu_cl.onClickReport(null,targetReply)
+                                menu_cl.openReportDialog(null,targetReply)
                                 true
                             }
 

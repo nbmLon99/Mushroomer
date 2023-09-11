@@ -1,5 +1,6 @@
 package com.nbmlon.mushroomer.api.service
 
+import com.nbmlon.mushroomer.api.dto.UserRequestDTO
 import com.nbmlon.mushroomer.api.dto.UserResponseDTO.SuccessResponse
 import com.nbmlon.mushroomer.api.dto.UserRequestDTO.LoginRequestDTO
 import com.nbmlon.mushroomer.api.dto.UserRequestDTO.RegisterRequestDTO
@@ -17,19 +18,19 @@ import retrofit2.http.Path
 interface UserService {
     //로그인
     @POST("/login")
-    suspend fun login(@Body request: LoginRequestDTO) : Call<UserResponseDTO>
+    suspend fun login(@Body request: LoginRequestDTO) : Call<UserResponseDTO.LoginResponseDTO>
 
     //토큰 재발급
     @POST("/users/token/generateToken")
-    suspend fun generateToken() : Call<UserResponseDTO>
+    suspend fun generateToken() : Call<UserRequestDTO.TokenLoginRequestDTO>
 
     //소셜 로그인
     @POST("/api/users/oauth2/login")
-    suspend fun kakaoLogin() : Call<UserResponseDTO>
+    suspend fun kakaoLogin() : Call<UserRequestDTO.TokenLoginRequestDTO>
 
     //유저 정보 변경
     @PUT("/users/{userId}")
-    suspend fun modifyUser(@Path("userId")id:Int, @Body request : RegisterRequestDTO) : Call<UserResponseDTO>
+    suspend fun modifyUser(@Path("userId")id:Int, @Body request : RegisterRequestDTO) : Call<SuccessResponse>
 
     //회원 탈퇴
     @DELETE("/users/{userId}")

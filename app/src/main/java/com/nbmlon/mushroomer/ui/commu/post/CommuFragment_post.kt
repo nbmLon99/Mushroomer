@@ -11,9 +11,11 @@ import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.api.dto.CommuPostRequestDTO
+import com.nbmlon.mushroomer.databinding.DialogEdittextBinding
 import com.nbmlon.mushroomer.databinding.FragmentCommuPostBinding
 import com.nbmlon.mushroomer.model.Comment
 import com.nbmlon.mushroomer.model.Post
+import com.nbmlon.mushroomer.ui.commu.board.CommuFragment_write
 import com.nbmlon.mushroomer.ui.dialog_picture.ImageSliderAdapter
 import taimoor.sultani.sweetalert2.Sweetalert
 
@@ -32,22 +34,38 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
             }
     }
 
-    private var targetPost: Post? = null
+    private lateinit var targetPost: Post
     private var _binding: FragmentCommuPostBinding? = null
     private val binding get() = _binding!!
     private val viewModel by viewModels<ViewModelPost>()
     private lateinit var loading : Sweetalert
+
+    private lateinit var commentAdapter : AdapterPostComment
+    private var replyFor : Comment? = null
+
+    //response 올 떄 실행시킬 함수 등록
     private var onResponseSuccess : (() -> Unit)? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                targetPost = it.getSerializable(TARGET_POST, Post::class.java)
+                targetPost = it.getSerializable(TARGET_POST, Post::class.java) ?: viewModel.mPost.value!!
             }else{
-                targetPost = it.getSerializable(TARGET_POST) as Post
+                targetPost = it.getSerializable(TARGET_POST) as? Post ?: viewModel.mPost.value!!
             }
         }
+        viewModel.loadTargetPost(targetPost.id)
         loading = Sweetalert(context, Sweetalert.PROGRESS_TYPE).apply { setCancelable(false) }
+        loading.show()
+        viewModel.mPost.observe(viewLifecycleOwner){
+            loading.dismissWithAnimation()
+            bindingPost(it)
+        }
+        viewModel.response.observe(viewLifecycleOwner, ::responseObserver)
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     override fun onCreateView(
@@ -58,8 +76,13 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
+
+    private fun bindingPost(targetPost: Post){
         binding.apply {
             post = targetPost
             if(post.images?.size ?: 0 > 0)
@@ -67,19 +90,18 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
 
             boardType.text = resources.getString(post?.boardType!!.boardNameResId)
             targetPost?.comments?.let{comments ->
-                commentRV.adapter = AdapterPostComment(this@CommuFragment_post as PopupMenuClickListener).apply { submitList(comments) }
+                commentAdapter = AdapterPostComment(this@CommuFragment_post as PopupMenuClickListener)
+                commentRV.adapter = commentAdapter.apply { submitList(comments) }
             }
             btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
             btnPostMore.setOnClickListener { showContextMenu(btnPostMore) }
+            replyCancel.setOnClickListener {
+                replyFor = null
+                setReplyTarget(replyFor)
+            }
         }
     }
 
-
-
-    override fun onDestroyView() {
-        _binding = null
-        super.onDestroyView()
-    }
 
 
     private fun showContextMenu(view: View) {
@@ -100,7 +122,15 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
                         true
                     }
                     R.id.modify_post_or_comment -> {
-                        onClickModify(targetPost,null)
+                        requireActivity().supportFragmentManager.beginTransaction()
+                            .replace(
+                                R.id.FragmentContainer,
+                                CommuFragment_write.getModifyFragment(targetPost = targetPost),
+                                CommuFragment_write.TAG
+                            )
+                            .addToBackStack(null)
+                            .commit()
+
                         true
                     }
                     R.id.delete_post_or_comment -> {
@@ -139,6 +169,13 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
                 targetType = type,
                 dto = dto)
         )
+        onResponseSuccess = {
+            Sweetalert(this@CommuFragment_post.context, Sweetalert.BUTTON_NEUTRAL)
+                .setTitleText("신고되었습니다!")
+                .setCancelButton("확인"){it.dismissWithAnimation()}
+                .show()
+        }
+
         loading.show()
     }
 
@@ -149,48 +186,86 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
             viewModel.request(
                 CommuPostRequest.ForDelete(
                     targetType = TargetType.POST,
-                    dto = dto)
+                    dto =  CommuPostRequestDTO.DeleteDTO(target_post.id))
             )
+            onResponseSuccess = {
+                Sweetalert(this@CommuFragment_post.context, Sweetalert.BUTTON_NEUTRAL)
+                    .setTitleText("삭제되었습니다!")
+                    .setCancelButton("확인"){
+                        it.dismissWithAnimation()
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
+                    }
+                    .show()
+            }
+
         }
         //댓글 삭제       
         else if ( target_post == null && target_comment != null ){
             viewModel.request(
                 CommuPostRequest.ForDelete(
                     targetType = TargetType.COMMENT,
-                    dto = dto)
+                    dto = CommuPostRequestDTO.DeleteDTO(target_comment.id))
             )
+            onResponseSuccess = {
+                Sweetalert(this@CommuFragment_post.context, Sweetalert.BUTTON_NEUTRAL)
+                    .setTitleText("삭제되었습니다!")
+                    .setCancelButton("확인"){
+                        targetPost?.comments?.apply{
+                            remove(target_comment)
+                            commentAdapter.submitList(this)
+                        }
+                        it.dismissWithAnimation()
+                    }
+                    .show()
+            }
         }
         loading.show()
     }
 
-    override fun onClickModify(target_post: Post?, target_comment: Comment?) {
-        //포스트 수정
-        if (target_post != null && target_comment == null){
-            viewModel.request(
-                CommuPostRequest.ForReport(
-                    targetType = TargetType.POST,
-                    dto = dto)
-            )
-        }
-        //댓글 수정     
-        else if ( target_post == null && target_comment != null ){
-            viewModel.request(
-                CommuPostRequest.ForModify(
-                    targetType = TargetType.COMMENT,
-                    dto = target_comment)
-            )
+    override fun onClickModify(target_post: Post?, target_comment: Comment?, ) {
+        //댓글 수정
+        if ( target_post == null && target_comment != null ){
+            Sweetalert(context, Sweetalert.NORMAL_TYPE).apply {
+                val dialogBinding = DialogEdittextBinding.inflate(layoutInflater).apply {
+                    editText.setText(target_comment?.content)
+                }
+                val editText = dialogBinding.editText
+                setCustomView(dialogBinding.root)
+                setCancelButton("수정"){
+                    requestModify(target_comment,editText.text.toString())
+                    it.dismissWithAnimation()
+                }
+                setNeutralButton(resources.getString(R.string.cancel)){
+                    it.dismissWithAnimation()
+                }
+                show()
+            }
         }
         loading.show()
+    }
+    private fun requestModify(target : Comment, modifiedContent : String){
+        viewModel.request(
+            CommuPostRequest.ForModifyComment(
+                dto = CommuPostRequestDTO.ModifyCommentDTO(target = target, modified = modifiedContent))
+        )
+        onResponseSuccess = {
+            Sweetalert(this@CommuFragment_post.context, Sweetalert.BUTTON_NEUTRAL)
+                .setTitleText("수정되었습니다!")
+                .setCancelButton("확인"){
+                    targetPost?.comments?.apply{
+                        this[indexOf(target)].content = modifiedContent
+                        commentAdapter.submitList(this)
+                    }
+                    it.dismissWithAnimation()
+                }
+                .show()
+        }
     }
 
     // 
     override fun onClickWriteReply(target_comment: Comment) {
-        //TODO : 클릭 -> 댓글 작성 버튼 위에 답글 띄우고 댓글 업로드 버튼을 그걸로 바꿔야함
-        viewModel.request(
-            CommuPostRequest.ForWriteReply(
-                targetType = TargetType.COMMENT,
-                dto = target_comment)
-        )
+        replyFor = target_comment
+        binding.setReplyTarget(replyFor)
     }
 
 
@@ -200,8 +275,13 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
             loading.dismissWithAnimation()
         when(response){
             is CommuPostResponse.SuccessResponse ->{
-                if(response.dto.success)
+                if(response.dto.success){
                     onResponseSuccess?.let{ it() }
+                    onResponseSuccess = null
+                }
+            }
+            else ->{
+                error("로드가 선택됨")
             }
         }
     }
@@ -213,6 +293,15 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
         }
     }
 
+    fun FragmentCommuPostBinding.setReplyTarget(target : Comment?){
+        if (target != null){
+            replyTargetFrame.visibility = View.VISIBLE
+            replyTargetContent.text = target.content
+        }
+        else{
+            replyTargetFrame.visibility = View.GONE
+        }
+    }
 
 }
 

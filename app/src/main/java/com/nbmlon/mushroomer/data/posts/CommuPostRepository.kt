@@ -5,6 +5,7 @@ import com.nbmlon.mushroomer.api.dto.CommuPostResponseDTO
 import com.nbmlon.mushroomer.api.service.BoardService
 import com.nbmlon.mushroomer.api.service.CommentService
 import com.nbmlon.mushroomer.api.service.ReportService
+import com.nbmlon.mushroomer.model.Post
 import com.nbmlon.mushroomer.ui.commu.post.CommuPostResponse
 import com.nbmlon.mushroomer.ui.commu.post.TargetType
 import kotlinx.coroutines.Dispatchers
@@ -17,8 +18,9 @@ import javax.inject.Inject
 interface CommuPostRepository {
     suspend fun report(targetType : TargetType, dto : CommuPostRequestDTO) : CommuPostResponse
     suspend fun delete(targetType : TargetType, dto : CommuPostRequestDTO) : CommuPostResponse
-    suspend fun upload(targetType : TargetType, dto : CommuPostRequestDTO) : CommuPostResponse
-    suspend fun modify(targetType : TargetType, dto : CommuPostRequestDTO) : CommuPostResponse
+    suspend fun uploadComment(dto : CommuPostRequestDTO) : CommuPostResponse
+    suspend fun modifyComment(dto : CommuPostRequestDTO) : CommuPostResponse
+    suspend fun loadPost(dto: CommuPostRequestDTO) : Post
 }
 
 fun CommuPostRepository() : CommuPostRepository = CommuPostRepositoryImpl()
@@ -32,14 +34,23 @@ class CommuPostRepositoryImpl : CommuPostRepository {
     @Inject private lateinit var commentService : CommentService
 
     override suspend fun report(targetType: TargetType, dto: CommuPostRequestDTO): CommuPostResponse {
+        var responseDTO = CommuPostResponseDTO.SuccessResponseDTO(false)
+
         when (targetType){
             TargetType.POST->{
-                reportService.report(dto)
+                if(dto is CommuPostRequestDTO.ReportDTO){
+                    responseDTO = reportService.report(dto.id).await()
+                }
             }
             TargetType.COMMENT->{
-                reportService.report(dto)
+                if(dto is CommuPostRequestDTO.ReportDTO){
+                    val response = reportService.report(dto.id).await()
+                    if( response is CommuPostResponseDTO.SuccessResponseDTO )
+                        responseDTO = response
+                }
             }
         }
+        CommuPostResponse.SuccessResponse(responseDTO)
     }
 
     override suspend fun delete(targetType: TargetType, dto: CommuPostRequestDTO): CommuPostResponse {
@@ -53,33 +64,22 @@ class CommuPostRepositoryImpl : CommuPostRepository {
         }
     }
 
-    override suspend fun upload(targetType: TargetType, dto: CommuPostRequestDTO): CommuPostResponse {
-        when (targetType){
-            TargetType.POST->{
-                boardService.writePost(dto)
-            }
-            TargetType.COMMENT->{
-                commentService.writeComment(dto)
-            }
-        }
+    override suspend fun uploadComment(dto: CommuPostRequestDTO): CommuPostResponse {
+        TODO("Not yet implemented")
     }
 
-    override suspend fun modify(targetType: TargetType, dto: CommuPostRequestDTO): CommuPostResponse {
-        withContext(Dispatchers.IO){
-            var responseDTO = CommuPostResponseDTO.SuccessResponseDTO(success = false)
-            when (targetType){
-                TargetType.POST->{
-                    if(dto is CommuPostRequestDTO.ModifyDTO){
-                        TODO("dto 형식 변환")
-                        responseDTO = boardService.modifyPost(dto).await()
-                    }
-                }
-                TargetType.COMMENT->{
-                    responseDTO = commentService.modifyComment(dto).await()
-                }
-            }
-            CommuPostResponse.SuccessResponse(responseDTO)
-        }
+    override suspend fun modifyComment(dto: CommuPostRequestDTO): CommuPostResponse {
+        TODO("Not yet implemented")
     }
+
+    override suspend fun loadPost(dto: CommuPostRequestDTO): CommuPostResponse {
+        var response : CommuPostResponse = CommuPostResponse.SuccessResponse(CommuPostResponseDTO.SuccessResponseDTO(false))
+        if(dto is CommuPostRequestDTO.LoadPostDTO)
+        withContext(Dispatchers.IO){
+            response = CommuPostResponse.LoadedPostResponse(boardService.getPost(dto.id).await())
+        }
+        response
+    }
+
 
 }

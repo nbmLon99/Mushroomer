@@ -47,11 +47,8 @@ private class UserRepositoryImpl: UserRepository {
         return withContext(Dispatchers.IO){
             var responseDTO = LoginResponseDTO(success = false)
             if(dto is LoginRequestDTO) {
-                val response = backend.login(dto).await()
-                if (response is LoginResponseDTO)
-                    responseDTO = response
+                responseDTO = backend.login(dto).await()
             }
-
             UserResponse.Login(responseDTO)
         }
     }
@@ -59,11 +56,9 @@ private class UserRepositoryImpl: UserRepository {
     override suspend fun loginWithToken(dto: UserRequestDTO): UserResponse {
         return withContext(Dispatchers.IO){
             var responseDTO = LoginResponseDTO(success = false)
-            if(dto is TokenLoginRequestDTO) {
                 //val response = backend.tokenLogin(dto).await()
                 //if (response is LoginResponseDTO)
                 //    responseDTO = response
-            }
 
             UserResponse.Login(responseDTO)
         }
@@ -72,11 +67,8 @@ private class UserRepositoryImpl: UserRepository {
     override suspend fun register(dto: UserRequestDTO): UserResponse {
         return withContext(Dispatchers.IO) {
             var responseDTO = SuccessResponse(success = false)
-            if(dto is RegisterRequestDTO) {
-                val response = backend.signUp(dto).await()
-                if (response is SuccessResponse)
-                    response
-            }
+            if(dto is RegisterRequestDTO)
+                responseDTO = backend.signUp(dto).await()
             UserResponse.Register(responseDTO)
         }
     }
