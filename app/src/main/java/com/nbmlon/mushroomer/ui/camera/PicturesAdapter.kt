@@ -26,7 +26,7 @@ class PicturesAdapter(im: ImageDeleteListner) : ListAdapter<Bitmap,PictureViewHo
                 .with(itemView.context)
                 .load(targetBitmap)
                 .into(itemBinding.photo)
-            itemBinding.clearBtn.setOnClickListener { imageManager.deleteImage(pos) }
+            itemBinding.clearBtn.setOnClickListener { imageManager.deleteImage(bindingAdapterPosition) }
         }
     }
 

@@ -55,12 +55,19 @@ class CameraViewModel : ViewModel() {
         bitmap?.let { currentList.add(0, it) }
         _capturedImages.value = currentList
     }
-    fun delPicture(idx : Int){
-        val currentList = _capturedImages.value ?: arrayListOf()
-        currentList.removeAt(idx)
-        _capturedImages.value = currentList
-    }
 
+    fun delPicture(id : Int){
+        Log.d("아이템 삭제 요청", id.toString())
+        val currentList = _capturedImages.value ?: arrayListOf()
+        try{
+            currentList.removeAt(id)
+            _capturedImages.value = currentList
+        }catch (e : IndexOutOfBoundsException){
+            e.printStackTrace()
+        }catch (e : Exception){
+            e.printStackTrace()
+        }
+    }
 
     suspend fun savePictureFromBitmaps(context: Context) : Boolean{
         val timestampFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())

@@ -52,7 +52,7 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
     private val cameraViewModel: CameraViewModel by viewModels()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var lat : Double? = null; private var lon : Double? = null;
-
+    private var pictureAdded = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -87,7 +87,10 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
 
         cameraViewModel.capturedImages.observe(viewLifecycleOwner) { itemList ->
             picturesAdapter.submitList(itemList.toList())
-            binding.pictureRV.smoothScrollToPosition(0)
+            if(pictureAdded){
+                binding.pictureRV.smoothScrollToPosition(0)
+                pictureAdded = false
+            }
         }
 
         binding.apply {
@@ -207,6 +210,7 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
                 ContextCompat.getMainExecutor(requireContext()),
                 object : ImageCapture.OnImageCapturedCallback() {
                     override fun onCaptureSuccess(image: ImageProxy) {
+                        pictureAdded = true
                         cameraViewModel.addPicture(image)
                         image.close()
                         Log.d("CAMERA_TEST",cameraViewModel.capturedImages.value!!.size.toString())
@@ -230,8 +234,8 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
 
 
 
-    override fun deleteImage(idx : Int) {
-        cameraViewModel.delPicture(idx)
+    override fun deleteImage(id : Int) {
+        cameraViewModel.delPicture(id)
     }
 
 

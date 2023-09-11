@@ -21,7 +21,7 @@ class PicturesAdapterForWriting(im:ImageDeleteListner) : ListAdapter<Uri, Pictur
                         .with(itemView.context)
                         .load(targetUri)
                         .into(itemBinding.photo)
-                itemBinding.clearBtn.setOnClickListener { imageManager.deleteImage(pos) }
+                itemBinding.clearBtn.setOnClickListener { imageManager.deleteImage(bindingAdapterPosition) }
              }
         }
 
