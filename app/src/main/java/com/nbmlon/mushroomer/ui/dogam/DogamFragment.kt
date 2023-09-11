@@ -215,11 +215,11 @@ class DogamFragment : Fragment(), DogamItemClickListner {
                         }
                         //희귀도로 정렬
                         DogamSortingOption.MUSH_RARE -> {
-                            onSortingChanged(DogamUiAction.Sort(DogamSortingOption.MUSH_NO))
+                            onSortingChanged(DogamUiAction.Sort(DogamSortingOption.MUSH_RARE))
                         }
                         //버섯이름으로 정렬
                         DogamSortingOption.MUSH_NAME -> {
-                            onSortingChanged(DogamUiAction.Sort(DogamSortingOption.MUSH_NO))
+                            onSortingChanged(DogamUiAction.Sort(DogamSortingOption.MUSH_NAME))
                         }
                     }
                 }

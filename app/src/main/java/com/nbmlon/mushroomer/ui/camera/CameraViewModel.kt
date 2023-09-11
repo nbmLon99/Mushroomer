@@ -57,7 +57,6 @@ class CameraViewModel : ViewModel() {
     }
 
     fun delPicture(id : Int){
-        Log.d("아이템 삭제 요청", id.toString())
         val currentList = _capturedImages.value ?: arrayListOf()
         try{
             currentList.removeAt(id)
