@@ -18,6 +18,7 @@ import java.io.Serializable
  * @param replies       답글 리스트 ( 코멘트 )
  */
 data class Comment(
+    val id : Int,
     val writer : User,
     val content : String,
     val time : DateTime,
@@ -31,12 +32,12 @@ data class Comment(
 
             val comments = arrayListOf<Comment>()
             for (i in 1..3)
-                comments.add(Comment(User.getDummy(), "댓글 예시", DateTime(), replies))
+                comments.add(Comment(i,User.getDummy(), "댓글 예시", DateTime(), replies))
             return comments
         }
 
         fun getDummy(): Comment {
-            return Comment(User.getDummy(), "댓글 예시", DateTime(), null)
+            return Comment(0,User.getDummy(), "댓글 예시", DateTime(), null)
         }
     }
 
@@ -58,7 +59,7 @@ class CommentDataBindingAdapter{
 }
 class CommentDiffCallback : DiffUtil.ItemCallback<Comment>() {
     override fun areItemsTheSame(oldItem: Comment, newItem: Comment): Boolean {
-        return oldItem == newItem
+        return oldItem.id == newItem.id
     }
 
     override fun areContentsTheSame(oldItem: Comment, newItem: Comment): Boolean {
