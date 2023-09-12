@@ -22,6 +22,7 @@ import com.nbmlon.mushroomer.model.MushHistory
 import com.nbmlon.mushroomer.model.Post
 import com.nbmlon.mushroomer.ui.camera.ImageDeleteListner
 import org.joda.time.DateTime
+import taimoor.sultani.sweetalert2.Sweetalert
 
 /**
  * 게시판 글 쓰기 화면
@@ -33,7 +34,10 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
         const val TAG = "CommuFragment_write"
         private val maxImageCount = 5 // 최대 이미지 개수 (예시: 5개)
         private val REQUIRED_PERMISSIONS = Manifest.permission.READ_EXTERNAL_STORAGE
+        private const val MODIFY_TARGET_POST = "modify_target_post"
         private const val GALLERY_PERMISSION_REQUEST_CODE = 700
+
+        //기본 글쓰기 화면 열기
         @JvmStatic
         fun getInstance(boardTypeIdx: Int, mushHistory: MushHistory? = null) =
             CommuFragment_write().apply {
@@ -42,11 +46,21 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
                     mushHistory?.let { putSerializable(CALL_HISTORY_WRITING,it) }
                 }
             }
+
+        //수정 요구
+        @JvmStatic
+        fun getModifyFragment(targetPost: Post) =
+            CommuFragment_write().apply {
+                arguments = Bundle().apply {
+                    putSerializable(MODIFY_TARGET_POST, targetPost)
+                }
+            }
     }
     // TODO: Rename and change types of parameters
     private var board_type_idx : Int? = null
     private lateinit var mBoardType : BoardType
 
+    private var modifyTarget : Post? = null
     private var mushHistoryForWriting : MushHistory? = null
     private var _binding: FragmentCommuWriteBinding? = null
     private val binding get() = _binding!!
@@ -64,8 +78,10 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 mushHistoryForWriting = it.getSerializable(CALL_HISTORY_WRITING, MushHistory::class.java)
+                modifyTarget = it.getSerializable(MODIFY_TARGET_POST,Post::class.java)
             }else{
                 mushHistoryForWriting = it.getSerializable(CALL_HISTORY_WRITING) as? MushHistory
+                modifyTarget = it.getSerializable(MODIFY_TARGET_POST) as? Post
             }
         }
         getPermission()
@@ -96,11 +112,18 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
         }
 
 
+
         binding.apply {
+            //수정할 값 반영
+            modifyTarget?.let {
+                title.setText(it.title)
+                content.setText(it.content)
+            }
             pictureRV.adapter = imageAdapter
             btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
             btnUpload.setOnClickListener {
                 val newPostWrited = Post(
+                    id = 0,
                     title = "입력값",
                     images = arrayListOf(),
                     content = "내용",
@@ -113,9 +136,14 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
                     updated = false
                 )
                 if(newPostWrited.images!!.size <= 0 && mBoardType == BoardType.PicBoard){
-                    TODO("사진 하나이상등록하라고 alert")
-                }else{
+                    Sweetalert(context, Sweetalert.BUTTON_CANCEL)
+                        .setTitleText("사진 게시판에는 반드시 하나 이상의 사진 등록이 필요합니다!")
+                        .setCancelButton("확인"){it.dismissWithAnimation()}
+                        .show()
+                }else if(modifyTarget == null){
                     TODO("등록")
+                }else{
+                    TODO("수정")
                 }
             }
             btnAddPic.setOnClickListener {

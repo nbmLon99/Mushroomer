@@ -30,3 +30,17 @@ class ViewModelPostWriting :ViewModel(){
 
 
 }
+sealed class CommuWriteRequest{
+    data class Write(val a : Int) : CommuWriteRequest()
+    data class Modify(val a : Int) : CommuWriteRequest()
+}
+
+sealed class CommuWriteResponse{
+    data class SuccessResponse(val success: Boolean) : CommuWriteResponse()
+}
+
+
+/**
+ * 포스팅 등록
+ * 포스팅 수정
+ */
