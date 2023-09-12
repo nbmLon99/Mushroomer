@@ -2,7 +2,9 @@ package com.nbmlon.mushroomer.data.posts
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.nbmlon.mushroomer.api.dto.BoardResponseDTO
 import com.nbmlon.mushroomer.api.service.BoardService
+import com.nbmlon.mushroomer.domain.toPostDomain
 import com.nbmlon.mushroomer.model.Post
 import com.nbmlon.mushroomer.ui.commu.board.BoardType
 import com.nbmlon.mushroomer.ui.commu.board.PostSortingOption
@@ -25,10 +27,10 @@ class PostPagingSource(
     val searchKeyword: String? = null,
     val sortingOption: PostSortingOption = PostSortingOption.SORTING_TIME,
     val isHotBoard : Boolean = false
-) : PagingSource<Int, Post>() {
+) : PagingSource<Int, Post >() {
     override suspend fun load(
-        params: PagingSource.LoadParams<Int>,
-    ): PagingSource.LoadResult<Int, Post> {
+        params: LoadParams<Int>,
+    ): LoadResult<Int, Post> {
 
         try {
             var query : String = ""
@@ -59,7 +61,8 @@ class PostPagingSource(
             }
 
             return LoadResult.Page(
-                data = response.items,
+                data = response.posts.map {it.toPost()},
+
                 prevKey = when (startKey) {
                     STARTING_KEY -> null
                     else -> when (val prevKey = ensureValidKey(key = range.first - params.loadSize)) {
@@ -68,7 +71,7 @@ class PostPagingSource(
                         else -> prevKey
                     }
                 },
-                nextKey = if (response.items.isEmpty()) null else range.last + 1
+                nextKey = if (response.posts.isEmpty()) null else range.last + 1
             )
         } catch (e: IOException) {
             // IOException for network failures.

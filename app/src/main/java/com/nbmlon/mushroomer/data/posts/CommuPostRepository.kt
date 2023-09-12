@@ -1,26 +1,29 @@
 package com.nbmlon.mushroomer.data.posts
 
-import com.nbmlon.mushroomer.api.dto.CommuPostRequestDTO
-import com.nbmlon.mushroomer.api.dto.CommuPostResponseDTO
+import com.nbmlon.mushroomer.AppUser
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.UNDEFINED_ERROR_CODE
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest.*
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseResponse
 import com.nbmlon.mushroomer.api.service.BoardService
 import com.nbmlon.mushroomer.api.service.CommentService
 import com.nbmlon.mushroomer.api.service.ReportService
-import com.nbmlon.mushroomer.model.Post
-import com.nbmlon.mushroomer.ui.commu.post.CommuPostResponse
-import com.nbmlon.mushroomer.ui.commu.post.TargetType
+import com.nbmlon.mushroomer.domain.toPostDomain
+import com.nbmlon.mushroomer.domain.TargetType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.await
+import java.io.IOException
 import javax.inject.Inject
 
 
 /** 특정 게시판 열린 상태에서 사용할 repo **/
 interface CommuPostRepository {
-    suspend fun report(targetType : TargetType, dto : CommuPostRequestDTO) : CommuPostResponse
-    suspend fun delete(targetType : TargetType, dto : CommuPostRequestDTO) : CommuPostResponse
-    suspend fun uploadComment(dto : CommuPostRequestDTO) : CommuPostResponse
-    suspend fun modifyComment(dto : CommuPostRequestDTO) : CommuPostResponse
-    suspend fun loadPost(dto: CommuPostRequestDTO) : Post
+    suspend fun report(domain : ReportRequestDomain) : CommuPostUseCaseResponse
+    suspend fun delete(domain: DeleteRequestDomain) : CommuPostUseCaseResponse
+    suspend fun uploadComment(domain: UploadCommentRequestDomain) : CommuPostUseCaseResponse
+    suspend fun modifyComment(domain: ModifyCommentRequestDomain) : CommuPostUseCaseResponse
+    suspend fun loadPost(domain: LoadPostRequestDomain) : CommuPostUseCaseResponse.PostResponseDomain
 }
 
 fun CommuPostRepository() : CommuPostRepository = CommuPostRepositoryImpl()
@@ -33,53 +36,83 @@ class CommuPostRepositoryImpl : CommuPostRepository {
     @Inject private lateinit var reportService : ReportService
     @Inject private lateinit var commentService : CommentService
 
-    override suspend fun report(targetType: TargetType, dto: CommuPostRequestDTO): CommuPostResponse {
-        var responseDTO = CommuPostResponseDTO.SuccessResponseDTO(false)
-
-        when (targetType){
-            TargetType.POST->{
-                if(dto is CommuPostRequestDTO.ReportDTO){
-                    responseDTO = reportService.report(dto.id).await()
+    override suspend fun report(domain : ReportRequestDomain): CommuPostUseCaseResponse {
+        return try{
+            withContext(Dispatchers.IO){
+                when (domain.type){
+                    TargetType.POST->{
+                        reportService.report(domain.id).await().toPostDomain()
+                    }
+                    TargetType.COMMENT->{
+                        reportService.report(domain.id).await().toPostDomain()
+                    }
                 }
             }
-            TargetType.COMMENT->{
-                if(dto is CommuPostRequestDTO.ReportDTO){
-                    val response = reportService.report(dto.id).await()
-                    if( response is CommuPostResponseDTO.SuccessResponseDTO )
-                        responseDTO = response
+        }catch (e : IOException){
+            CommuPostUseCaseResponse.SuccessResponseDomain(false, NETWORK_ERROR_CODE)
+        }catch (e : Exception){
+            CommuPostUseCaseResponse.SuccessResponseDomain(false, UNDEFINED_ERROR_CODE)
+        }
+    }
+
+    override suspend fun delete(domain: DeleteRequestDomain): CommuPostUseCaseResponse {
+        return try{
+            withContext(Dispatchers.IO){
+                when (domain.type){
+                    TargetType.POST->{
+                        boardService.deleteBoard(domain.id).await().toPostDomain()
+                    }
+                    TargetType.COMMENT->{
+                        commentService.deleteComment(AppUser.user!!.id, domain.id).await().toPostDomain()
+                    }
                 }
             }
+        }catch (e : IOException){
+            CommuPostUseCaseResponse.SuccessResponseDomain(false, NETWORK_ERROR_CODE)
+        }catch (e : Exception){
+            CommuPostUseCaseResponse.SuccessResponseDomain(false, UNDEFINED_ERROR_CODE)
         }
-        CommuPostResponse.SuccessResponse(responseDTO)
     }
 
-    override suspend fun delete(targetType: TargetType, dto: CommuPostRequestDTO): CommuPostResponse {
-        when (targetType){
-            TargetType.POST->{
-                boardService.deleteBoard(dto)
+    override suspend fun uploadComment(domain: UploadCommentRequestDomain): CommuPostUseCaseResponse {
+        return try{
+            withContext(Dispatchers.IO){
+                commentService.writeComment(AppUser?.user!!.id,domain.target.boardId, domain.target).await().toPostDomain()
             }
-            TargetType.COMMENT->{
-                commentService.deleteComment(dto)
+        }catch (e : IOException){
+            CommuPostUseCaseResponse.SuccessResponseDomain(false, NETWORK_ERROR_CODE)
+        }catch (e : Exception){
+            CommuPostUseCaseResponse.SuccessResponseDomain(false, UNDEFINED_ERROR_CODE)
+        }
+    }
+
+    override suspend fun modifyComment(domain: ModifyCommentRequestDomain): CommuPostUseCaseResponse {
+        return try{
+            withContext(Dispatchers.IO){
+                commentService.modifyComment(AppUser?.user!!.id,domain.target.id, domain.target).await().toPostDomain()
             }
+        }catch (e : IOException){
+            CommuPostUseCaseResponse.SuccessResponseDomain(false, NETWORK_ERROR_CODE)
+        }catch (e : Exception){
+            CommuPostUseCaseResponse.SuccessResponseDomain(false, UNDEFINED_ERROR_CODE)
         }
     }
 
-    override suspend fun uploadComment(dto: CommuPostRequestDTO): CommuPostResponse {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun modifyComment(dto: CommuPostRequestDTO): CommuPostResponse {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun loadPost(dto: CommuPostRequestDTO): CommuPostResponse {
-        var response : CommuPostResponse = CommuPostResponse.SuccessResponse(CommuPostResponseDTO.SuccessResponseDTO(false))
-        if(dto is CommuPostRequestDTO.LoadPostDTO)
-        withContext(Dispatchers.IO){
-            response = CommuPostResponse.LoadedPostResponse(boardService.getPost(dto.id).await())
+    override suspend fun loadPost(domain: LoadPostRequestDomain): CommuPostUseCaseResponse.PostResponseDomain {
+        return try {
+            withContext(Dispatchers.IO) {
+                boardService.getPost(domain.id).await().toPostDomain()
+            }
+        }catch (e : IOException){
+            CommuPostUseCaseResponse.PostResponseDomain(false, NETWORK_ERROR_CODE)
+        }catch (e : Exception){
+            CommuPostUseCaseResponse.PostResponseDomain(false, UNDEFINED_ERROR_CODE)
         }
-        response
     }
-
-
 }
+
+
+
+
+
+

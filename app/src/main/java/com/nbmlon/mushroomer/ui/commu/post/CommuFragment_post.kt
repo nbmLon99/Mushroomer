@@ -5,14 +5,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
-import com.nbmlon.mushroomer.api.dto.CommuPostRequestDTO
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest
 import com.nbmlon.mushroomer.databinding.DialogEdittextBinding
 import com.nbmlon.mushroomer.databinding.FragmentCommuPostBinding
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseResponse
+import com.nbmlon.mushroomer.domain.TargetType
 import com.nbmlon.mushroomer.model.Comment
 import com.nbmlon.mushroomer.model.Post
 import com.nbmlon.mushroomer.ui.commu.board.CommuFragment_write
@@ -54,13 +57,22 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
                 targetPost = it.getSerializable(TARGET_POST) as? Post ?: viewModel.mPost.value!!
             }
         }
-        viewModel.loadTargetPost(targetPost.id)
+        //targetPost 로딩 요청
+        viewModel.request(
+            CommuPostUseCaseRequest.LoadPostRequestDomain(targetPost.id)
+        )
+
+        //targetPost 로딩전까지 로딩스피너
         loading = Sweetalert(context, Sweetalert.PROGRESS_TYPE).apply { setCancelable(false) }
         loading.show()
+
+        //targetPost 로드되면 UI 반영
         viewModel.mPost.observe(viewLifecycleOwner){
             loading.dismissWithAnimation()
             bindingPost(it)
         }
+
+        //결과값 UI 반영하는 옵저버 등록
         viewModel.response.observe(viewLifecycleOwner, ::responseObserver)
     }
 
@@ -163,19 +175,14 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
             requireActivity().supportFragmentManager, TAG
         )
     }
-    override fun onDialogReportBtnClicked(type: TargetType, dto: CommuPostRequestDTO.ReportDTO) {
-        viewModel.request(
-            CommuPostRequest.ForReport(
-                targetType = type,
-                dto = dto)
-        )
+    override fun onDialogReportBtnClicked(domain: CommuPostUseCaseRequest.ReportRequestDomain) {
+        viewModel.request(domain)
         onResponseSuccess = {
             Sweetalert(this@CommuFragment_post.context, Sweetalert.BUTTON_NEUTRAL)
                 .setTitleText("신고되었습니다!")
                 .setCancelButton("확인"){it.dismissWithAnimation()}
                 .show()
         }
-
         loading.show()
     }
 
@@ -184,9 +191,10 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
         //포스트 삭제
         if (target_post != null && target_comment == null){
             viewModel.request(
-                CommuPostRequest.ForDelete(
-                    targetType = TargetType.POST,
-                    dto =  CommuPostRequestDTO.DeleteDTO(target_post.id))
+                CommuPostUseCaseRequest.DeleteRequestDomain(
+                    type = TargetType.POST ,
+                    id = target_post.id
+                )
             )
             onResponseSuccess = {
                 Sweetalert(this@CommuFragment_post.context, Sweetalert.BUTTON_NEUTRAL)
@@ -202,9 +210,10 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
         //댓글 삭제       
         else if ( target_post == null && target_comment != null ){
             viewModel.request(
-                CommuPostRequest.ForDelete(
-                    targetType = TargetType.COMMENT,
-                    dto = CommuPostRequestDTO.DeleteDTO(target_comment.id))
+                CommuPostUseCaseRequest.DeleteRequestDomain(
+                    type = TargetType.COMMENT ,
+                    id = target_comment.id
+                )
             )
             onResponseSuccess = {
                 Sweetalert(this@CommuFragment_post.context, Sweetalert.BUTTON_NEUTRAL)
@@ -245,8 +254,10 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
     }
     private fun requestModify(target : Comment, modifiedContent : String){
         viewModel.request(
-            CommuPostRequest.ForModifyComment(
-                dto = CommuPostRequestDTO.ModifyCommentDTO(target = target, modified = modifiedContent))
+            CommuPostUseCaseRequest.ModifyCommentRequestDomain(
+                target = target,
+                modified = modifiedContent
+            )
         )
         onResponseSuccess = {
             Sweetalert(this@CommuFragment_post.context, Sweetalert.BUTTON_NEUTRAL)
@@ -270,14 +281,16 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
 
 
     /** 서버 요청에 대한 결과값 처리 **/
-    private fun responseObserver(response : CommuPostResponse){
+    private fun responseObserver(response : CommuPostUseCaseResponse){
         if(loading.isShowing)
             loading.dismissWithAnimation()
         when(response){
-            is CommuPostResponse.SuccessResponse ->{
-                if(response.dto.success){
+            is CommuPostUseCaseResponse.SuccessResponseDomain ->{
+                if(response.success){
                     onResponseSuccess?.let{ it() }
                     onResponseSuccess = null
+                }else{
+                    Toast.makeText(this.context,"실패하였습니다.",Toast.LENGTH_SHORT).show()
                 }
             }
             else ->{

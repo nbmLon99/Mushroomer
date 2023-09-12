@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import com.nbmlon.mushroomer.api.dto.CommuPostRequestDTO
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest
 import com.nbmlon.mushroomer.databinding.FragmentCommuReportBinding
 import com.nbmlon.mushroomer.model.Comment
 import com.nbmlon.mushroomer.model.Post
@@ -63,7 +63,12 @@ class CommuFragment_report private constructor() : DialogFragment() {
             comment = targetComment
             btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
             btnReport.setOnClickListener {
-                cl.onDialogReportBtnClicked(targetType, CommuPostRequestDTO.ReportDTO((post?.id ?: comment?.id)!!))
+                cl.onDialogReportBtnClicked(
+                    CommuPostUseCaseRequest.ReportRequestDomain(
+                        type = targetType,
+                        id = (post?.id ?: comment?.id)!!
+                    )
+                )
             }
         }
     }

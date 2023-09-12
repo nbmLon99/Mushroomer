@@ -1,7 +1,8 @@
 package com.nbmlon.mushroomer.api.service
 
 import com.google.gson.annotations.SerializedName
-import com.nbmlon.mushroomer.api.dto.CommuPostResponseDTO.*
+import com.nbmlon.mushroomer.api.dto.CommentResponseDTO
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseResponse.*
 import com.nbmlon.mushroomer.model.Comment
 import dagger.Module
 import dagger.Provides
@@ -20,15 +21,15 @@ interface CommentService {
 
     //댓글 등록
     @POST("/comments/{userId}/{boardId}")
-    suspend fun writeComment(@Path("userId")userId : Int, @Path("boardId")boardId : Int, comment: Comment) : Call<SuccessResponseDTO>
+    suspend fun writeComment(@Path("userId")userId : Int, @Path("boardId")boardId : Int, comment: Comment) : Call<CommentResponseDTO.SuccessResponseDTO>
 
     //댓글 수정
     @PUT("/comments/{userId}/{boardId}")
-    suspend fun modifyComment(@Path("userId")userId : Int, @Path("boardId")boardId : Int, comment: Comment) : Call<SuccessResponseDTO>
+    suspend fun modifyComment(@Path("userId")userId : Int, @Path("boardId")commentId : Int, comment: Comment) : Call<CommentResponseDTO.SuccessResponseDTO>
 
     //댓글 삭제
     @DELETE("/comments/{userid}/{boardId}")
-    suspend fun deleteComment(@Path("userId")userId : Int, @Path("boardId")boardId : Int) : Call<SuccessResponseDTO>
+    suspend fun deleteComment(@Path("userId")userId : Int, @Path("boardId")boardId : Int) : Call<CommentResponseDTO.SuccessResponseDTO>
 
 }
 

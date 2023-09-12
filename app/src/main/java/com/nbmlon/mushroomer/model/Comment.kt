@@ -19,6 +19,7 @@ import java.io.Serializable
  */
 data class Comment(
     val id : Int,
+    val boardId : Int = -1,
     val writer : User,
     var content : String,
     val time : DateTime,
@@ -32,12 +33,12 @@ data class Comment(
 
             val comments = arrayListOf<Comment>()
             for (i in 1..3)
-                comments.add(Comment(i,User.getDummy(), "댓글 예시", DateTime(), replies))
+                comments.add(Comment(i,i,User.getDummy(), "댓글 예시", DateTime(), replies))
             return comments
         }
 
         fun getDummy(): Comment {
-            return Comment(0,User.getDummy(), "댓글 예시", DateTime(), null)
+            return Comment(0,0,User.getDummy(), "댓글 예시", DateTime(), null)
         }
     }
 

@@ -1,6 +1,7 @@
 package com.nbmlon.mushroomer.api.service
 
-import com.nbmlon.mushroomer.api.dto.CommuPostResponseDTO
+import com.nbmlon.mushroomer.api.dto.ReportResponseDTO
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseResponse
 import dagger.Module
 import dagger.Provides
 import retrofit2.Call
@@ -10,7 +11,7 @@ import retrofit2.http.Path
 
 interface ReportService {
     @POST("/reports/{reportId}")
-    suspend fun report(@Path("reportId")id: Int) : Call<CommuPostResponseDTO.SuccessResponseDTO>
+    suspend fun report(@Path("reportId")id: Int) : Call<ReportResponseDTO.SuccessResponseDTO>
 }
 
 @Module

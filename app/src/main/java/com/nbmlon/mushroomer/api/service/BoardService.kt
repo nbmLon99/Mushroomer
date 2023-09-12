@@ -1,7 +1,7 @@
 package com.nbmlon.mushroomer.api.service
 
 import com.google.gson.annotations.SerializedName
-import com.nbmlon.mushroomer.api.dto.CommuPostResponseDTO
+import com.nbmlon.mushroomer.api.dto.BoardResponseDTO.*
 import com.nbmlon.mushroomer.model.Comment
 import com.nbmlon.mushroomer.model.Post
 import dagger.Module
@@ -17,27 +17,27 @@ import retrofit2.http.Path
 interface BoardService {
     //게시판별 게시글 조회
     @GET("/boards/type/{type}")
-    suspend fun getBoardPosts(query : String?, @Path("type") type : String) : Call<BoardResponse>
+    suspend fun getBoardPosts(query : String?, @Path("type") type : String) : Call<PostsArrayResponseDTO>
 
     //특정 개시글 조회
     @GET("/boards/{boardId}")
-    suspend fun getPost(@Path("boardId")id : Int) : Call<CommuPostResponseDTO.PostDTO>
+    suspend fun getPost(@Path("boardId")id : Int) : Call<PostResponseDTO>
 
     //
     @POST("/boards/{userId}")
-    suspend fun writePost(@Path("userId")id : Int, post : Post) : Call<CommuPostResponseDTO.SuccessResponseDTO>
+    suspend fun writePost(@Path("userId")id : Int, post : Post) : Call<SuccessResponseDTO>
 
     //유저 게시글 조회
     @GET("/boards/users/{userId}")
-    suspend fun getUserPosts(@Path("userId")id:Int) :  Call<BoardResponse>
+    suspend fun getUserPosts(@Path("userId")id:Int) :  Call<PostsArrayResponseDTO>
 
     //게시글 수정
     @PUT("/boards/{userId}/{boardId}")
-    suspend fun modifyPost(@Path("userId")userId: Int, @Path("boardId")boardId : Int, post : Post) : Call<CommuPostResponseDTO.SuccessResponseDTO>
+    suspend fun modifyPost(@Path("userId")userId: Int, @Path("boardId")boardId : Int, post : Post) : Call<SuccessResponseDTO>
 
     //게시글 삭제
     @DELETE("/boards/{userId}/{boardId}")
-    suspend fun deleteBoard(@Path("boardId")id : Int) : Call<CommuPostResponseDTO.SuccessResponseDTO>
+    suspend fun deleteBoard(@Path("boardId")id : Int) : Call<SuccessResponseDTO>
 }
 
 

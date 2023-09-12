@@ -11,12 +11,13 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Observer
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
-import com.nbmlon.mushroomer.api.dto.UserRequestDTO.LoginRequestDTO
-import com.nbmlon.mushroomer.api.dto.UserRequestDTO.TokenLoginRequestDTO
 import com.nbmlon.mushroomer.databinding.ActivityLoginBinding
 import com.nbmlon.mushroomer.databinding.DialogFindIdBinding
 import com.nbmlon.mushroomer.databinding.DialogFindPwBinding
 import com.nbmlon.mushroomer.databinding.DialogRegisterBinding
+import com.nbmlon.mushroomer.domain.LoginUseCaseRequest.*
+import com.nbmlon.mushroomer.domain.LoginUseCaseResponse
+import com.nbmlon.mushroomer.domain.LoginUseCaseResponse.*
 import com.nbmlon.mushroomer.model.User
 import com.nbmlon.mushroomer.ui.MainActivity
 import com.nbmlon.mushroomer.utils.BiometricPromptUtils
@@ -108,17 +109,17 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
-    private fun responseObserver(response : UserResponse){
+    private fun responseObserver(response : LoginUseCaseResponse){
         if( loading.isShowing )
             loading.dismissWithAnimation()
         when(response){
-            is UserResponse.Login ->{
-                val dto = response.dto
-                if(dto.success){
-                    AppUser.refreshToken = dto.refreshToken
-                    AppUser.token = dto.token
-                    AppUser.user = dto.loginUser
-                    AppUser.percent = dto.percentage
+            is LoginResponseDomain ->{
+                if(response.success){
+                    AppUser.refreshToken = response.refreshToken
+                    AppUser.token = response.token
+                    AppUser.user = response.loginUser
+                    AppUser.percent = response.percentage
+
 
                     //자동로그인 토큰 저장
                     if(sharedPrefs.getBoolean("autoLoginEnabled", false)){
@@ -127,18 +128,17 @@ class LoginActivity : AppCompatActivity() {
                     updateApp()
                 }
             }
-            is UserResponse.FindIdPw ->{
-                val dto = response.dto
-                if(dto.success) {
+            is FindResponseDomain ->{
+                if(response.success)
                     TODO("아이디 비번 찾기 결과값 표시")
-                }
 
             }
-            is UserResponse.Register ->{
-                val dto = response.dto
-                if(dto.success) {
-                    TODO("회원가입")
-                }
+            is SuccessResponseDomain ->{
+                if(response.success)
+                    TODO("성공 다이얼로그")
+            }
+            is GenerateTokenResponseDomain -> {
+
             }
         }
 
@@ -179,12 +179,10 @@ class LoginActivity : AppCompatActivity() {
 
             //라이브데이터로 변경된 부분
             loginViewModel.request(
-                UserRequest.Login(
-                    LoginRequestDTO(
+                    LoginRequestDomain(
                         email =    binding.username.text.toString(),
                         password = binding.password.text.toString()
                     )
-                )
             )
             loading.show()
 
@@ -194,7 +192,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun updateApp() {
-        AppUser.user = User(1L,binding.username.text.toString(),"닉네임","","01000000000")
+        AppUser.user = User(1,binding.username.text.toString(),"닉네임","","01000000000")
         AppUser.percent = 50
         startActivity(Intent(this,MainActivity::class.java))
         this@LoginActivity.finish()
@@ -228,11 +226,7 @@ class LoginActivity : AppCompatActivity() {
                         cryptographyManager.decryptData(textWrapper.ciphertext, it)
 
                     //라이브 데이터로 변경된 내용
-                    loginViewModel.request(
-                        UserRequest.LoginWithToken(
-                            TokenLoginRequestDTO(plaintext)
-                        )
-                    )
+                    loginViewModel.request(TokenLoginRequestDomain(plaintext))
                     //----------------------
                     loading.show()
                 }
@@ -253,10 +247,7 @@ class LoginActivity : AppCompatActivity() {
                     cryptographyManager.decryptData(textWrapper.ciphertext, cipher)
 
                 //라이브 데이터로 변경된 내용
-                loginViewModel.request(
-                    UserRequest.LoginWithToken(
-                        TokenLoginRequestDTO(plaintext))
-                )
+                loginViewModel.request(TokenLoginRequestDomain(plaintext))
                 //----------------------
                 loading.show()
             }

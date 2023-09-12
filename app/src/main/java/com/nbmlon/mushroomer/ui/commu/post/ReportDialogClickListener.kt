@@ -1,7 +1,7 @@
 package com.nbmlon.mushroomer.ui.commu.post
 
-import com.nbmlon.mushroomer.api.dto.CommuPostRequestDTO
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest
 
 fun interface ReportDialogClickListener {
-    fun onDialogReportBtnClicked(type : TargetType, dto : CommuPostRequestDTO.ReportDTO)
+    fun onDialogReportBtnClicked( domain : CommuPostUseCaseRequest.ReportRequestDomain)
 }

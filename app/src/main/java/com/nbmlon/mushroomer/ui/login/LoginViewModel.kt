@@ -6,17 +6,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nbmlon.mushroomer.R
-import com.nbmlon.mushroomer.api.dto.UserRequestDTO
-import com.nbmlon.mushroomer.api.dto.UserRequestDTO.FindIdRequestDTO
-import com.nbmlon.mushroomer.api.dto.UserRequestDTO.FindPwRequestDTO
-import com.nbmlon.mushroomer.api.dto.UserRequestDTO.LoginRequestDTO
-import com.nbmlon.mushroomer.api.dto.UserRequestDTO.RegisterRequestDTO
-import com.nbmlon.mushroomer.api.dto.UserRequestDTO.TokenLoginRequestDTO
-import com.nbmlon.mushroomer.api.dto.UserResponseDTO
-import com.nbmlon.mushroomer.api.dto.UserResponseDTO.FindResponseDTO
-import com.nbmlon.mushroomer.api.dto.UserResponseDTO.LoginResponseDTO
-import com.nbmlon.mushroomer.api.dto.UserResponseDTO.SuccessResponse
 import com.nbmlon.mushroomer.data.user.UserRepository
+import com.nbmlon.mushroomer.domain.LoginUseCaseRequest
+import com.nbmlon.mushroomer.domain.LoginUseCaseRequest.FindIdRequestDomain
+import com.nbmlon.mushroomer.domain.LoginUseCaseRequest.FindPwRequestDomain
+import com.nbmlon.mushroomer.domain.LoginUseCaseRequest.LoginRequestDomain
+import com.nbmlon.mushroomer.domain.LoginUseCaseRequest.RegisterRequestDomain
+import com.nbmlon.mushroomer.domain.LoginUseCaseRequest.TokenLoginRequestDomain
+import com.nbmlon.mushroomer.domain.LoginUseCaseResponse
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
@@ -25,37 +22,37 @@ class LoginViewModel : ViewModel() {
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginWithPasswordFormState: LiveData<LoginFormState> = _loginForm
 
-    val _response = MutableLiveData<UserResponse>()
-    val response : LiveData<UserResponse> = _response
-    val request : (UserRequest) -> Unit
+    val _response = MutableLiveData<LoginUseCaseResponse>()
+    val response : LiveData<LoginUseCaseResponse> = _response
+    val request : (LoginUseCaseRequest) -> Unit
 
     init {
-        request = { requestType ->
-            val dto = requestType.dto
+        request = { domain ->
+
             viewModelScope.launch {
-                when(requestType){
+                when(domain){
                     //로그인
-                    is UserRequest.Login -> {
-                        if ((isUserNameValid(requestType.dto.email) && isPasswordValid(requestType.dto.password))) {
-                            _response.value = repository.login(dto)
+                    is LoginRequestDomain -> {
+                        if ((isUserNameValid(domain.email) && isPasswordValid(domain.password))) {
+                            _response.value = repository.login(domain)
                         }
                     }
                     //토큰로그인
-                    is UserRequest.LoginWithToken -> {
-                        _response.value = repository.loginWithToken(dto)
+                    is TokenLoginRequestDomain -> {
+                        _response.value = repository.loginWithToken(domain)
                     }
 
                     //회원가입
-                    is UserRequest.Register -> {
-                        _response.value =  repository.register(dto)
+                    is RegisterRequestDomain -> {
+                        _response.value =  repository.register(domain)
                     }
                     //아이디찾기
-                    is UserRequest.FindPW -> {
-                        _response.value = repository.findID(dto)
+                    is FindIdRequestDomain -> {
+                        _response.value = repository.findID(domain)
                     };
                     //비밀번호찾기
-                    is UserRequest.FindID -> {
-                        _response.value = repository.findPW(dto)
+                    is FindPwRequestDomain -> {
+                        _response.value = repository.findPW(domain)
                     };
                 }
             }
@@ -87,20 +84,4 @@ class LoginViewModel : ViewModel() {
     private fun isPasswordValid(password: String): Boolean {
         return password.length > 5
     }
-}
-
-sealed class UserRequest() {
-    abstract val dto: UserRequestDTO
-    data class Login(override val dto : LoginRequestDTO) : UserRequest()
-    data class LoginWithToken(override val dto : TokenLoginRequestDTO) : UserRequest()
-    data class FindPW(override val dto : FindPwRequestDTO) : UserRequest()
-    data class FindID(override val dto : FindIdRequestDTO) : UserRequest()
-    data class Register(override val dto : RegisterRequestDTO) : UserRequest()
-}
-
-sealed class UserResponse{
-    abstract val dto : UserResponseDTO
-    data class Login(override val dto : LoginResponseDTO) : UserResponse()
-    data class FindIdPw(override val dto : FindResponseDTO) : UserResponse()
-    data class Register(override val dto : SuccessResponse) : UserResponse()
 }
