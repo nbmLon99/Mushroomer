@@ -37,7 +37,7 @@ class DogamFragment : Fragment(), DogamItemClickListner {
     companion object {
         const val TAG = "DogamFragment"
 
-        //도감 번호 입력해서 넘어갈떄 이렇게 넘어가면될듯?
+        /** 지도에서 도감으로 넘어올 떄 사용 **/
         @JvmStatic
         fun openDetail(target : MushHistory) =
             DogamFragment().apply {

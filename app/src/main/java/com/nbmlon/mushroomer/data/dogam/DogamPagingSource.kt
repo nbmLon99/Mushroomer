@@ -3,8 +3,9 @@ package com.nbmlon.mushroomer.data.dogam
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.nbmlon.mushroomer.api.service.MushroomService
+import com.nbmlon.mushroomer.domain.DogamUseCaseReqeust
+import com.nbmlon.mushroomer.domain.toDogamDomain
 import com.nbmlon.mushroomer.model.Mushroom
-import com.nbmlon.mushroomer.ui.dogam.DogamSortingOption
 import retrofit2.HttpException
 import retrofit2.await
 import java.io.IOException
@@ -18,8 +19,7 @@ private const val STARTING_KEY = 0
  */
 class DogamPagingSource(
     val backend : MushroomService,
-    val query : String?,
-    val sortingOption: DogamSortingOption
+    val domain : DogamUseCaseReqeust.LoadDogamResquestDomain
 ) : PagingSource<Int, Mushroom>() {
 
     override suspend fun load(
@@ -30,7 +30,7 @@ class DogamPagingSource(
             val startKey = params.key ?: STARTING_KEY
             val range = startKey.until(startKey + params.loadSize)
             // 비동기로 호출하고 응답을 받기 위한 Deferred 객체를 생성
-            val response = backend.getMushrooms(query).await()
+            val response = backend.getMushrooms(domain.query, domain.sortingOption).await().toDogamDomain()
 
             //val response = DogamResponse(Dogam.getDummy(3,query) )
             return LoadResult.Page(

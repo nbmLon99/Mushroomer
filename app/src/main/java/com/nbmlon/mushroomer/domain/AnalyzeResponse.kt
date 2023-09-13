@@ -1,4 +1,4 @@
-package com.nbmlon.mushroomer.api.dto
+package com.nbmlon.mushroomer.domain
 
 import com.nbmlon.mushroomer.model.Mushroom
 import java.io.Serializable

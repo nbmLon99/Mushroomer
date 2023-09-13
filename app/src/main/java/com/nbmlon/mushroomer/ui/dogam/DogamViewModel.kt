@@ -8,6 +8,7 @@ import androidx.paging.cachedIn
 import androidx.paging.filter
 import androidx.paging.map
 import com.nbmlon.mushroomer.data.dogam.DogamRepository
+import com.nbmlon.mushroomer.domain.DogamUseCaseReqeust
 import com.nbmlon.mushroomer.model.Mushroom
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -151,8 +152,9 @@ class DogamViewModel(
     }
 
     private fun loadDogam(query : String?, sortingWay : DogamSortingOption): Flow<PagingData<DogamUiModel>> =
-        repository.getDogamstream(query, sortingWay)
+        repository.getDogamstream(DogamUseCaseReqeust.LoadDogamResquestDomain(query, sortingWay))
             .map { pagingData -> pagingData.map { DogamUiModel.MushItem(it) } }
+
 }
 
 data class CombinedAction(

@@ -12,7 +12,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nbmlon.mushroomer.api.dto.AnalyzeResponse
+import com.nbmlon.mushroomer.domain.AnalyzeResponse
 import com.nbmlon.mushroomer.data.mushrooms.AnalyzeMushroomPictures
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

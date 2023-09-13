@@ -1,7 +1,7 @@
 package com.nbmlon.mushroomer.data.mushrooms
 
 import android.graphics.Bitmap
-import com.nbmlon.mushroomer.api.dto.AnalyzeResponse
+import com.nbmlon.mushroomer.domain.AnalyzeResponse
 import com.nbmlon.mushroomer.api.service.MushroomService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
