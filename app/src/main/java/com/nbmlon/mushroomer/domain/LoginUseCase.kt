@@ -1,5 +1,6 @@
 package com.nbmlon.mushroomer.domain
 
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.UNDEFINED_ERROR_CODE
 import com.nbmlon.mushroomer.api.dto.UserRequestDTO
 import com.nbmlon.mushroomer.api.dto.UserResponseDTO.GenerateTokenResponseDTO
 import com.nbmlon.mushroomer.api.dto.UserResponseDTO.KakaoLoginResponseDTO
@@ -68,7 +69,7 @@ sealed class LoginUseCaseResponse{
     abstract val code : Int
     data class LoginResponseDomain(
         override val success: Boolean = false,
-        override val code : Int = -1,
+        override val code : Int = UNDEFINED_ERROR_CODE,
         val refreshToken : String? = null,
         val token : String? = null,
         val loginUser : User? = null,
@@ -83,13 +84,13 @@ sealed class LoginUseCaseResponse{
 
     data class SuccessResponseDomain(
         override val success: Boolean = false,
-        override val code : Int = -1,
+        override val code : Int = UNDEFINED_ERROR_CODE,
         val message: String = ""
     ) : LoginUseCaseResponse()
 
     data class GenerateTokenResponseDomain(
         override val success: Boolean = false,
-        override val code : Int = -1,
+        override val code : Int = UNDEFINED_ERROR_CODE,
         val token : String
     ) : LoginUseCaseResponse()
 }

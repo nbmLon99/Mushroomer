@@ -1,5 +1,6 @@
 package com.nbmlon.mushroomer.domain
 
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.UNDEFINED_ERROR_CODE
 import com.nbmlon.mushroomer.api.dto.BoardResponseDTO
 import com.nbmlon.mushroomer.api.dto.CommentResponseDTO
 import com.nbmlon.mushroomer.api.dto.ReportResponseDTO
@@ -20,12 +21,12 @@ sealed class CommuPostUseCaseResponse{
     abstract val code : Int
     data class SuccessResponseDomain(
         override val success: Boolean = false,
-        override val code : Int = -1,
+        override val code : Int = UNDEFINED_ERROR_CODE,
         val message: String = ""
     ) : CommuPostUseCaseResponse()
     data class PostResponseDomain(
         override val success: Boolean = false,
-        override val code : Int = -1,
+        override val code : Int = UNDEFINED_ERROR_CODE,
         val post : Post? = null
     ) : CommuPostUseCaseResponse()
 }

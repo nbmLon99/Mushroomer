@@ -22,7 +22,7 @@ class LoginViewModel : ViewModel() {
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginWithPasswordFormState: LiveData<LoginFormState> = _loginForm
 
-    val _response = MutableLiveData<LoginUseCaseResponse>()
+    private val _response = MutableLiveData<LoginUseCaseResponse>()
     val response : LiveData<LoginUseCaseResponse> = _response
     val request : (LoginUseCaseRequest) -> Unit
 

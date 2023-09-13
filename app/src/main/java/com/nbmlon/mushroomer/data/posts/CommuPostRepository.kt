@@ -2,14 +2,17 @@ package com.nbmlon.mushroomer.data.posts
 
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
-import com.nbmlon.mushroomer.api.ResponseCodeConstants.UNDEFINED_ERROR_CODE
-import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest.*
-import com.nbmlon.mushroomer.domain.CommuPostUseCaseResponse
 import com.nbmlon.mushroomer.api.service.BoardService
 import com.nbmlon.mushroomer.api.service.CommentService
 import com.nbmlon.mushroomer.api.service.ReportService
-import com.nbmlon.mushroomer.domain.toPostDomain
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest.DeleteRequestDomain
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest.LoadPostRequestDomain
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest.ModifyCommentRequestDomain
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest.ReportRequestDomain
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest.UploadCommentRequestDomain
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseResponse
 import com.nbmlon.mushroomer.domain.TargetType
+import com.nbmlon.mushroomer.domain.toPostDomain
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.await
@@ -51,7 +54,7 @@ class CommuPostRepositoryImpl : CommuPostRepository {
         }catch (e : IOException){
             CommuPostUseCaseResponse.SuccessResponseDomain(false, NETWORK_ERROR_CODE)
         }catch (e : Exception){
-            CommuPostUseCaseResponse.SuccessResponseDomain(false, UNDEFINED_ERROR_CODE)
+            CommuPostUseCaseResponse.SuccessResponseDomain(false)
         }
     }
 
@@ -70,7 +73,7 @@ class CommuPostRepositoryImpl : CommuPostRepository {
         }catch (e : IOException){
             CommuPostUseCaseResponse.SuccessResponseDomain(false, NETWORK_ERROR_CODE)
         }catch (e : Exception){
-            CommuPostUseCaseResponse.SuccessResponseDomain(false, UNDEFINED_ERROR_CODE)
+            CommuPostUseCaseResponse.SuccessResponseDomain(false)
         }
     }
 
@@ -82,7 +85,7 @@ class CommuPostRepositoryImpl : CommuPostRepository {
         }catch (e : IOException){
             CommuPostUseCaseResponse.SuccessResponseDomain(false, NETWORK_ERROR_CODE)
         }catch (e : Exception){
-            CommuPostUseCaseResponse.SuccessResponseDomain(false, UNDEFINED_ERROR_CODE)
+            CommuPostUseCaseResponse.SuccessResponseDomain(false)
         }
     }
 
@@ -94,7 +97,7 @@ class CommuPostRepositoryImpl : CommuPostRepository {
         }catch (e : IOException){
             CommuPostUseCaseResponse.SuccessResponseDomain(false, NETWORK_ERROR_CODE)
         }catch (e : Exception){
-            CommuPostUseCaseResponse.SuccessResponseDomain(false, UNDEFINED_ERROR_CODE)
+            CommuPostUseCaseResponse.SuccessResponseDomain(false)
         }
     }
 
@@ -106,7 +109,7 @@ class CommuPostRepositoryImpl : CommuPostRepository {
         }catch (e : IOException){
             CommuPostUseCaseResponse.PostResponseDomain(false, NETWORK_ERROR_CODE)
         }catch (e : Exception){
-            CommuPostUseCaseResponse.PostResponseDomain(false, UNDEFINED_ERROR_CODE)
+            CommuPostUseCaseResponse.PostResponseDomain(false)
         }
     }
 }

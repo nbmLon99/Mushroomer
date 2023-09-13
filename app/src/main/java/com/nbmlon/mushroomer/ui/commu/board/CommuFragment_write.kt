@@ -17,7 +17,11 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.AppUser
+import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
 import com.nbmlon.mushroomer.databinding.FragmentCommuWriteBinding
+import com.nbmlon.mushroomer.domain.CommuWriteUseCaseRequest
+import com.nbmlon.mushroomer.domain.CommuWriteUseCaseResponse
 import com.nbmlon.mushroomer.model.MushHistory
 import com.nbmlon.mushroomer.model.Post
 import com.nbmlon.mushroomer.ui.camera.ImageDeleteListner
@@ -36,6 +40,7 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
         private val REQUIRED_PERMISSIONS = Manifest.permission.READ_EXTERNAL_STORAGE
         private const val MODIFY_TARGET_POST = "modify_target_post"
         private const val GALLERY_PERMISSION_REQUEST_CODE = 700
+        private lateinit var loading : Sweetalert
 
         //기본 글쓰기 화면 열기
         @JvmStatic
@@ -70,7 +75,7 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
         onGalleryResult(result)
     }
 
-        override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             board_type_idx = it.getInt(BOARD_TYPE_ORDINAL)
@@ -85,6 +90,9 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
             }
         }
         getPermission()
+        loading = Sweetalert(context,Sweetalert.PROGRESS_TYPE).apply {
+            setCancelable(false)
+        }
     }
 
     override fun onCreateView(
@@ -124,9 +132,9 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
             btnUpload.setOnClickListener {
                 val newPostWrited = Post(
                     id = 0,
-                    title = "입력값",
-                    images = arrayListOf(),
-                    content = "내용",
+                    title = title.text.toString(),
+                    images = ArrayList(imageAdapter.currentList.map { it.toString() }),
+                    content = content.text.toString(),
                     time = DateTime(),
                     writer = AppUser.user!!,
                     comments = arrayListOf(),
@@ -140,10 +148,13 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
                         .setTitleText("사진 게시판에는 반드시 하나 이상의 사진 등록이 필요합니다!")
                         .setCancelButton("확인"){it.dismissWithAnimation()}
                         .show()
-                }else if(modifyTarget == null){
-                    TODO("등록")
-                }else{
-                    TODO("수정")
+                }else {
+                    loading.show()
+                    if(modifyTarget == null){
+                        viewModel.request(CommuWriteUseCaseRequest.UploadPostDomain(newPostWrited))
+                    }else{
+                        viewModel.request(CommuWriteUseCaseRequest.ModifiyPostDomain(modifyTarget!!.id ,newPostWrited))
+                    }
                 }
             }
             btnAddPic.setOnClickListener {
@@ -213,6 +224,24 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
                     viewModel.addUris(arrayListOf(imageUri))
                 }
             }
+        }
+    }
+    private fun responseObserver(response : CommuWriteUseCaseResponse){
+        if(loading.isShowing)
+            loading.dismissWithAnimation()
+        if(response.success){
+            Sweetalert(context,Sweetalert.BUTTON_CANCEL).apply {
+                titleText = "성공하였습니다!"
+                setCancelButton("확인"){
+                    it.dismissWithAnimation()
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                }
+                show()
+            }
+        }else if(response.code == NETWORK_ERROR_CODE){
+            Toast.makeText(this.context, getString(R.string.network_error_msg), Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(this.context, getString(R.string.error_msg), Toast.LENGTH_SHORT).show()
         }
     }
 
