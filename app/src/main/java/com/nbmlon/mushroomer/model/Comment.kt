@@ -1,6 +1,9 @@
 package com.nbmlon.mushroomer.model
 
+import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -23,8 +26,10 @@ data class Comment(
     val writer : User,
     var content : String,
     val time : DateTime,
-    val replies : ArrayList<Comment>?
-): Serializable {
+    val replies : ArrayList<Comment>?,
+    val thumbsUpCount : Int = 0,
+    val myThumbsUp : Boolean = false,
+    ): Serializable {
     companion object {
         fun getDummyswithReplies(): ArrayList<Comment> {
             val replies = arrayListOf<Comment>()
@@ -53,6 +58,26 @@ class CommentDataBindingAdapter{
                 linearLayout.setBackgroundColor(ContextCompat.getColor(linearLayout.context, R.color.CommentBg))
             else
                 linearLayout.setBackgroundColor(ContextCompat.getColor(linearLayout.context, R.color.myCommentBg))
+        }
+
+        @JvmStatic
+        @BindingAdapter("setLikeVisible")
+        fun bindLikeVisibility(iv : ImageView, count : Int){
+            if( count <= 0)
+                iv.visibility = View.GONE
+            else
+                iv.visibility = View.VISIBLE
+        }
+        @JvmStatic
+        @BindingAdapter("setLikeText")
+        fun bindLikeText(tv : TextView, count : Int){
+            if( count <= 0)
+                tv.visibility = View.GONE
+            else{
+                tv.visibility = View.VISIBLE
+                tv.text = count.toString()
+            }
+
         }
     }
 

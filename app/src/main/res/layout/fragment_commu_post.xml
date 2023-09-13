@@ -120,6 +120,7 @@
                                     android:layout_height="wrap_content"
 
                                     android:text="@{post.title}"
+                                    android:textSize="@dimen/text_main"
                                     android:textStyle="bold"
                                     />
 
@@ -127,7 +128,7 @@
                                     android:id="@+id/btn_postMore"
                                     android:layout_width="30dp"
                                     android:layout_height="match_parent"
-                                    android:padding="1dp"
+                                    android:padding="5dp"
                                     android:src="@drawable/icons_more" />
                             </LinearLayout>
                             <androidx.constraintlayout.widget.ConstraintLayout
@@ -137,6 +138,7 @@
                                 <com.smarteist.autoimageslider.SliderView
                                     android:id="@+id/imageSlider"
                                     android:layout_width="match_parent"
+                                    android:layout_marginHorizontal="20dp"
                                     android:layout_height="0dp"
                                     app:layout_constraintDimensionRatio="1"
                                     app:layout_constraintTop_toTopOf="parent"
@@ -164,18 +166,39 @@
 
                                 android:text="@{post.content}"
                                 android:paddingVertical="10dp"
-                                android:textSize="12sp"
+                                android:textSize="@dimen/text_sub"
                                 />
-                            <TextView
-                                android:id="@+id/post_time"
+                            <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:orientation="horizontal"
                                 android:gravity="right"
-                                android:textSize="10sp"
-                                android:textFontWeight="300"
-                                app:setTimeRelatively="@{post.time}"
-                                />
-
+                                >
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="@dimen/text_small"
+                                    android:textColor="@color/likeRed"
+                                    android:text="@{Integer.toString(post.thumbsUpCount)}"
+                                    />
+                                <ImageView
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
+                                    android:layout_gravity="bottom"
+                                    android:src="@drawable/icons_like_emp"
+                                    android:layout_marginLeft="5dp"
+                                    android:layout_marginRight="10dp"
+                                    />
+                                <TextView
+                                    android:id="@+id/post_time"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="right"
+                                    android:textSize="@dimen/text_small"
+                                    android:textFontWeight="300"
+                                    app:setTimeRelatively="@{post.time}"
+                                    />
+                            </LinearLayout>
                         </LinearLayout>
 
                     </androidx.cardview.widget.CardView>

@@ -40,13 +40,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="10dp"
+                android:padding="5dp"
                 android:background="@color/CommentBg"
                 app:checkMyComment = "@{comment.isMine}"
                 >
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
                     android:orientation="horizontal"
                     >
                     <TextView
@@ -63,19 +64,44 @@
                         android:id="@+id/btn_commentMore"
                         android:layout_width="30dp"
                         android:layout_height="20dp"
-                        android:padding="1dp"
+                        android:padding="5dp"
                         android:src="@drawable/icons_more" />
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/post_time"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="right|bottom"
-                    android:textSize="@dimen/text_small"
-                    android:textFontWeight="300"
-                    app:setTimeRelatively="@{comment.time}"
-                    />
+                    android:orientation="horizontal"
+                    >
+                    <TextView
+                        android:id="@+id/post_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="left"
+                        android:textSize="@dimen/text_small"
+                        android:textFontWeight="300"
+                        app:setTimeRelatively="@{comment.time}"
+                        />
+
+                    <ImageView
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_gravity="bottom"
+
+                        android:src="@drawable/icons_like_emp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="5dp"
+                        setLikeVisible="@{comment.thumbsUpCount}"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/text_small"
+                        android:textColor="@color/likeRed"
+                        setLikeText="@{comment.thumbsUpCount}"
+                        />
+                </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
