@@ -10,16 +10,16 @@ data class MushHistory (
     val mushroom : Mushroom,
     val picPath : ArrayList<String>,
     val date : DateTime,
-    val lat : Double,
-    val lon : Double
+    val lat : Double?,
+    val lon : Double?
 ) : Serializable{
     companion object{
         fun getDummy() = MushHistory(
             mushroom = Mushroom.getDummy(123,true),
             picPath = arrayListOf(),
             date = DateTime(),
-            lat = 0.0,
-            lon = 0.0
+            lat = null,
+            lon = null
 
         )
     }

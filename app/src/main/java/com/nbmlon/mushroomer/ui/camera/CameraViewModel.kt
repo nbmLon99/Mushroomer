@@ -12,12 +12,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nbmlon.mushroomer.domain.AnalyzeResponse
-import com.nbmlon.mushroomer.data.mushrooms.AnalyzeMushroomPictures
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.BITMAP_SAVE_ERROR
+import com.nbmlon.mushroomer.data.analyze.AnalyzeRepository
+import com.nbmlon.mushroomer.data.analyze.AnalyzerTF
+import com.nbmlon.mushroomer.domain.AnalyzeUseCaseRequest
+import com.nbmlon.mushroomer.domain.AnalyzeUseCaseResponse
+import com.nbmlon.mushroomer.model.MushHistory
+import com.nbmlon.mushroomer.model.Mushroom
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.joda.time.DateTime
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -25,28 +31,109 @@ import java.util.Date
 import java.util.Locale
 
 class CameraViewModel : ViewModel() {
+    private val repository = AnalyzeRepository()
     // MutableLiveData를 사용하여 분석 결과를 저장할 변수를 선언합니다.
     //    private val _analysisRequest = MutableLiveData<>
-    private val _analysisResult = MutableLiveData<AnalyzeResponse>()
+    private val _response = MutableLiveData<AnalyzeUseCaseResponse>()
+    val response: LiveData<AnalyzeUseCaseResponse> get() = _response
+
+
     private val _capturedImages: MutableLiveData<ArrayList<Bitmap>> = MutableLiveData(arrayListOf())
-
-    val analysisResult: LiveData<AnalyzeResponse>
-        get() = _analysisResult
-
-    val capturedImages : LiveData<ArrayList<Bitmap>>
-        get() = _capturedImages
+    val capturedImages : LiveData<ArrayList<Bitmap>> get() = _capturedImages
 
 
     // 분석 작업을 수행하는 함수입니다.
     fun startAnalysis() {
-        viewModelScope.launch(Dispatchers.IO){
-            val result = AnalyzeMushroomPictures(capturedImages.value!!).analyzeMushroomPictures()
-            delay(1000)
-            withContext(Dispatchers.Main){
-                _analysisResult.value = result
+        viewModelScope.launch {
+            _response.value = repository.analyze(AnalyzeUseCaseRequest.AnalyzeRequestDomain(capturedImages.value!!))
+        }
+    }
+
+
+
+    /** 분석 성공 -> 사진, MushHistory 저장 **/
+    fun onSuccessAnalyze(context: Context, mush : Mushroom, lat : Double?, lon : Double?){
+        viewModelScope.launch(Dispatchers.Default) {
+            val timestampFormat = SimpleDateFormat(FILENAME_FORMAT, Locale.getDefault())
+            val timestamp = timestampFormat.format(Date())
+            var success = true
+            val paths = arrayListOf<String>()
+
+            //사진 저장 시도
+            capturedImages.value?.let {
+                for ((idx, bitmap) in it.withIndex()){
+                    val filename = "${timestamp}_${idx}"
+                    val result = savePictureFromBitmap(context, bitmap, filename)
+                    if(result == null){
+                        success = false
+                    }else {
+                        paths.add(result)
+                    }
+                }
+            }
+
+            //사진 저장 성공 -> History 저장
+            if(success){
+                saveHistory(mush, paths, lat, lon)
+                clearImages()
+            }
+            //사진 저장 실패
+            else{
+                _response.value = AnalyzeUseCaseResponse.SuccessResponseDomain(false, BITMAP_SAVE_ERROR)
             }
         }
     }
+
+
+
+
+    fun clearImages() {
+        _capturedImages.value = arrayListOf()
+    }
+
+    /** 사진 저장 시도 **/
+    private suspend fun savePictureFromBitmap(context: Context, bitmap: Bitmap, filename: String): String? {
+        return withContext(Dispatchers.IO) {
+            val directory = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            val file = File(directory, filename)
+
+            var path : String? = null
+            var fos: FileOutputStream? = null
+            try {
+                fos = FileOutputStream(file)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+                fos.flush()
+                Log.d("성공",file.path)
+                path = file.path
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                fos?.close()
+            }
+            path
+        }
+    }
+    private fun saveHistory(mush : Mushroom, paths : ArrayList<String>, lat : Double?, lon : Double?){
+        val history_for_save = MushHistory(
+            mushroom = mush,
+            picPath = paths,
+            date = DateTime(),
+            lat = lat,
+            lon = lon
+        )
+        viewModelScope.launch{
+            _response.value = repository.saveHistory(AnalyzeUseCaseRequest.SaveHistoryDomain(history_for_save))
+        }
+    }
+
+    private fun Image.toBitmap(): Bitmap {
+        val buffer = planes[0].buffer
+        buffer.rewind()
+        val bytes = ByteArray(buffer.capacity())
+        buffer.get(bytes)
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+    }
+
 
     @SuppressLint("UnsafeOptInUsageError")
     fun addPicture(image : ImageProxy){
@@ -68,55 +155,7 @@ class CameraViewModel : ViewModel() {
         }
     }
 
-    suspend fun savePictureFromBitmaps(context: Context) : Boolean{
-        val timestampFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
-        val timestamp = timestampFormat.format(Date())
-        var success = true
-        capturedImages.value?.let {
-            for ((idx, bitmap) in it.withIndex()){
-                val filename = "${timestamp}_${idx}"
-                val result = savePictureFromBitmap(context, bitmap, filename)
-                if(!result){
-                    success = false
-                }
-            }
-        }
-        return success
-    }
-    fun clearImages() {
-        _capturedImages.value = arrayListOf()
-    }
-
-    suspend fun savePictureFromBitmap(context: Context, bitmap: Bitmap, filename: String): Boolean {
-        return withContext(Dispatchers.IO) {
-            val directory = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-            val file = File(directory, filename)
-
-            var success = false
-            var fos: FileOutputStream? = null
-            try {
-                fos = FileOutputStream(file)
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
-                fos.flush()
-                Log.d("성공",file.path)
-                success = true
-            } catch (e: Exception) {
-                e.printStackTrace()
-            } finally {
-                fos?.close()
-            }
-            success
-        }
-    }
-
-
-    private fun Image.toBitmap(): Bitmap {
-        val buffer = planes[0].buffer
-        buffer.rewind()
-        val bytes = ByteArray(buffer.capacity())
-        buffer.get(bytes)
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-    }
-
-
 }
+
+
+private const val FILENAME_FORMAT = "yyyyMMdd_HHmmss"

@@ -25,7 +25,14 @@ import com.google.android.gms.location.LocationServices
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.api.RequestCodeConstants
 import com.nbmlon.mushroomer.api.RequestCodeConstants.CAMERA_PERMISSION_REQUEST_CODE
+import com.nbmlon.mushroomer.api.ResponseCodeConstants
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.BITMAP_SAVE_ERROR
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.LOW_ACCURACY_ERROR
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
 import com.nbmlon.mushroomer.databinding.FragmentCameraBinding
+import com.nbmlon.mushroomer.domain.AnalyzeUseCaseResponse
+import com.nbmlon.mushroomer.domain.toResultModel
+import com.nbmlon.mushroomer.model.AnalyzeResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,7 +43,6 @@ import java.util.concurrent.Executors
 class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
     companion object {
         const val TAG = "CameraFragment"
-        private const val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
         private val REQUIRED_PERMISSIONS =
             mutableListOf (
                 Manifest.permission.CAMERA,
@@ -44,15 +50,37 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ).toTypedArray()
     }
+    private val viewModel: CameraViewModel by viewModels()
+
     private var _binding: FragmentCameraBinding? = null
     private val binding get() = _binding!!
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
     private lateinit var picturesAdapter: PicturesAdapter
     private lateinit var cameraExecutor: ExecutorService
+    private lateinit var loading : Sweetalert
     private var imageCapture: ImageCapture? = null
-    private val cameraViewModel: CameraViewModel by viewModels()
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var lat : Double? = null; private var lon : Double? = null;
     private var pictureAdded = false
+    private var analyzeResult : AnalyzeResult? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        if (!checkLocationPermission()) {
+            // 위치 권한을 요청합니다.
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                RequestCodeConstants.LOCATION_PERMISSION_REQUEST_CODE
+            )
+        }
+        viewModel.response.observe(viewLifecycleOwner, ::responseObserver)
+        loading = Sweetalert(requireActivity(),Sweetalert.PROGRESS_TYPE).apply {
+            titleText = resources.getString(R.string.ANLAYZE_IN_PROGRESS)
+            setCancelable(false)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,16 +90,6 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
         _binding = FragmentCameraBinding.inflate(inflater, container, false)
 
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-
-        if (!checkLocationPermission()) {
-            // 위치 권한을 요청합니다.
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                RequestCodeConstants.LOCATION_PERMISSION_REQUEST_CODE
-            )
-        }
         return binding.root
     }
 
@@ -85,7 +103,7 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
         picturesAdapter = PicturesAdapter(this@CameraFragment as ImageDeleteListner)
         cameraExecutor = Executors.newSingleThreadExecutor()
 
-        cameraViewModel.capturedImages.observe(viewLifecycleOwner) { itemList ->
+        viewModel.capturedImages.observe(viewLifecycleOwner) { itemList ->
             picturesAdapter.submitList(itemList.toList())
             if(pictureAdded){
                 binding.pictureRV.smoothScrollToPosition(0)
@@ -97,24 +115,23 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
             pictureRV.adapter = picturesAdapter
             shootBtn.setOnClickListener { takePhoto() }
             startBtn.setOnClickListener {
-                cameraViewModel.capturedImages.value?.let {
+                viewModel.capturedImages.value?.let {
                     if(it.size <= 0) { showAlertMessage(R.string.TOAST_pictureMinimum, null) }
                     else if(it.size < resources.getInteger(R.integer.recommended_pic_count)) { showAlertForAdditionalPicture() }
                     else{
-                        savePictures()
                         startAnalyze()
                     }
                 }
             }
             closeBtn.setOnClickListener{
-                cameraViewModel.capturedImages.value?.let{
+                viewModel.capturedImages.value?.let{
                     if (it.size > 0){
                         //Positive가 안떠서 negative를 positive로함
                         Sweetalert(requireActivity(),Sweetalert.NORMAL_TYPE)
                             .setTitleText(resources.getString(R.string.ALERT_CANCEL_TITLE))
                             .setContentText(resources.getString(R.string.ALERT_CANCEL_CONTENT))
                             .setCancelButton(resources.getString(R.string.YES)) { dialog ->
-                                cameraViewModel.clearImages()
+                                viewModel.clearImages()
                                 dialog.dismissWithAnimation()
                             }
                             .setNeutralButton(resources.getString(R.string.NO)) { dialog ->
@@ -132,17 +149,6 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
                             .show()}
                 }
 
-            }
-        }
-    }
-
-    private fun savePictures() {
-        CoroutineScope(Dispatchers.Main).launch {
-            val success = cameraViewModel.savePictureFromBitmaps(requireActivity())
-            if (success) {
-                Log.d(TAG, "SUCCESS_TO_SAVE")
-            } else {
-                showAlertMessage(R.string.TOAST_FAIL_TO_SAVE,null)
             }
         }
     }
@@ -202,7 +208,7 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
 
 
     private fun takePhoto() {
-        if (cameraViewModel.capturedImages.value!!.size < 5) {
+        if (viewModel.capturedImages.value!!.size < 5) {
             // Get a stable reference of the modifiable image capture use case
             val imageCapture = imageCapture ?: return
 
@@ -211,9 +217,9 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
                 object : ImageCapture.OnImageCapturedCallback() {
                     override fun onCaptureSuccess(image: ImageProxy) {
                         pictureAdded = true
-                        cameraViewModel.addPicture(image)
+                        viewModel.addPicture(image)
                         image.close()
-                        Log.d("CAMERA_TEST",cameraViewModel.capturedImages.value!!.size.toString())
+                        Log.d("CAMERA_TEST",viewModel.capturedImages.value!!.size.toString())
                     }
 
                     override fun onError(exception: ImageCaptureException) {
@@ -235,46 +241,23 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
 
 
     override fun deleteImage(id : Int) {
-        cameraViewModel.delPicture(id)
+        viewModel.delPicture(id)
     }
 
 
-    private fun showAlertForAdditionalPicture(){
-        cameraViewModel.capturedImages.value?.let {
-            val dialogFragment = CameraFragment_alert.getInstance(cameraViewModel.capturedImages.value!!.size,  this@CameraFragment as AnalyzeStartListener)
-            dialogFragment.show(parentFragmentManager, CameraFragment_alert.TAG)
-        }
-    }
-
-    private fun showAlertMessage(titleId : Int, subid : Int?){
-        Sweetalert(requireActivity(),Sweetalert.NORMAL_TYPE).apply {
-            titleText = resources.getString(titleId)
-            subid?.let { contentText = resources.getString(it) }
-            setNeutralButton(resources.getString(R.string.CONFIRM)) { dialog ->
-                    dialog.dismissWithAnimation()
-            }
-            show()
-        }
-    }
 
 
+
+
+
+    /** 검사 요청 **/
     override fun startAnalyze() {
         // 위치 권한이 이미 허용된 경우 위치 정보 업데이트
         if (checkLocationPermission()) {
             requestLocationUpdates()
         }
-        cameraViewModel.startAnalysis()
-        val loading = Sweetalert(requireActivity(),Sweetalert.PROGRESS_TYPE).apply {
-            titleText = resources.getString(R.string.ANLAYZE_IN_PROGRESS)
-            setCancelable(false)
-            show()
-        }
-
-        cameraViewModel.analysisResult.observe(viewLifecycleOwner){response ->
-            loading.dismissWithAnimation()
-            CameraFragment_result.getInstance(response = response)
-                .show(requireActivity().supportFragmentManager, CameraFragment_result.TAG)
-        }
+        viewModel.startAnalysis()
+        loading.show()
     }
 
 
@@ -301,5 +284,69 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
                 // 위치 정보를 가져오는 데 실패한 경우 처리하세요.
                 Toast.makeText(requireActivity(),"위치 정보를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
             }
+    }
+
+
+    /** 요청 결과값 처리 **/
+    private fun responseObserver(response : AnalyzeUseCaseResponse){
+        when(response){
+            is AnalyzeUseCaseResponse.AnalyzeResponseDomain ->{
+                //분석 성공
+                if(response.success){
+                    analyzeResult = response.toResultModel()
+                    viewModel.onSuccessAnalyze(requireActivity(), analyzeResult!!.mushroom, lat,lon)
+                }else if(response.code == LOW_ACCURACY_ERROR){
+                    CameraFragment_result.getInstance(response = response.toResultModel())
+                        .show(requireActivity().supportFragmentManager, CameraFragment_result.TAG)
+                    Toast.makeText(requireActivity(), "정확도가 기준에 미치지 않습니다. 해당 결과는 저장되지 않습니다!", Toast.LENGTH_SHORT).show()
+                }else if(response.code == NETWORK_ERROR_CODE){
+                    Toast.makeText(requireActivity(), "네트워크 연결을 확인하세요!", Toast.LENGTH_SHORT).show()
+                }else{
+                    Toast.makeText(requireActivity(), "요청이 실패하였습니다. 잠시 후 다시 시도하세요!", Toast.LENGTH_SHORT).show()
+                }
+            }
+            is AnalyzeUseCaseResponse.SuccessResponseDomain ->{
+                if(loading.isShowing)
+                    loading.dismissWithAnimation()
+                if(response.success){
+                    analyzeResult?.let {
+                        CameraFragment_result.getInstance(response = it)
+                            .show(requireActivity().supportFragmentManager, CameraFragment_result.TAG)
+                    }
+                    analyzeResult = null
+                }else if(response.code == LOW_ACCURACY_ERROR){
+                    Toast.makeText(requireActivity(), "정확도가 기준에 미치지 않습니다. 다른 각도로 촬영을 시도해보세요!", Toast.LENGTH_SHORT).show()
+                }else if(response.code == NETWORK_ERROR_CODE){
+                    Toast.makeText(requireActivity(), "네트워크 연결을 확인하세요!", Toast.LENGTH_SHORT).show()
+                }else if(response.code == BITMAP_SAVE_ERROR){
+                    Toast.makeText(requireActivity(), "사진 저장에 실패했습니다! 권한을 확인하세요", Toast.LENGTH_SHORT).show()
+                }else{
+                    Toast.makeText(requireActivity(), "요청이 실패하였습니다. 잠시 후 다시 시도하세요!", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+        }
+    }
+
+
+    /**사진 0개 혹은 5개 이상시, 메시지 표시 **/
+    private fun showAlertMessage(titleId : Int, subid : Int?){
+        Sweetalert(requireActivity(),Sweetalert.NORMAL_TYPE).apply {
+            titleText = resources.getString(titleId)
+            subid?.let { contentText = resources.getString(it) }
+            setNeutralButton(resources.getString(R.string.CONFIRM)) { dialog ->
+                dialog.dismissWithAnimation()
+            }
+            show()
+        }
+    }
+
+
+    /** 추가 촬영 권고 (1<=사진<=3) **/
+    private fun showAlertForAdditionalPicture(){
+        viewModel.capturedImages.value?.let {
+            val dialogFragment = CameraFragment_alert.getInstance(viewModel.capturedImages.value!!.size,  this@CameraFragment as AnalyzeStartListener)
+            dialogFragment.show(parentFragmentManager, CameraFragment_alert.TAG)
+        }
     }
 }
