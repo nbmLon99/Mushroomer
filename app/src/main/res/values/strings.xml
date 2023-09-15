@@ -91,7 +91,7 @@
     <string name="dialog_btnText_modify_password">변경</string>
 
     <string name="dialog_title_withdrawal">회원 탈퇴</string>
-    <string name="dialog_content_withdrawal">회원 탈퇴시 복구할 수 없습니다.\n탈퇴를 원하신다면\n가입했던 이메일을 입력해주세요.\n</string>
+    <string name="dialog_content_withdrawal">회원 탈퇴시 복구할 수 없습니다.\n정말로 탈퇴를 원하신다면 가입했던 이메일을 입력해주세요.\n</string>
     <string name="dialog_btnText_withdrawal">회원 탈퇴</string>
 
 

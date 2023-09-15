@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="회원 탈퇴"
+        android:textSize="24sp"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_content_withdrawal"
+        android:layout_marginTop="20dp"
+        android:textSize="@dimen/text_main"
+        android:textStyle="italic"
+        />
+
+    <EditText
+        android:id="@+id/et_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="이메일"
+        android:inputType="textEmailAddress"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/et_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="비밀번호 입력"
+        android:inputType="textPassword"
+        android:layout_marginTop="16dp"/>
+
+
+    <EditText
+        android:id="@+id/et_password_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="비밀번호 확인"
+        android:inputType="textPassword"
+        android:layout_marginTop="16dp"/>
+
+    <Button
+        android:id="@+id/btn_start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="회원 탈퇴"
+        android:layout_marginTop="16dp"
+        android:background="@color/red_btn_bg_color"
+        android:textColor="@color/white"
+        />
+
+</LinearLayout>

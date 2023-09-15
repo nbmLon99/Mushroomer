@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
@@ -14,9 +16,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
 import com.nbmlon.mushroomer.databinding.DialogEdittextBinding
+import com.nbmlon.mushroomer.databinding.DialogFindIdBinding
 import com.nbmlon.mushroomer.databinding.DialogLoginMethodBinding
+import com.nbmlon.mushroomer.databinding.DialogModifyNicknameBinding
+import com.nbmlon.mushroomer.databinding.DialogModifyPasswordBinding
+import com.nbmlon.mushroomer.databinding.DialogWithdrawalBinding
 import com.nbmlon.mushroomer.databinding.FragmentProfileBinding
+import com.nbmlon.mushroomer.domain.ProfileUseCaseRequest
+import com.nbmlon.mushroomer.domain.ProfileUseCaseResponse
+import com.nbmlon.mushroomer.model.User
 import com.nbmlon.mushroomer.ui.login.LoginActivity
 import com.nbmlon.mushroomer.utils.BiometricPromptUtils
 import com.nbmlon.mushroomer.utils.CIPHERTEXT_WRAPPER
@@ -35,19 +45,12 @@ class ProfileFragment : Fragment(), DialogListener {
         const val TAG = "ProfileFragment"
     }
 
-    enum class SettingType {
-        MODIFY_PASSWORD,
-        MODIFY_NICKNAME,
-        WITHDRAWAL,
-
-    }
-
     private var _binding : FragmentProfileBinding?  = null
     private val binding get() = _binding!!
-
     private val profileViewModel by viewModels<ProfileViewModel>()
     private val cryptographyManager = CryptographyManager()
-
+    private var onSuccessResponse : ((ProfileUseCaseResponse) -> (Unit))? = null
+    private lateinit var loading : Sweetalert
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -57,8 +60,21 @@ class ProfileFragment : Fragment(), DialogListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         _binding = FragmentProfileBinding.inflate(inflater)
+        loading = Sweetalert(context, Sweetalert.PROGRESS_TYPE).apply { setCancelable(false) }
+        profileViewModel.response.observe(viewLifecycleOwner){response ->
+            if(loading.isShowing)
+                loading.dismissWithAnimation()
+            if(response.success){
+                onSuccessResponse?.let { it(response) }
+            }else if(response.code == NETWORK_ERROR_CODE) {
+                Toast.makeText(context, getString(R.string.network_error_msg),Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(context, getString(R.string.error_msg),Toast.LENGTH_SHORT).show()
+            }
+
+            onSuccessResponse = null
+        }
         return binding.root
     }
 
@@ -66,54 +82,15 @@ class ProfileFragment : Fragment(), DialogListener {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             user = AppUser.user
-            btnChgNickname.setOnClickListener { showDialogWithEditText(SettingType.MODIFY_NICKNAME, this@ProfileFragment as DialogListener) }
-            btnChgPassword.setOnClickListener { showDialogWithEditText(SettingType.MODIFY_PASSWORD, this@ProfileFragment as DialogListener) }
-            btnWithdrawal.setOnClickListener { showDialogWithEditText(SettingType.WITHDRAWAL, this@ProfileFragment as DialogListener) }
+            btnChgNickname.setOnClickListener { showModifyNicknameDialog() }
+            btnChgPassword.setOnClickListener { showModifyPasswordDialog() }
+            btnWithdrawal.setOnClickListener { showWithdrawalDialog() }
             btnChgLoginMethod.setOnClickListener { showDialogLoginMethod() }
 
             btnLogout.setOnClickListener { showLogoutDialog() }
         }
     }
 
-    private fun showDialogWithEditText( settingType: SettingType, dialogListener: DialogListener,){
-        var title : String; var content : String; var btnText : String
-        when(settingType){
-            SettingType.MODIFY_NICKNAME->{
-                title = resources.getString(R.string.dialog_title_modify_nickname)
-                content = resources.getString(R.string.dialog_content_modify_nickname)
-                btnText = resources.getString(R.string.dialog_btnText_modify_nickname)
-            }
-            SettingType.MODIFY_PASSWORD -> {
-                title = resources.getString(R.string.dialog_title_modify_password)
-                content = resources.getString(R.string.dialog_content_modify_password)
-                btnText = resources.getString(R.string.dialog_btnText_modify_password)
-            }
-            SettingType.WITHDRAWAL -> {
-                title = resources.getString(R.string.dialog_title_withdrawal)
-                content = resources.getString(R.string.dialog_content_withdrawal)
-                btnText = resources.getString(R.string.dialog_btnText_withdrawal)
-            }
-            else -> error("타입 오류")
-        }
-
-
-        Sweetalert(context, Sweetalert.NORMAL_TYPE).apply {
-            val dialogBinding = DialogEdittextBinding.inflate(layoutInflater).apply {
-                tvContent.text = content
-            }
-            val editText = dialogBinding.editText
-            titleText = title
-            setCustomView(dialogBinding.root)
-            setCancelButton(btnText){
-                dialogListener.dialogEditDone(etString = editText.text.toString(), settingType, it)
-                it.dismissWithAnimation()
-            }
-            setNeutralButton(resources.getString(R.string.cancel)){
-                it.dismissWithAnimation()
-            }
-            show()
-        }
-    }
 
     private fun showDialogLoginMethod(){
         Sweetalert(context, Sweetalert.NORMAL_TYPE).apply {
@@ -151,20 +128,111 @@ class ProfileFragment : Fragment(), DialogListener {
         }
     }
 
-
-
-
-    override fun dialogEditDone(etString: String, settingType: SettingType, dialog : Sweetalert) {
-        dialog.dismissWithAnimation()
-        return ;
-
-        when(settingType){
-            SettingType.MODIFY_NICKNAME-> TODO("닉네임 변경")
-            SettingType.MODIFY_PASSWORD -> TODO("비밀번호 변경")
-            SettingType.WITHDRAWAL -> TODO("회원탈퇴")
-            else -> error("타입 오류")
+    //회원 탈퇴
+    private fun showWithdrawalDialog(){
+        val dialog = Sweetalert(context, Sweetalert.NORMAL_TYPE)
+        val dialogBinding = DialogWithdrawalBinding.inflate(layoutInflater).apply {
+            btnStart.setOnClickListener {
+                if(!(etEmail.text.toString().contains('@') && Patterns.EMAIL_ADDRESS.matcher(etEmail.text.toString()).matches())){
+                    etEmail.error = "이메일 형식을 확인해 주세요"
+                }else if(etPassword.text.toString().length <=5 ) {
+                    etPassword.error = "비밀번호는 최소 6글자입니다."
+                }else if(!etPassword.text.equals(etPasswordConfirm.text)){
+                    etPasswordConfirm.error = "비밀번호가 일치하지 않습니다!"
+                }else{
+                    onSuccessResponse ={
+                        Sweetalert(context,Sweetalert.NORMAL_TYPE).apply {
+                            titleText = "회원 탈퇴가 성공적으로 처리되었습니다!\n이용해 주셔서 갑사합니다."
+                            setCancelButton("확인"){
+                                it.dismissWithAnimation()
+                                logout()
+                            }
+                            setCancelable(false)
+                            show()
+                        }
+                    }
+                    profileViewModel.request(ProfileUseCaseRequest.WithdrawalRequestDomain(
+                        email = etEmail.text.toString(), password = etPassword.text.toString()
+                    ))
+                }
+            }
+        }
+        dialog.apply {
+            setCustomView(dialogBinding.root)
+            show()
         }
     }
+
+    //닉네임 변경
+    private fun showModifyNicknameDialog(){
+        val dialog = Sweetalert(context, Sweetalert.NORMAL_TYPE)
+        val dialogBinding = DialogModifyNicknameBinding.inflate(layoutInflater).apply {
+            btnStart.setOnClickListener {
+                if(etNickname.text.toString().length < 3){
+                    etNickname.error = "닉네임은 최소 3글자입니다."
+                }else if(etPassword.text.toString().length < 6){
+                    etPassword.error = "비밀번호는 최소 6글자입니다"
+                }else{
+                    val my = AppUser.user!!
+                    val newNickname = etNickname.text.toString()
+                    profileViewModel.request(ProfileUseCaseRequest.ModifyProfileRequestDomain(
+                        password = newNickname,
+                        modifiedPwd = null,
+                        modified = my.getModifiedNickname(newNickname)
+                    ))
+                    onSuccessResponse = {
+                        Sweetalert(context,Sweetalert.NORMAL_TYPE).apply {
+                            titleText = "닉네임 변경이 성공적으로 처리되었습니다!"
+                            setCancelButton("확인"){
+                                AppUser.user = AppUser.user!!.getModifiedNickname(newNickname)
+                                binding.user = AppUser.user!!
+                                it.dismissWithAnimation()
+                            }
+                            setCancelable(false)
+                            show()
+                        }
+                    }
+                }
+            }
+        }
+        dialog.apply {
+            setCustomView(dialogBinding.root)
+            show()
+        }
+    }
+
+    //비밀번호 변경
+    private fun showModifyPasswordDialog(){
+        val dialog = Sweetalert(context, Sweetalert.NORMAL_TYPE)
+        val dialogBinding = DialogModifyPasswordBinding.inflate(layoutInflater).apply {
+            btnStart.setOnClickListener {
+                if(etNewPassword.text.toString().length <=5 ) {
+                    etNewPassword.error = "비밀번호는 최소 6글자입니다."
+                }else if(!etNewPassword.text.equals(etNewPasswordConfirm.text)){
+                    etNewPasswordConfirm.error = "비밀번호가 일치하지 않습니다!"
+                }else{
+                    profileViewModel.request(ProfileUseCaseRequest.ModifyProfileRequestDomain(
+                        password = etOldPassword.text.toString(),
+                        modifiedPwd = etNewPassword.text.toString(),
+                        modified = AppUser.user!!
+                        )
+                    )
+                    onSuccessResponse = {
+                        Sweetalert(context,Sweetalert.NORMAL_TYPE).apply {
+                            titleText = "비밀번호 변경이 성공적으로 처리되었습니다!"
+                            setCancelButton("확인"){ it.dismissWithAnimation() }
+                            setCancelable(false)
+                            show()
+                        }
+                    }
+                }
+            }
+        }
+        dialog.setCustomView(dialogBinding.root).show()
+    }
+
+
+
 
     override fun loginMethodModify(radioCheckedId: Int?) {
         Log.d(TAG, radioCheckedId.toString())
@@ -174,7 +242,6 @@ class ProfileFragment : Fragment(), DialogListener {
             deleteServerToken()
             when(id){
                 R.id.login_biometric -> showBiometricPromptForEncryption() ;
-                R.id.login_pattern-> TODO("패턴인증") ;
                 R.id.login_password-> TODO("로그인") ;
                 else -> error("잘못된 인증 방식 선택")
             }
@@ -228,6 +295,5 @@ class ProfileFragment : Fragment(), DialogListener {
 
 
 interface DialogListener{
-    fun dialogEditDone(etString : String, settingType: ProfileFragment.SettingType, dialog: Sweetalert)
     fun loginMethodModify(radioCheckedId : Int?)
 }

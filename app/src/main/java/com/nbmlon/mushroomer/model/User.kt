@@ -15,15 +15,25 @@ import com.nbmlon.mushroomer.utils.GlideApp
 data class User(
     val id: Int,
     val email: String,
+    val name : String,
     val nickname: String,
     val icon: String,
-    val phone_number: String
-){
+    val phone_number: String,
+    ){
     companion object {
         fun getDummy() : User {
-            return User(-1,"rhfwleowkd77@naver.com","nbmlon99","","010-2222-3333")
+            return User(-1,"rhfwleowkd77@naver.com","","nbmlon99","","010-2222-3333")
         }
     }
+
+    fun getModifiedNickname(new_nickname: String) :User =
+        User(
+            id, email, name, new_nickname, icon, phone_number
+        )
+    fun getModifiedIcon(new_icon: String) :User =
+        User(
+            id, email, name, nickname, new_icon, phone_number
+        )
 }
 
 

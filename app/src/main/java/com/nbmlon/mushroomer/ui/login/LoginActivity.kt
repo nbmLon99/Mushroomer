@@ -192,7 +192,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun updateApp() {
-        AppUser.user = User(1,binding.username.text.toString(),"닉네임","","01000000000")
+        AppUser.user = User(1,binding.username.text.toString(),"","닉네임","","01000000000")
         AppUser.percent = 50
         startActivity(Intent(this,MainActivity::class.java))
         this@LoginActivity.finish()

@@ -45,6 +45,7 @@ sealed class BoardResponseDTO{
                 email = "",
                 nickname = "",
                 icon = "",
+                name = "",
                 phone_number = ""
             ),
             comments = null,
