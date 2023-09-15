@@ -96,9 +96,9 @@
         </LinearLayout>
 
     </FrameLayout>
-
     <!-- 도감 영역 -->
     <FrameLayout
+        android:id="@+id/dogamFrame"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -120,7 +120,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/no_results"
+            android:text="@string/error_msg"
             android:textSize="20sp"
             android:textAlignment="center"
             android:background="@color/bgGray"
