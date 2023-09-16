@@ -15,9 +15,13 @@ import com.nbmlon.mushroomer.databinding.ActivityLoginBinding
 import com.nbmlon.mushroomer.databinding.DialogFindIdBinding
 import com.nbmlon.mushroomer.databinding.DialogFindPwBinding
 import com.nbmlon.mushroomer.databinding.DialogRegisterBinding
-import com.nbmlon.mushroomer.domain.LoginUseCaseRequest.*
+import com.nbmlon.mushroomer.domain.LoginUseCaseRequest.LoginRequestDomain
+import com.nbmlon.mushroomer.domain.LoginUseCaseRequest.TokenLoginRequestDomain
 import com.nbmlon.mushroomer.domain.LoginUseCaseResponse
-import com.nbmlon.mushroomer.domain.LoginUseCaseResponse.*
+import com.nbmlon.mushroomer.domain.LoginUseCaseResponse.FindResponseDomain
+import com.nbmlon.mushroomer.domain.LoginUseCaseResponse.GenerateTokenResponseDomain
+import com.nbmlon.mushroomer.domain.LoginUseCaseResponse.LoginResponseDomain
+import com.nbmlon.mushroomer.domain.LoginUseCaseResponse.SuccessResponseDomain
 import com.nbmlon.mushroomer.model.User
 import com.nbmlon.mushroomer.ui.MainActivity
 import com.nbmlon.mushroomer.utils.BiometricPromptUtils

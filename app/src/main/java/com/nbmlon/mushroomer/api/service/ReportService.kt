@@ -1,9 +1,10 @@
 package com.nbmlon.mushroomer.api.service
 
 import com.nbmlon.mushroomer.api.dto.ReportResponseDTO
-import com.nbmlon.mushroomer.domain.CommuPostUseCaseResponse
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.POST
@@ -15,6 +16,7 @@ interface ReportService {
 }
 
 @Module
+@InstallIn(ViewModelComponent::class)
 class ReportServiceModule {
     @Provides
     fun provideReportService(retrofit: Retrofit): ReportService {

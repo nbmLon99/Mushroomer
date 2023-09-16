@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import com.nbmlon.mushroomer.api.dto.SuccessResponse
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.GET
@@ -23,6 +25,7 @@ interface ObserveService {
 }
 
 @Module
+@InstallIn(ViewModelComponent::class)
 class ObserveServiceModule {
     @Provides
     fun provideUserService(retrofit: Retrofit): ObserveService {

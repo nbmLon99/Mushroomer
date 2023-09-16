@@ -21,7 +21,7 @@ interface AnalyzeRepository{
 
 private class AnalyzeRepositoryImpl : AnalyzeRepository {
     @Inject
-    private lateinit var mushService : MushroomService
+    lateinit var mushService : MushroomService
 
     override suspend fun analyze(domain: AnalyzeUseCaseRequest.AnalyzeRequestDomain): AnalyzeUseCaseResponse {
         return try {

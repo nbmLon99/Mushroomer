@@ -11,9 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
-import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest
 import com.nbmlon.mushroomer.databinding.DialogEdittextBinding
 import com.nbmlon.mushroomer.databinding.FragmentCommuPostBinding
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest
 import com.nbmlon.mushroomer.domain.CommuPostUseCaseResponse
 import com.nbmlon.mushroomer.domain.TargetType
 import com.nbmlon.mushroomer.model.Comment
@@ -97,8 +97,8 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
     private fun bindingPost(targetPost: Post){
         binding.apply {
             post = targetPost
-            if(post.images?.size ?: 0 > 0)
-                imageSlider.setSliderAdapter(ImageSliderAdapter(post.images!!.toList()))
+            if(targetPost.images?.size ?: 0 > 0)
+                imageSlider.setSliderAdapter(ImageSliderAdapter(targetPost.images!!.toList()))
 
             boardType.text = resources.getString(post?.boardType!!.boardNameResId)
             targetPost?.comments?.let{comments ->

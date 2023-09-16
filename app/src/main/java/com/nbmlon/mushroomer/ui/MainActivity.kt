@@ -9,11 +9,11 @@ import com.nbmlon.mushroomer.model.MushHistory
 import com.nbmlon.mushroomer.ui.camera.CameraFragment
 import com.nbmlon.mushroomer.ui.commu.board.BoardType
 import com.nbmlon.mushroomer.ui.commu.board.CommuFragmentBoard_img
-import com.nbmlon.mushroomer.ui.commu.home.CommuFragment_home
 import com.nbmlon.mushroomer.ui.commu.board.CommuFragment_write
-import com.nbmlon.mushroomer.ui.dogam.DogamFragment
+import com.nbmlon.mushroomer.ui.commu.home.CommuFragment_home
 import com.nbmlon.mushroomer.ui.dialog_picture.PictureDialogFrom
 import com.nbmlon.mushroomer.ui.dialog_picture.pictureDialogListener
+import com.nbmlon.mushroomer.ui.dogam.DogamFragment
 import com.nbmlon.mushroomer.ui.map.MapFragment
 import com.nbmlon.mushroomer.ui.profile.ProfileFragment
 

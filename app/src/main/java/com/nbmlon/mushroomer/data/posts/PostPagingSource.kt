@@ -2,9 +2,7 @@ package com.nbmlon.mushroomer.data.posts
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.nbmlon.mushroomer.api.dto.BoardResponseDTO
 import com.nbmlon.mushroomer.api.service.BoardService
-import com.nbmlon.mushroomer.domain.toPostDomain
 import com.nbmlon.mushroomer.model.Post
 import com.nbmlon.mushroomer.ui.commu.board.BoardType
 import com.nbmlon.mushroomer.ui.commu.board.PostSortingOption
@@ -17,16 +15,20 @@ private const val STARTING_KEY = 0
 
 
 /**
- * @param backend   sevice
+ * @param backend           sevice
  * @param searchKeyword     searchKeyword
- * @param boardType boardType ( 자유게시판, QnA, 사진 게시판 )
+ * @param boardType         boardType ( 자유게시판, QnA, 사진 게시판 )
+ * @param isHotBoard        Hot게시판 구별
+ * @param isHistoryMyBoard  내가 쓴 글 보기
  */
 class PostPagingSource(
     val backend: BoardService,
     val boardType: BoardType,
     val searchKeyword: String? = null,
     val sortingOption: PostSortingOption = PostSortingOption.SORTING_TIME,
-    val isHotBoard : Boolean = false
+    val isHotBoard : Boolean = false,
+    val isHistoryMyBoard : Boolean = false,
+    val isHistoryMyCommentBoard : Boolean = false
 ) : PagingSource<Int, Post >() {
     override suspend fun load(
         params: LoadParams<Int>,
@@ -37,23 +39,17 @@ class PostPagingSource(
             // Start refresh at page 1 if undefined.
             val startKey = params.key ?: STARTING_KEY
             val range = startKey.until(startKey + params.loadSize)
+
+            /**
+            if(isHotBoard)
+                //핫게 처리문
+            if(isHistoryMyBoard)
+                //작성글 보기 처리
+            if(isHistoryMyCommentBoard)
+                //작성댓글보기 처리
+            */
             val response = backend.getBoardPosts(query, boardType.name).await()
 
-            // 보드 타입별 정리
-//            when(boardType){
-//                //내 댓글or 포스트 화면
-//                BoardType.MyPosts, BoardType.MyComments -> {
-//                    response = PostsResponse(Post.getDummys(boardType, writer = AppUser.user))
-//                };
-//
-//                //인기게시판, 자유게시판, qna게시판, 사진게시판
-//                else ->{
-//                    if(searchKeyword?.isEmpty() == true || (  searchKeyword!= null && searchKeyword == "test" )) //빈값 테스트 위함
-//                        response = PostsResponse()
-//                    else
-//                        response = PostsResponse( Post.getDummys(boardType, searchKeyword) )
-//                }   ;
-//            }
             //정렬 쿼리 정의
             when(sortingOption){
                 PostSortingOption.SORTING_TIME ->{};

@@ -22,7 +22,7 @@ fun BoardPostsRepository() : BoardPostsRepository = BoardPostsRepositoryImpl()
 
 private class BoardPostsRepositoryImpl: BoardPostsRepository {
     @Inject
-    private lateinit var backend : BoardService
+    lateinit var backend : BoardService
 
     override fun getPostStream(boardType: BoardType, sortOpt : PostSortingOption, isHotBoard : Boolean): Flow<PagingData<Post>> {
         return Pager(

@@ -17,8 +17,6 @@ import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
-import com.nbmlon.mushroomer.databinding.DialogEdittextBinding
-import com.nbmlon.mushroomer.databinding.DialogFindIdBinding
 import com.nbmlon.mushroomer.databinding.DialogLoginMethodBinding
 import com.nbmlon.mushroomer.databinding.DialogModifyNicknameBinding
 import com.nbmlon.mushroomer.databinding.DialogModifyPasswordBinding
@@ -26,7 +24,6 @@ import com.nbmlon.mushroomer.databinding.DialogWithdrawalBinding
 import com.nbmlon.mushroomer.databinding.FragmentProfileBinding
 import com.nbmlon.mushroomer.domain.ProfileUseCaseRequest
 import com.nbmlon.mushroomer.domain.ProfileUseCaseResponse
-import com.nbmlon.mushroomer.model.User
 import com.nbmlon.mushroomer.ui.login.LoginActivity
 import com.nbmlon.mushroomer.utils.BiometricPromptUtils
 import com.nbmlon.mushroomer.utils.CIPHERTEXT_WRAPPER
@@ -34,7 +31,6 @@ import com.nbmlon.mushroomer.utils.CryptographyManager
 import com.nbmlon.mushroomer.utils.REFRESH_TOKEN_ENCRYPTION_KEY
 import com.nbmlon.mushroomer.utils.SHARED_PREFS_FILENAME
 import taimoor.sultani.sweetalert2.Sweetalert
-
 
 
 /**

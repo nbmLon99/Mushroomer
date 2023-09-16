@@ -23,7 +23,7 @@ fun CommuWriteRepository() : CommuWriteRepository = CommuWriteRepositoryImpl()
 
 class CommuWriteRepositoryImpl : CommuWriteRepository {
     @Inject
-    private lateinit var service : BoardService
+    lateinit var service : BoardService
 
     override suspend fun uploadPost(domain: CommuWriteUseCaseRequest.UploadPostDomain): CommuWriteUseCaseResponse {
         return try{

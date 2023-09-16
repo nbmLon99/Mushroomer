@@ -4,6 +4,8 @@ import com.nbmlon.mushroomer.api.dto.UserRequestDTO.*
 import com.nbmlon.mushroomer.api.dto.UserResponseDTO.*
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.Body
@@ -41,6 +43,7 @@ interface UserService {
 }
 
 @Module
+@InstallIn(ViewModelComponent::class)
 class UserServiceModule {
     @Provides
     fun provideUserService(retrofit: Retrofit): UserService {

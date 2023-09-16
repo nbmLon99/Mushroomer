@@ -68,7 +68,7 @@ class PictureDialogFragment private constructor(): DialogFragment() {
         binding.apply {
             history = mMushHistory
 
-            imageSlider.setSliderAdapter(ImageSliderAdapter(history.picPath.toList()))
+            imageSlider.setSliderAdapter(ImageSliderAdapter(mMushHistory.picPath.toList()))
 
             btnGoAnother.setOnClickListener { goAnother(); this@PictureDialogFragment.dismiss() }
             btnGoBoard.setOnClickListener { goPicBoard(); this@PictureDialogFragment.dismiss() }

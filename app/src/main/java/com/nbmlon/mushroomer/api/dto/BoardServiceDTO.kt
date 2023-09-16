@@ -1,7 +1,6 @@
 package com.nbmlon.mushroomer.api.dto
 
 import com.google.gson.annotations.SerializedName
-import com.nbmlon.mushroomer.domain.CommuPostUseCaseResponse
 import com.nbmlon.mushroomer.model.Comment
 import com.nbmlon.mushroomer.model.Post
 import com.nbmlon.mushroomer.model.ThumbsUp

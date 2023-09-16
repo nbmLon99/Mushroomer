@@ -35,9 +35,9 @@ fun CommuPostRepository() : CommuPostRepository = CommuPostRepositoryImpl()
 
 
 class CommuPostRepositoryImpl : CommuPostRepository {
-    @Inject private lateinit var boardService : BoardService
-    @Inject private lateinit var reportService : ReportService
-    @Inject private lateinit var commentService : CommentService
+    @Inject lateinit var boardService : BoardService
+    @Inject lateinit var reportService : ReportService
+    @Inject lateinit var commentService : CommentService
 
     override suspend fun report(domain : ReportRequestDomain): CommuPostUseCaseResponse {
         return try{

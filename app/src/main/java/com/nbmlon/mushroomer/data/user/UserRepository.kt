@@ -2,7 +2,6 @@ package com.nbmlon.mushroomer.data.user
 
 import com.nbmlon.mushroomer.api.ResponseCodeConstants
 import com.nbmlon.mushroomer.api.service.UserService
-import com.nbmlon.mushroomer.domain.CommuPostUseCaseResponse
 import com.nbmlon.mushroomer.domain.LoginUseCaseRequest
 import com.nbmlon.mushroomer.domain.LoginUseCaseRequest.LoginRequestDomain
 import com.nbmlon.mushroomer.domain.LoginUseCaseRequest.RegisterRequestDomain
@@ -43,7 +42,7 @@ interface UserRepository {
 
 private class UserRepositoryImpl: UserRepository {
     @Inject
-    private lateinit var service : UserService
+    lateinit var service : UserService
     override suspend fun login(domain: LoginRequestDomain): LoginUseCaseResponse {
         return try{
             withContext(Dispatchers.IO){

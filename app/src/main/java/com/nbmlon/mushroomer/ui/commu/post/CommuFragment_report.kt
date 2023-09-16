@@ -7,8 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest
 import com.nbmlon.mushroomer.databinding.FragmentCommuReportBinding
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest
+import com.nbmlon.mushroomer.domain.TargetType
 import com.nbmlon.mushroomer.model.Comment
 import com.nbmlon.mushroomer.model.Post
 import com.nbmlon.mushroomer.ui.commu.board.ViewModelBoard

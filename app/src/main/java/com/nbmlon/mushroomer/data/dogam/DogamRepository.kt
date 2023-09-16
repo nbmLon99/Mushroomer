@@ -29,7 +29,7 @@ private class DogamRepositoryImpl : DogamRepository {
     }
 
     @Inject
-    private lateinit var backend : MushroomService
+    lateinit var backend : MushroomService
 
     override fun getDogamstream(domain : DogamUseCaseReqeust.LoadDogamResquestDomain): Flow<PagingData<Mushroom>> {
         return Pager(

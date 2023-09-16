@@ -1,11 +1,11 @@
 package com.nbmlon.mushroomer.api.service
 
-import com.google.gson.annotations.SerializedName
 import com.nbmlon.mushroomer.api.dto.BoardResponseDTO.*
-import com.nbmlon.mushroomer.model.Comment
 import com.nbmlon.mushroomer.model.Post
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.DELETE
@@ -43,28 +43,10 @@ interface BoardService {
 
 
 @Module
+@InstallIn(ViewModelComponent::class)
 class BoardServiceModule {
     @Provides
     fun provideBoardService(retrofit: Retrofit): BoardService {
         return retrofit.create(BoardService::class.java)
     }
 }
-
-data class BoardResponse(
-    @SerializedName("data") val items: ArrayList<Post>,
-    @SerializedName("message") val message: String?
-)
-
-data class BoardData(
-    @SerializedName("createdDate") val createdDate: String,
-    @SerializedName("updatedDate") val updatedDate: String,
-    @SerializedName("boardId") val boardId: Int,
-    @SerializedName("type") val type: String,
-    @SerializedName("title") val title: String,
-    @SerializedName("content") val content: String,
-    @SerializedName("status") val status: String,
-    @SerializedName("image") val image: String,
-    @SerializedName("comments") val comments: List<Comment>,
-    @SerializedName("thumbsUps") val thumbsUps: Int
-)
-

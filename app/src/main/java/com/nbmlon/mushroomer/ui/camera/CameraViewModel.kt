@@ -14,13 +14,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.BITMAP_SAVE_ERROR
 import com.nbmlon.mushroomer.data.analyze.AnalyzeRepository
-import com.nbmlon.mushroomer.data.analyze.AnalyzerTF
 import com.nbmlon.mushroomer.domain.AnalyzeUseCaseRequest
 import com.nbmlon.mushroomer.domain.AnalyzeUseCaseResponse
 import com.nbmlon.mushroomer.model.MushHistory
 import com.nbmlon.mushroomer.model.Mushroom
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.joda.time.DateTime

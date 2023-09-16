@@ -24,7 +24,7 @@ fun PostsSearchRepository() : PostsSearchRepository = PostsSearchRepositoryImpl(
 class PostsSearchRepositoryImpl : PostsSearchRepository {
     /** query를 통해 검색된 값 가져오기 **/
     @Inject
-    private lateinit var backend : BoardService
+    lateinit var backend : BoardService
 
 
     override fun getSearchedPostStream(

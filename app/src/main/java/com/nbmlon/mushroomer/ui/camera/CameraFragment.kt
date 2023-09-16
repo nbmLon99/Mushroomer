@@ -25,7 +25,6 @@ import com.google.android.gms.location.LocationServices
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.api.RequestCodeConstants
 import com.nbmlon.mushroomer.api.RequestCodeConstants.CAMERA_PERMISSION_REQUEST_CODE
-import com.nbmlon.mushroomer.api.ResponseCodeConstants
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.BITMAP_SAVE_ERROR
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.LOW_ACCURACY_ERROR
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
@@ -33,9 +32,6 @@ import com.nbmlon.mushroomer.databinding.FragmentCameraBinding
 import com.nbmlon.mushroomer.domain.AnalyzeUseCaseResponse
 import com.nbmlon.mushroomer.domain.toResultModel
 import com.nbmlon.mushroomer.model.AnalyzeResult
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import taimoor.sultani.sweetalert2.Sweetalert
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors

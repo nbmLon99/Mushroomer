@@ -5,12 +5,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.commu.home.CommuFragment_home"
     >
-    <data>
-        <variable
-            name="commu"
-            type="com.nbmlon.mushroomer.model.Commu" />
-    </data>
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

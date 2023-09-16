@@ -4,7 +4,6 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.nbmlon.mushroomer.api.service.BoardService
-import com.nbmlon.mushroomer.api.service.CommentService
 import com.nbmlon.mushroomer.model.Post
 import com.nbmlon.mushroomer.ui.commu.board.BoardType
 import kotlinx.coroutines.flow.Flow
@@ -25,9 +24,7 @@ fun CommuHistoryRepository() : CommuHistoryRepository = CommuHistoryRepositoryIm
 
 class CommuHistoryRepositoryImpl : CommuHistoryRepository {
     @Inject
-    private lateinit var boardBackend : BoardService
-    @Inject
-    private lateinit var commentBackend : CommentService
+    lateinit var boardBackend : BoardService
 
     override fun getPostHistoryStream(): Flow<PagingData<Post>> {
         return Pager(
@@ -35,7 +32,12 @@ class CommuHistoryRepositoryImpl : CommuHistoryRepository {
                 pageSize = NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { PostPagingSource(boardBackend, BoardType.MyPosts) }
+            pagingSourceFactory = {
+                PostPagingSource(
+                    boardBackend,
+                    BoardType.MyPosts,
+                    isHistoryMyBoard = true
+                ) }
         ).flow
     }
 
@@ -45,7 +47,13 @@ class CommuHistoryRepositoryImpl : CommuHistoryRepository {
                 pageSize = NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { PostPagingSource(boardBackend, BoardType.MyComments) }
+            pagingSourceFactory = {
+                PostPagingSource(
+                    boardBackend,
+                    BoardType.MyComments,
+                    isHistoryMyCommentBoard = true
+                )
+            }
         ).flow
     }
 

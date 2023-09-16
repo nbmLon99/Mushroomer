@@ -7,17 +7,20 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.UNDEFINED_ERROR_CODE
 import com.nbmlon.mushroomer.databinding.FragmentCommuHomeBinding
 import com.nbmlon.mushroomer.model.Post
 import com.nbmlon.mushroomer.ui.commu.board.BoardType
-import com.nbmlon.mushroomer.ui.commu.post.CommuFragment_post
-import com.nbmlon.mushroomer.ui.commu.board.PostClickListener
 import com.nbmlon.mushroomer.ui.commu.board.CommuBoardFragment
 import com.nbmlon.mushroomer.ui.commu.board.CommuFragment_history
+import com.nbmlon.mushroomer.ui.commu.board.PostClickListener
 import com.nbmlon.mushroomer.ui.commu.board.getBoardFragment
+import com.nbmlon.mushroomer.ui.commu.post.CommuFragment_post
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,10 +61,16 @@ class CommuFragment_home : Fragment(), PostClickListener {
             show()
         }
 
-        viewModel.recentPostsForDisplay.observe(viewLifecycleOwner){item ->
-            adapterFree.submitList(item.newFreePosts)
-            adapterPic.submitList(item.newPicPosts)
-            adapterQnA.submitList(item.newQnAPosts)
+        viewModel.recentPostsForDisplay.observe(viewLifecycleOwner){response ->
+            if(response.success){
+                adapterFree.submitList(response.freeBoardPosts)
+                adapterPic.submitList(response.qnaBoardPosts)
+                adapterQnA.submitList(response.picBoardPosts)
+            }else if(response.code == NETWORK_ERROR_CODE){
+                Toast.makeText(requireActivity(),getString(R.string.network_error_msg), Toast.LENGTH_SHORT).show()
+            }else if(response.code == UNDEFINED_ERROR_CODE){
+                Toast.makeText(requireActivity(),getString(R.string.error_msg), Toast.LENGTH_SHORT).show()
+            }
             loading?.dismissWithAnimation()
             loading = null
         }

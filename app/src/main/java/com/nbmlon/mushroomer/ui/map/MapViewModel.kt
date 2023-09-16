@@ -3,20 +3,19 @@ package com.nbmlon.mushroomer.ui.map
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.nbmlon.mushroomer.model.MushHistory
+import androidx.lifecycle.viewModelScope
+import com.nbmlon.mushroomer.data.marker.HistoryRepository
+import com.nbmlon.mushroomer.domain.MapUseCaseResponse
+import kotlinx.coroutines.launch
 
 class MapViewModel : ViewModel() {
-    private val _markers: MutableLiveData<ArrayList<MushHistory>> by lazy {
-        MutableLiveData<ArrayList<MushHistory>>().also {
-            loadHistories()
+    private val repository = HistoryRepository()
+    private val _markers: MutableLiveData<MapUseCaseResponse.MapResponseDomain> by lazy {
+        MutableLiveData<MapUseCaseResponse.MapResponseDomain>().also {
+            viewModelScope.launch {
+                it.value = repository.getHistories()
+            }
         }
     }
-
-    val markers : LiveData<ArrayList<MushHistory>> get() = _markers
-
-
-
-    private fun loadHistories() {
-        // Do an asynchronous operation to fetch users.
-    }
+    val markers : LiveData<MapUseCaseResponse.MapResponseDomain> get() = _markers
 }

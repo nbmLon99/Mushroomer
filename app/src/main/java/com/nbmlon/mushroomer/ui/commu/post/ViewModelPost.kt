@@ -4,12 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest
-import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest.*
-import com.nbmlon.mushroomer.domain.CommuPostUseCaseResponse
-import com.nbmlon.mushroomer.domain.CommuPostUseCaseResponse.*
 import com.nbmlon.mushroomer.data.posts.CommuPostRepository
-import com.nbmlon.mushroomer.model.Comment
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest.DeleteRequestDomain
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest.LoadPostRequestDomain
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest.ModifyCommentRequestDomain
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest.ReportRequestDomain
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest.UploadCommentRequestDomain
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseResponse
 import com.nbmlon.mushroomer.model.Post
 import kotlinx.coroutines.launch
 

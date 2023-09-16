@@ -23,7 +23,7 @@ interface  ProfileRepository{
 
 private class ProfileRepositoryImpl : ProfileRepository {
     @Inject
-    private lateinit var service : UserService
+    lateinit var service : UserService
 
     override suspend fun withdrawal(domain: ProfileUseCaseRequest.WithdrawalRequestDomain): ProfileUseCaseResponse {
         return try{

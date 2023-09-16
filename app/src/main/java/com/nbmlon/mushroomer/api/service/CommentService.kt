@@ -1,11 +1,12 @@
 package com.nbmlon.mushroomer.api.service
 
-import com.google.gson.annotations.SerializedName
 import com.nbmlon.mushroomer.api.dto.CommentResponseDTO
 import com.nbmlon.mushroomer.domain.CommuPostUseCaseResponse.*
 import com.nbmlon.mushroomer.model.Comment
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.DELETE
@@ -35,15 +36,10 @@ interface CommentService {
 
 
 @Module
+@InstallIn(ViewModelComponent::class)
 class CommentServiceModule {
     @Provides
     fun provideCommentService(retrofit: Retrofit): CommentService {
         return retrofit.create(CommentService::class.java)
     }
 }
-
-
-data class CommentResponse(
-    @SerializedName("data") val data: ArrayList<Comment>,
-    @SerializedName("message") val message: String?
-)

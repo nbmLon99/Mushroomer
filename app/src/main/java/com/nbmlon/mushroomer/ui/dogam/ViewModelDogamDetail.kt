@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.nbmlon.mushroomer.data.dogam.DogamRepository
 import com.nbmlon.mushroomer.domain.DogamUseCaseReqeust
 import com.nbmlon.mushroomer.domain.DogamUseCaseResponse
-import com.nbmlon.mushroomer.model.Mushroom
 import kotlinx.coroutines.launch
 
 class DogamDetailViewModel : ViewModel() {
