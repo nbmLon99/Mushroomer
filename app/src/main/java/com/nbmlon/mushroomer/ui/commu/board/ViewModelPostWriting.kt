@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.nbmlon.mushroomer.data.posts.CommuWriteRepository
 import com.nbmlon.mushroomer.domain.CommuWriteUseCaseRequest
 import com.nbmlon.mushroomer.domain.CommuWriteUseCaseResponse
+import com.nbmlon.mushroomer.model.MushHistory
 import com.nbmlon.mushroomer.model.Post
 import kotlinx.coroutines.launch
 
@@ -60,13 +61,6 @@ class ViewModelPostWriting :ViewModel(){
         _images?.let { currentList.removeAt(pos) }
         _images.value = currentList
     }
-
-
-    /** 서버에 등록 요청 **/
-    fun requestUpload(targetPost : Post?){
-
-    }
-
 
 }
 

@@ -108,7 +108,7 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val imageAdapter = PicturesAdapterForWriting(this@CommuFragment_write as ImageDeleteListner)
-
+        setInitialImage()
         //이미지 반영
         viewModel.images.observe(viewLifecycleOwner){ items->
             if(items.size <= 0){
@@ -131,7 +131,7 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
             btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
             btnUpload.setOnClickListener {
                 val newPostWrited = Post(
-                    id = 0,
+                    id = -1,
                     title = title.text.toString(),
                     images = ArrayList(imageAdapter.currentList.map { it.toString() }),
                     content = content.text.toString(),
@@ -168,6 +168,13 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
         }
     }
 
+    private fun setInitialImage() {
+        mushHistoryForWriting?.let { target->
+            val uris = target.picPath.map { Uri.parse(it) }
+            viewModel.addUris(ArrayList(uris))
+        }
+    }
+
 
     override fun onDestroyView() {
         _binding = null
@@ -198,7 +205,7 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
                     val imageUris = arrayListOf<Uri>()
 
                     // 이미지 개수 체크
-                    if (count > maxImageCount) {
+                    if (viewModel.images.value?.size ?: 0 + count > maxImageCount) {
                         // 너무 많은 이미지가 선택되었음을 사용자에게 알림
                         // 예: Toast 메시지 표시
                         Toast.makeText(
