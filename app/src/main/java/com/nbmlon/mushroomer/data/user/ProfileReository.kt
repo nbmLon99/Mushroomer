@@ -17,7 +17,10 @@ fun ProfileRepository() : ProfileRepository = ProfileRepositoryImpl()
 
 interface  ProfileRepository{
     suspend fun withdrawal(domain : ProfileUseCaseRequest.WithdrawalRequestDomain) : ProfileUseCaseResponse
-    suspend fun modifyProfile(domain: ProfileUseCaseRequest.ModifyProfileRequestDomain) : ProfileUseCaseResponse
+    suspend fun modifyPwd(domain: ProfileUseCaseRequest.ModifyPwdRequestDomain) : ProfileUseCaseResponse
+    suspend fun modifyNickname(domain: ProfileUseCaseRequest.ModifyNicknameRequestDomain) : ProfileUseCaseResponse
+    suspend fun modifyIcon(domain: ProfileUseCaseRequest.ModifyIconRequestDomain) : ProfileUseCaseResponse
+
 }
 
 
@@ -43,10 +46,46 @@ private class ProfileRepositoryImpl : ProfileRepository {
         }
     }
 
-    override suspend fun modifyProfile(domain: ProfileUseCaseRequest.ModifyProfileRequestDomain): ProfileUseCaseResponse {
+    override suspend fun modifyPwd(domain: ProfileUseCaseRequest.ModifyPwdRequestDomain): ProfileUseCaseResponse {
         return try{
             withContext(Dispatchers.IO){
                 service.withdrawal(AppUser.user!!.id).await().toProfileDomain()
+            }
+        }catch (e : IOException){
+            ProfileUseCaseResponse.SuccessResponseDomain(
+                false,
+                ResponseCodeConstants.NETWORK_ERROR_CODE
+            )
+        }catch (e : Exception){
+            ProfileUseCaseResponse.SuccessResponseDomain(
+                false,
+                ResponseCodeConstants.UNDEFINED_ERROR_CODE
+            )
+        }
+    }
+
+    override suspend fun modifyNickname(domain: ProfileUseCaseRequest.ModifyNicknameRequestDomain): ProfileUseCaseResponse {
+        return try{
+            withContext(Dispatchers.IO){
+                TODO("명세서")
+            }
+        }catch (e : IOException){
+            ProfileUseCaseResponse.SuccessResponseDomain(
+                false,
+                ResponseCodeConstants.NETWORK_ERROR_CODE
+            )
+        }catch (e : Exception){
+            ProfileUseCaseResponse.SuccessResponseDomain(
+                false,
+                ResponseCodeConstants.UNDEFINED_ERROR_CODE
+            )
+        }
+    }
+
+    override suspend fun modifyIcon(domain: ProfileUseCaseRequest.ModifyIconRequestDomain): ProfileUseCaseResponse {
+        return try{
+            withContext(Dispatchers.IO){
+                TODO("명세서")
             }
         }catch (e : IOException){
             ProfileUseCaseResponse.SuccessResponseDomain(

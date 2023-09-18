@@ -7,7 +7,9 @@ import com.nbmlon.mushroomer.model.User
 
 sealed class ProfileUseCaseRequest{
     data class WithdrawalRequestDomain(val email : String, val password : String) : ProfileUseCaseRequest()
-    data class ModifyProfileRequestDomain(val password: String, val modifiedPwd : String? , val modified : User) : ProfileUseCaseRequest(){
+    data class ModifyIconRequestDomain(val icon : String) : ProfileUseCaseRequest()
+    data class ModifyNicknameRequestDomain(val nickname : String) : ProfileUseCaseRequest()
+    data class ModifyPwdRequestDomain(val password: String, val modifiedPwd : String?, val modified : User) : ProfileUseCaseRequest(){
         fun toDTO() : UserRequestDTO.RegisterRequestDTO =
             UserRequestDTO.RegisterRequestDTO(
                 name = modified.name,

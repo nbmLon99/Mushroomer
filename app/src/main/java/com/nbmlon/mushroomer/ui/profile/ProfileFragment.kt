@@ -3,7 +3,6 @@ package com.nbmlon.mushroomer.ui.profile
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
@@ -28,8 +27,6 @@ import com.nbmlon.mushroomer.databinding.DialogWithdrawalBinding
 import com.nbmlon.mushroomer.databinding.FragmentProfileBinding
 import com.nbmlon.mushroomer.domain.ProfileUseCaseRequest
 import com.nbmlon.mushroomer.domain.ProfileUseCaseResponse
-import com.nbmlon.mushroomer.model.User
-import com.nbmlon.mushroomer.ui.commu.board.CommuFragment_write
 import com.nbmlon.mushroomer.ui.login.LoginActivity
 import com.nbmlon.mushroomer.utils.BiometricPromptUtils
 import com.nbmlon.mushroomer.utils.CIPHERTEXT_WRAPPER
@@ -65,12 +62,9 @@ class ProfileFragment : Fragment(), DialogListener {
                 if (data.data != null) {
                     // 단일 이미지 선택 시
                     val imageUri = data.data!!
-                    TODO("아이콘 변경시 패스워드값 필요없도록 변경해야함 명세서")
                     profileViewModel.request(
-                        ProfileUseCaseRequest.ModifyProfileRequestDomain(
-                            password = "",
-                            modifiedPwd = null,
-                            modified = AppUser.user!!.getModifiedIcon(imageUri.toString())
+                        ProfileUseCaseRequest.ModifyIconRequestDomain(
+                            icon = imageUri.toString()
                         )
                     )
                 }
@@ -206,15 +200,11 @@ class ProfileFragment : Fragment(), DialogListener {
             btnStart.setOnClickListener {
                 if(etNickname.text.toString().length < 3){
                     etNickname.error = "닉네임은 최소 3글자입니다."
-                }else if(etPassword.text.toString().length < 6){
-                    etPassword.error = "비밀번호는 최소 6글자입니다"
                 }else{
                     val my = AppUser.user!!
                     val newNickname = etNickname.text.toString()
-                    profileViewModel.request(ProfileUseCaseRequest.ModifyProfileRequestDomain(
-                        password = newNickname,
-                        modifiedPwd = null,
-                        modified = my.getModifiedNickname(newNickname)
+                    profileViewModel.request(ProfileUseCaseRequest.ModifyNicknameRequestDomain(
+                        nickname = newNickname
                     ))
                     onSuccessResponse = {
                         Sweetalert(context,Sweetalert.NORMAL_TYPE).apply {
@@ -247,7 +237,7 @@ class ProfileFragment : Fragment(), DialogListener {
                 }else if(!etNewPassword.text.equals(etNewPasswordConfirm.text)){
                     etNewPasswordConfirm.error = "비밀번호가 일치하지 않습니다!"
                 }else{
-                    profileViewModel.request(ProfileUseCaseRequest.ModifyProfileRequestDomain(
+                    profileViewModel.request(ProfileUseCaseRequest.ModifyPwdRequestDomain(
                         password = etOldPassword.text.toString(),
                         modifiedPwd = etNewPassword.text.toString(),
                         modified = AppUser.user!!

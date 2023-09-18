@@ -19,12 +19,17 @@ class ProfileViewModel : ViewModel() {
         request = {domain ->
             viewModelScope.launch {
                 when(domain){
-                    is ProfileUseCaseRequest.ModifyProfileRequestDomain ->{
-                        _response.value = repository.modifyProfile(domain)
+                    is ProfileUseCaseRequest.ModifyPwdRequestDomain ->{
+                        _response.value = repository.modifyPwd(domain)
                     }
                     is ProfileUseCaseRequest.WithdrawalRequestDomain ->{
                         _response.value = repository.withdrawal(domain)
-
+                    }
+                    is ProfileUseCaseRequest.ModifyNicknameRequestDomain->{
+                        _response.value = repository.modifyNickname(domain)
+                    }
+                    is ProfileUseCaseRequest.ModifyIconRequestDomain->{
+                        _response.value = repository.modifyIcon(domain)
                     }
                 }
             }

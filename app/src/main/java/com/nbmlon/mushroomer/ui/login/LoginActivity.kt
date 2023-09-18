@@ -341,9 +341,9 @@ class LoginActivity : AppCompatActivity() {
                     etName.error ="빈칸을 채워주세요"
                 }else if(etPhoneNumber.text.toString().isEmpty()){
                     etPhoneNumber.error ="빈칸을 채워주세요"
-                }else if(etNickname.text.toString().isEmpty()){
-                    etNickname.error = "빈칸을 채워주세요"
-                }else if(!(etEmail.text.toString().contains('@') && Patterns.EMAIL_ADDRESS.matcher(etEmail.text.toString()).matches())){
+                }else if(etNickname.text.toString().length < 3){
+                etNickname.error = "닉네임은 최소 3글자입니다."
+                } else if(!(etEmail.text.toString().contains('@') && Patterns.EMAIL_ADDRESS.matcher(etEmail.text.toString()).matches())){
                     etEmail.error = "이메일 형식을 확인해 주세요"
                 }else if(etPassword.text.toString().length <=5 ) {
                     etPassword.error = "비밀번호는 최소 6글자입니다."
