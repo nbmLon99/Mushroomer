@@ -13,6 +13,7 @@
         android:layout_gravity="center"/>
 
     <EditText
+        android:id="@+id/et_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="이름"
@@ -20,13 +21,30 @@
         android:layout_marginTop="16dp"/>
 
     <EditText
+        android:id="@+id/et_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="이메일"
         android:inputType="textEmailAddress"
         android:layout_marginTop="16dp"/>
-
     <EditText
+        android:id="@+id/et_nickname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="닉네임"
+        android:inputType="textPassword"
+        android:layout_marginTop="16dp"
+        />
+    <EditText
+        android:id="@+id/et_phone_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="휴대폰 번호"
+        android:inputType="phone"
+        android:layout_marginTop="16dp"
+    />
+    <EditText
+        android:id="@+id/et_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="비밀번호"
@@ -34,6 +52,7 @@
         android:layout_marginTop="16dp"
         />
     <EditText
+        android:id="@+id/et_password_confirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="비밀번호 확인"
@@ -41,15 +60,7 @@
         android:layout_marginTop="16dp"
         />
 
-        <EditText
-            android:id="@+id/et_nickname"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="닉네임"
-            android:inputType="textPassword"
-            android:layout_marginTop="16dp"
-            />
+
 
 
     <Button

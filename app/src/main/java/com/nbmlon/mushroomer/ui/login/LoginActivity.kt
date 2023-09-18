@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Patterns
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
@@ -11,10 +13,13 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Observer
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.NICKNAME_DUPLICATED
 import com.nbmlon.mushroomer.databinding.ActivityLoginBinding
 import com.nbmlon.mushroomer.databinding.DialogFindIdBinding
 import com.nbmlon.mushroomer.databinding.DialogFindPwBinding
 import com.nbmlon.mushroomer.databinding.DialogRegisterBinding
+import com.nbmlon.mushroomer.domain.LoginUseCaseRequest
 import com.nbmlon.mushroomer.domain.LoginUseCaseRequest.LoginRequestDomain
 import com.nbmlon.mushroomer.domain.LoginUseCaseRequest.TokenLoginRequestDomain
 import com.nbmlon.mushroomer.domain.LoginUseCaseResponse
@@ -53,7 +58,8 @@ class LoginActivity : AppCompatActivity() {
         )
     private lateinit var loading : Sweetalert
     private lateinit var sharedPrefs : SharedPreferences
-
+    private var registerDialog : Sweetalert? = null
+    private var registerBinding : DialogRegisterBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -138,15 +144,30 @@ class LoginActivity : AppCompatActivity() {
 
             }
             is SuccessResponseDomain ->{
-                if(response.success)
-                    TODO("성공 다이얼로그")
+                if(response.success){
+                    Toast.makeText(this@LoginActivity,"성공",Toast.LENGTH_SHORT).show()
+                    if(registerDialog != null){
+                        registerDialog!!.dismissWithAnimation()
+                        registerDialog = null
+                        registerBinding = null
+                    }
+                }else if(response.code == NICKNAME_DUPLICATED){
+                    Toast.makeText(this@LoginActivity,"닉네임 중복",Toast.LENGTH_SHORT).show()
+                    if(registerDialog != null){
+                        registerBinding!!.etNickname.error = "닉네임 중복입니다."
+                    }
+
+                }else if(response.code == NETWORK_ERROR_CODE){
+                    Toast.makeText(this@LoginActivity,"네트워크 연결을 확인해주세요",Toast.LENGTH_SHORT).show()
+
+                } else{
+                    Toast.makeText(this@LoginActivity,"다시 시도해주세요",Toast.LENGTH_SHORT).show()
+                }
             }
             is GenerateTokenResponseDomain -> {
 
             }
         }
-
-
     }
 
     // USERNAME + PASSWORD SECTION
@@ -312,16 +333,40 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun openRegisterDialog(){
-        val dialog = Sweetalert(this, Sweetalert.NORMAL_TYPE)
-        val dialogBinding = DialogRegisterBinding.inflate(layoutInflater).apply {
+        registerDialog = Sweetalert(this, Sweetalert.NORMAL_TYPE)
+        registerBinding = DialogRegisterBinding.inflate(layoutInflater).apply {
             //회원가입 시도
             btnRegister.setOnClickListener {
+                if(etName.text.toString().isEmpty() ){
+                    etName.error ="빈칸을 채워주세요"
+                }else if(etPhoneNumber.text.toString().isEmpty()){
+                    etPhoneNumber.error ="빈칸을 채워주세요"
+                }else if(etNickname.text.toString().isEmpty()){
+                    etNickname.error = "빈칸을 채워주세요"
+                }else if(!(etEmail.text.toString().contains('@') && Patterns.EMAIL_ADDRESS.matcher(etEmail.text.toString()).matches())){
+                    etEmail.error = "이메일 형식을 확인해 주세요"
+                }else if(etPassword.text.toString().length <=5 ) {
+                    etPassword.error = "비밀번호는 최소 6글자입니다."
+                }else if(!etPassword.text.equals(etPasswordConfirm.text)){
+                    etPasswordConfirm.error = "비밀번호가 일치하지 않습니다!"
+                }else{
+                    loginViewModel.request(
+                        LoginUseCaseRequest.RegisterRequestDomain(
+                            name = etName.text.toString(),
+                            email = etEmail.text.toString(),
+                            password = etPassword.text.toString(),
+                            nickname = etNickname.text.toString(),
+                            cellphone = etPhoneNumber.text.toString()
+                        )
+                    )
+                    loading.show()
+                }
 
 
             }
         }
-        dialog.apply {
-            setCustomView(dialogBinding.root)
+        registerDialog!!.apply {
+            setCustomView(registerBinding!!.root)
             show()
         }
     }

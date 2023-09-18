@@ -6,4 +6,6 @@ object ResponseCodeConstants {
     const val UNDEFINED_ERROR_CODE = 999
     const val LOW_ACCURACY_ERROR = 991
     const val BITMAP_SAVE_ERROR = 992
+
+    const val NICKNAME_DUPLICATED = 880
 }
