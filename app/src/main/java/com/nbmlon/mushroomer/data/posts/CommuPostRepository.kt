@@ -5,6 +5,8 @@ import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
 import com.nbmlon.mushroomer.api.service.BoardService
 import com.nbmlon.mushroomer.api.service.CommentService
 import com.nbmlon.mushroomer.api.service.ReportService
+import com.nbmlon.mushroomer.api.service.ThumbsUpService
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest
 import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest.DeleteRequestDomain
 import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest.LoadPostRequestDomain
 import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest.ModifyCommentRequestDomain
@@ -26,6 +28,7 @@ interface CommuPostRepository {
     suspend fun delete(domain: DeleteRequestDomain) : CommuPostUseCaseResponse
     suspend fun uploadComment(domain: UploadCommentRequestDomain) : CommuPostUseCaseResponse
     suspend fun modifyComment(domain: ModifyCommentRequestDomain) : CommuPostUseCaseResponse
+    suspend fun changeThumbsUpState(domain: CommuPostUseCaseRequest.ChangeThumbsUpRequestDomain) : CommuPostUseCaseResponse
     suspend fun loadPost(domain: LoadPostRequestDomain) : CommuPostUseCaseResponse.PostResponseDomain
 }
 
@@ -38,6 +41,7 @@ class CommuPostRepositoryImpl : CommuPostRepository {
     @Inject lateinit var boardService : BoardService
     @Inject lateinit var reportService : ReportService
     @Inject lateinit var commentService : CommentService
+    @Inject lateinit var thumbsUpService: ThumbsUpService
 
     override suspend fun report(domain : ReportRequestDomain): CommuPostUseCaseResponse {
         return try{
@@ -99,6 +103,10 @@ class CommuPostRepositoryImpl : CommuPostRepository {
         }catch (e : Exception){
             CommuPostUseCaseResponse.SuccessResponseDomain(false)
         }
+    }
+
+    override suspend fun changeThumbsUpState(domain: CommuPostUseCaseRequest.ChangeThumbsUpRequestDomain): CommuPostUseCaseResponse {
+        TODO("명세서")
     }
 
     override suspend fun loadPost(domain: LoadPostRequestDomain): CommuPostUseCaseResponse.PostResponseDomain {

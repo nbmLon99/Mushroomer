@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
 import com.nbmlon.mushroomer.databinding.DialogEdittextBinding
 import com.nbmlon.mushroomer.databinding.FragmentCommuPostBinding
 import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest
@@ -52,9 +53,9 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
         super.onCreate(savedInstanceState)
         arguments?.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                targetPost = it.getSerializable(TARGET_POST, Post::class.java) ?: viewModel.mPost.value!!
+                targetPost = it.getSerializable(TARGET_POST, Post::class.java) ?: viewModel.mPost.value?.post!!
             }else{
-                targetPost = it.getSerializable(TARGET_POST) as? Post ?: viewModel.mPost.value!!
+                targetPost = it.getSerializable(TARGET_POST) as? Post ?: viewModel.mPost.value?.post!!
             }
         }
         //targetPost 로딩 요청
@@ -76,9 +77,6 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
         viewModel.response.observe(viewLifecycleOwner, ::responseObserver)
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -94,24 +92,31 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
         super.onDestroyView()
     }
 
-    private fun bindingPost(targetPost: Post){
-        binding.apply {
-            post = targetPost
-            if(targetPost.images?.size ?: 0 > 0)
-                imageSlider.setSliderAdapter(ImageSliderAdapter(targetPost.images!!.toList()))
+    private fun bindingPost(domain: CommuPostUseCaseResponse.PostResponseDomain){
+        if(domain.success){
+            binding.apply {
+                post = domain.post!!
+                if(domain.post.images?.size ?: 0 > 0)
+                    imageSlider.setSliderAdapter(ImageSliderAdapter(domain.post.images!!.toList()))
 
-            boardType.text = resources.getString(post?.boardType!!.boardNameResId)
-            targetPost?.comments?.let{comments ->
-                commentAdapter = AdapterPostComment(this@CommuFragment_post as PopupMenuClickListener)
-                commentRV.adapter = commentAdapter.apply { submitList(comments) }
+                boardType.text = resources.getString(post?.boardType!!.boardNameResId)
+                domain.post?.comments?.let{ comments ->
+                    commentAdapter = AdapterPostComment(this@CommuFragment_post as PopupMenuClickListener)
+                    commentRV.adapter = commentAdapter.apply { submitList(comments) }
+                }
+                btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+                btnPostMore.setOnClickListener { showContextMenu(btnPostMore) }
+                replyCancel.setOnClickListener {
+                    replyFor = null
+                    setReplyTarget(replyFor)
+                }
             }
-            btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
-            btnPostMore.setOnClickListener { showContextMenu(btnPostMore) }
-            replyCancel.setOnClickListener {
-                replyFor = null
-                setReplyTarget(replyFor)
-            }
+        }else if(domain.code == NETWORK_ERROR_CODE){
+            Toast.makeText(requireActivity(),getString(R.string.network_error_msg),Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(requireActivity(),getString(R.string.error_msg),Toast.LENGTH_SHORT).show()
         }
+
     }
 
 
@@ -122,13 +127,26 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
         inflater.inflate(R.menu.post_context_menu, popupMenu.menu)
         popupMenu.apply {
             val isMine = targetPost?.writer == AppUser.user
+            val isLike = targetPost?.myThumbsUp ?: true
+
+            //좋아요 표시
+            menu?.findItem(R.id.like)?.isVisible = isLike
+            menu?.findItem(R.id.dislike)?.isVisible = !isLike
+
             menu?.findItem(R.id.report)?.isVisible = !isMine
-//            menu?.setGroupVisible(R.id.menuForOwner,true)
             menu?.setGroupVisible(R.id.menuForOwner, isMine)
             menu?.setGroupVisible(R.id.menuForComment,false)
 
             setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
+                    R.id.like ->{
+                        onChangeLike(targetPost, null, true)
+                        true
+                    }
+                    R.id.dislike ->{
+                        onChangeLike(targetPost, null,  false)
+                        true
+                    }
                     R.id.report -> {
                         openReportDialog(targetPost,null)
                         true
@@ -279,6 +297,20 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
         binding.setReplyTarget(replyFor)
     }
 
+    override fun onChangeLike(target_post: Post?, target_comment: Comment?, like: Boolean) {
+        viewModel.request(CommuPostUseCaseRequest.ChangeThumbsUpRequestDomain(like))
+        onResponseSuccess = {
+            target_post?.let{
+                it.myThumbsUp = like
+                it.ThumbsUpCount += 1
+            }
+            target_comment?.let {
+                it.myThumbsUp = like
+                it.thumbsUpCount += 1
+            }
+        }
+    }
+
 
     /** 서버 요청에 대한 결과값 처리 **/
     private fun responseObserver(response : CommuPostUseCaseResponse){
@@ -296,13 +328,6 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
             else ->{
                 error("로드가 선택됨")
             }
-        }
-    }
-
-    private fun onSuccessReport(){
-        Sweetalert(this@CommuFragment_post.context,Sweetalert.BUTTON_NEUTRAL).apply {
-            titleText = "신고 접수되었습니다!"
-            setNeutralButton("확인"){this.dismissWithAnimation()}
         }
     }
 

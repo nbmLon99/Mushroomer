@@ -27,8 +27,8 @@ data class Comment(
     var content : String,
     val time : DateTime,
     val replies : ArrayList<Comment>?,
-    val thumbsUpCount : Int = 0,
-    val myThumbsUp : Boolean = false,
+    var thumbsUpCount : Int = 0,
+    var myThumbsUp : Boolean = false,
     ): Serializable {
     companion object {
         fun getDummyswithReplies(): ArrayList<Comment> {

@@ -40,7 +40,7 @@ data class Post(
     var ThumbsUpCount: Int,
 
     val boardType : BoardType,
-    val myThumbsUp: Boolean = false,
+    var myThumbsUp: Boolean = false,
     val updated: Boolean = false
     ) :Serializable {
     companion object {

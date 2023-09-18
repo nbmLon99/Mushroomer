@@ -13,6 +13,7 @@ sealed class CommuPostUseCaseRequest{
     data class UploadCommentRequestDomain(val target : Comment) : CommuPostUseCaseRequest()
     data class ModifyCommentRequestDomain(val target : Comment, val modified : String) : CommuPostUseCaseRequest()
     data class LoadPostRequestDomain(val id : Int) :  CommuPostUseCaseRequest()
+    data class ChangeThumbsUpRequestDomain(val toLike : Boolean) : CommuPostUseCaseRequest()
 
 }
 

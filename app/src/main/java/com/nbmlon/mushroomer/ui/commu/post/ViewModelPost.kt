@@ -18,8 +18,8 @@ import kotlinx.coroutines.launch
 class ViewModelPost : ViewModel() {
     private val repository = CommuPostRepository()
 
-    val _mPost = MutableLiveData<Post>()
-    val mPost : LiveData<Post> = _mPost!!
+    val _mPost = MutableLiveData<CommuPostUseCaseResponse.PostResponseDomain>()
+    val mPost : LiveData<CommuPostUseCaseResponse.PostResponseDomain> = _mPost!!
 
     val _response = MutableLiveData<CommuPostUseCaseResponse>()
     val response : LiveData<CommuPostUseCaseResponse> = _response
@@ -47,7 +47,10 @@ class ViewModelPost : ViewModel() {
                         _response.value =  repository.modifyComment(request)
                     }
                     is LoadPostRequestDomain ->{
-                        _mPost.value =  repository.loadPost(LoadPostRequestDomain(request.id)).post
+                        _mPost.value =  repository.loadPost(LoadPostRequestDomain(request.id))
+                    }
+                    is CommuPostUseCaseRequest.ChangeThumbsUpRequestDomain ->{
+                        _response.value = repository.changeThumbsUpState(request)
                     }
                 }
             }
