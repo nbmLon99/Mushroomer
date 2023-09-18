@@ -1,7 +1,9 @@
 package com.nbmlon.mushroomer.ui.profile
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
@@ -9,6 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
@@ -24,6 +28,8 @@ import com.nbmlon.mushroomer.databinding.DialogWithdrawalBinding
 import com.nbmlon.mushroomer.databinding.FragmentProfileBinding
 import com.nbmlon.mushroomer.domain.ProfileUseCaseRequest
 import com.nbmlon.mushroomer.domain.ProfileUseCaseResponse
+import com.nbmlon.mushroomer.model.User
+import com.nbmlon.mushroomer.ui.commu.board.CommuFragment_write
 import com.nbmlon.mushroomer.ui.login.LoginActivity
 import com.nbmlon.mushroomer.utils.BiometricPromptUtils
 import com.nbmlon.mushroomer.utils.CIPHERTEXT_WRAPPER
@@ -47,6 +53,33 @@ class ProfileFragment : Fragment(), DialogListener {
     private val cryptographyManager = CryptographyManager()
     private var onSuccessResponse : ((ProfileUseCaseResponse) -> (Unit))? = null
     private lateinit var loading : Sweetalert
+
+    private val iconLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result->
+        onIconResult(result)
+    }
+
+    private fun onIconResult(result: ActivityResult?) {
+        if (result?.resultCode == Activity.RESULT_OK) {
+            val data = result.data
+            if (data != null) {
+                if (data.data != null) {
+                    // 단일 이미지 선택 시
+                    val imageUri = data.data!!
+                    TODO("아이콘 변경시 패스워드값 필요없도록 변경해야함 명세서")
+                    profileViewModel.request(
+                        ProfileUseCaseRequest.ModifyProfileRequestDomain(
+                            password = "",
+                            modifiedPwd = null,
+                            modified = AppUser.user!!.getModifiedIcon(imageUri.toString())
+                        )
+                    )
+                }
+            }
+        }else{
+            Toast.makeText(context,getString(R.string.error_msg),Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -83,6 +116,13 @@ class ProfileFragment : Fragment(), DialogListener {
             btnWithdrawal.setOnClickListener { showWithdrawalDialog() }
             btnChgLoginMethod.setOnClickListener { showDialogLoginMethod() }
 
+            iconFrame.setOnClickListener {
+                iconLauncher.launch(
+                    Intent(Intent.ACTION_GET_CONTENT).apply {
+                        type = "image/*"
+                    }
+                )
+            }
             btnLogout.setOnClickListener { showLogoutDialog() }
         }
     }
@@ -286,6 +326,10 @@ class ProfileFragment : Fragment(), DialogListener {
             Context.MODE_PRIVATE
         )
         sharedPreferences.edit().remove(CIPHERTEXT_WRAPPER).apply()
+    }
+
+    fun modifyImage(){
+        TODO("프로필 이미지 변경 연결")
     }
 }
 
