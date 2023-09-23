@@ -1,6 +1,7 @@
 package com.nbmlon.mushroomer.ui.commu.board
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,6 +47,7 @@ class CommuFragmentBoard_hot private constructor(): CommuBoardFragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCommuHotBinding.inflate(layoutInflater)
+        Log.d(TAG, mBoardType.name)
         val viewModelFactory = BoardViewModelFactory(
             owner = this,
             repository = BoardPostsRepository(),
