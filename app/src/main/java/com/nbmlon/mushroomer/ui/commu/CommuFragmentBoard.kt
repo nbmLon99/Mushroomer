@@ -1,5 +1,6 @@
 package com.nbmlon.mushroomer.ui.commu
 
+import android.util.Log
 import android.widget.RadioGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -196,7 +197,6 @@ open abstract class CommuBoardFragment : Fragment(), PostClickListener{
     ){
         if(boardGroup == null)
             return
-
         boardGroup!!.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.radio_qna -> {

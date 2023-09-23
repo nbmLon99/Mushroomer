@@ -78,9 +78,7 @@
                 android:textColor="@color/option_radio_clickable_color"
                 android:button="@null"
                 android:background="@null"
-                android:checked="true"
                 android:padding="3dp"
-
                 />
 
             <RadioButton
