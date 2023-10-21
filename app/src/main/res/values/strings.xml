@@ -142,4 +142,8 @@
     </string-array>
 
 
+    <!-- 버섯 이미지 기록 -->
+    <string name="findAtDogam">도감에서 정보 확인하기</string>
+    <string name="findAtMap">지도에서 정보 확인하기</string>
+
 </resources>

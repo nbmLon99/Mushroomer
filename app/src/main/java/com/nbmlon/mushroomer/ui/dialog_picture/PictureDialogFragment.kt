@@ -67,7 +67,10 @@ class PictureDialogFragment private constructor(): DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             history = mMushHistory
-
+            binding.btnGoAnother.text = when (callFrom) {
+                PictureDialogFrom.DogamFrag -> getString(R.string.findAtMap)
+                PictureDialogFrom.MapFrag -> getString(R.string.findAtDogam)
+            }
             imageSlider.setSliderAdapter(ImageSliderAdapter(mMushHistory.picPath.toList()))
 
             btnGoAnother.setOnClickListener { goAnother(); this@PictureDialogFragment.dismiss() }
