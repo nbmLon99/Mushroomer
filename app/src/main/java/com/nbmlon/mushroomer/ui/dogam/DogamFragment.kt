@@ -10,17 +10,23 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.RecyclerView
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.UNDEFINED_ERROR_CODE
 import com.nbmlon.mushroomer.data.dogam.DogamRepository
 import com.nbmlon.mushroomer.databinding.DialogEdittextBinding
 import com.nbmlon.mushroomer.databinding.FragmentDogamBinding
+import com.nbmlon.mushroomer.domain.DogamUseCaseResponse
 import com.nbmlon.mushroomer.model.MushHistory
 import com.nbmlon.mushroomer.model.Mushroom
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -49,6 +55,7 @@ class DogamFragment : Fragment(), DogamItemClickListner {
     private var _binding: FragmentDogamBinding? = null
     private val binding get() = _binding!!
     private var targetMush: Mushroom? = null
+    private var fetchState : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,11 +83,44 @@ class DogamFragment : Fragment(), DogamItemClickListner {
         )
 
         val viewModel: DogamViewModel by viewModels { viewModelFactory }
-        binding.bindState(
-            uiState = viewModel.state,
-            pagingData = viewModel.pagingDataFlow,
-            uiActions = viewModel.accept
-        )
+        val loading = Sweetalert(requireActivity(),Sweetalert.PROGRESS_TYPE).apply {
+            setTitleText(R.string.loading)
+            setCancelable(false)
+            show()
+        }
+
+
+        viewModel.responseLiveData.observe(viewLifecycleOwner, object : Observer<DogamUseCaseResponse.LoadDogamResponse> {
+            override fun onChanged(response: DogamUseCaseResponse.LoadDogamResponse) {
+                loading.dismissWithAnimation()
+
+                if(response.success){
+                    fetchState = true
+                    binding.bindState(
+                        uiState = viewModel.state,
+                        pagingData = viewModel.pagingDataFlow,
+                        uiActions = viewModel.accept
+                    )
+                    // 성공시 Observer를 제거하여 한 번만 호출되게 함
+                    viewModel.responseLiveData.removeObserver(this)
+
+                }else {
+                    //에러 처리
+                    binding.dogamRV.visibility = View.GONE
+                    binding.errorFrame.visibility = View.VISIBLE
+                    binding.retryButton.setOnClickListener {
+                        CoroutineScope(Dispatchers.IO).launch { viewModel.fetchData() }
+                        loading.show()
+                    }
+
+                    if(response.code == NETWORK_ERROR_CODE){
+                        binding.tvErrorMsg.text = getString(R.string.network_error_msg)
+                    }else if(response.code == UNDEFINED_ERROR_CODE){
+                        binding.tvErrorMsg.text = getString(R.string.error_msg)
+                    }
+                }
+            }
+        })
 
         return binding.root
     }
@@ -130,11 +170,10 @@ class DogamFragment : Fragment(), DogamItemClickListner {
         uiActions: (DogamUiAction) -> Unit
     ) {
         val dogamItemAdapter = DogamItemAdapter(this@DogamFragment::onDogamItemClicked)
-
-        dogamRV.adapter = dogamItemAdapter.withLoadStateFooter(
-            footer = DogamLoadStateAdapter { dogamItemAdapter.retry() }
-        )
-
+        dogamRV.adapter = dogamItemAdapter
+//        dogamRV.adapter = dogamItemAdapter.withLoadStateFooter(
+//            footer = DogamLoadStateAdapter { dogamItemAdapter.retry() }
+//        )
 
         bindSearch(
             onSearchCall =  uiActions
@@ -283,32 +322,32 @@ class DogamFragment : Fragment(), DogamItemClickListner {
                 }
             }
 
-            lifecycleScope.launch {
-                dogamItemAdapter.loadStateFlow.collect { loadState ->
-                    val isListEmpty = loadState.refresh is LoadState.NotLoading && dogamItemAdapter.itemCount == 0
-                    // show empty list
-                    emptyList.isVisible = isListEmpty
-                    // Only show the list if refresh succeeds.
-                    dogamRV.isVisible = !isListEmpty
-                    // Show loading spinner during initial load or refresh.
-                    progressSpinner.isVisible = loadState.source.refresh is LoadState.Loading
-                    // Show the retry state if initial load or refresh fails.
-                    retryButton.isVisible = loadState.source.refresh is LoadState.Error
-
-                    // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
-                    val errorState = loadState.source.append as? LoadState.Error
-                        ?: loadState.source.prepend as? LoadState.Error
-                        ?: loadState.append as? LoadState.Error
-                        ?: loadState.prepend as? LoadState.Error
-                    errorState?.let {
-                        Toast.makeText(
-                            requireContext(),
-                            "\uD83D\uDE28 Wooops ${it.error}",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
-            }
+//            lifecycleScope.launch {
+//                dogamItemAdapter.loadStateFlow.collect { loadState ->
+//                    val isListEmpty = loadState.refresh is LoadState.NotLoading && dogamItemAdapter.itemCount == 0
+//                    // show empty list
+//                    emptyList.isVisible = isListEmpty
+//                    // Only show the list if refresh succeeds.
+//                    dogamRV.isVisible = !isListEmpty
+//                    // Show loading spinner during initial load or refresh.
+//                    progressSpinner.isVisible = loadState.source.refresh is LoadState.Loading
+//                    // Show the retry state if initial load or refresh fails.
+//                    retryButton.isVisible = loadState.source.refresh is LoadState.Error
+//
+//                    // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
+//                    val errorState = loadState.source.append as? LoadState.Error
+//                        ?: loadState.source.prepend as? LoadState.Error
+//                        ?: loadState.append as? LoadState.Error
+//                        ?: loadState.prepend as? LoadState.Error
+//                    errorState?.let {
+//                        Toast.makeText(
+//                            requireContext(),
+//                            "\uD83D\uDE28 Wooops ${it.error}",
+//                            Toast.LENGTH_LONG
+//                        ).show()
+//                    }
+//                }
+//            }
 
         }
 

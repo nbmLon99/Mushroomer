@@ -17,7 +17,7 @@ sealed class DogamUseCaseResponse{
     data class LoadDogamResponse(
         override val success: Boolean = false,
         override val code : Int = ResponseCodeConstants.UNDEFINED_ERROR_CODE,
-        val items: ArrayList<Mushroom>
+        val items: List<Mushroom>
     ) : DogamUseCaseResponse()
     data class SpecificDogamResponse(
         override val success: Boolean = false,

@@ -18,8 +18,7 @@ private const val STARTING_KEY = 0
  * @param sortingOption : 정렬 기준
  */
 class DogamPagingSource(
-    val backend : MushroomService,
-    val domain : DogamUseCaseReqeust.LoadDogamResquestDomain
+    val items : List<Mushroom>
 ) : PagingSource<Int, Mushroom>() {
 
     override suspend fun load(
@@ -29,12 +28,10 @@ class DogamPagingSource(
             // Start refresh at page 1 if undefined.
             val startKey = params.key ?: STARTING_KEY
             val range = startKey.until(startKey + params.loadSize)
-            // 비동기로 호출하고 응답을 받기 위한 Deferred 객체를 생성
-            val response = backend.getMushrooms(domain.query, domain.sortingOption).await().toDogamDomain()
-
+            
             //val response = DogamResponse(Dogam.getDummy(3,query) )
             return LoadResult.Page(
-                data = response.items,
+                data = items,
                 prevKey = when (startKey) {
                     STARTING_KEY -> null
                     else -> when (val prevKey = ensureValidKey(key = range.first - params.loadSize)) {

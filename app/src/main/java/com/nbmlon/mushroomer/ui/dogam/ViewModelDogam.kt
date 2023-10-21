@@ -1,5 +1,7 @@
 package com.nbmlon.mushroomer.ui.dogam
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +11,7 @@ import androidx.paging.filter
 import androidx.paging.map
 import com.nbmlon.mushroomer.data.dogam.DogamRepository
 import com.nbmlon.mushroomer.domain.DogamUseCaseReqeust
+import com.nbmlon.mushroomer.domain.DogamUseCaseResponse
 import com.nbmlon.mushroomer.model.Mushroom
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -33,8 +36,10 @@ class DogamViewModel(
      * Stream of immutable states representative of the UI.
      */
     val state: StateFlow<DogamUiState>
-
     val pagingDataFlow: Flow<PagingData<DogamUiModel>>
+
+    private val _responseLiveData = MutableLiveData<DogamUseCaseResponse.LoadDogamResponse>()
+    val responseLiveData: LiveData<DogamUseCaseResponse.LoadDogamResponse> get() = _responseLiveData
 
     /**
      * Processor of side effects from the UI which in turn feedback into [state]
@@ -42,6 +47,10 @@ class DogamViewModel(
     val accept: (DogamUiAction) -> Unit
 
     init {
+        viewModelScope.launch {
+            fetchData()
+        }
+
         val initialQuery: String? = savedStateHandle[LAST_SEARCH_QUERY] ?: DEFAULT_QUERY
         val lastQueryScrolled: String? = savedStateHandle[LAST_QUERY_SCROLLED] ?: DEFAULT_QUERY
         val initialSorting : DogamSortingOption = savedStateHandle.get<DogamSortingOption>(LAST_SORTING_OPTION) ?: DEFAULT_SORTING
@@ -152,8 +161,13 @@ class DogamViewModel(
     }
 
     private fun loadDogam(query : String?, sortingWay : DogamSortingOption): Flow<PagingData<DogamUiModel>> =
-        repository.getDogamstream(DogamUseCaseReqeust.LoadDogamResquestDomain(query, sortingWay))
+        repository.getDogamstream(DogamUseCaseReqeust.LoadDogamResquestDomain(query, sortingWay), responseLiveData.value?.items ?: listOf())
             .map { pagingData -> pagingData.map { DogamUiModel.MushItem(it) } }
+
+    suspend fun fetchData(){
+        val response = repository.fetchDogam()
+        _responseLiveData.postValue(response)
+    }
 
 }
 

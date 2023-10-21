@@ -95,9 +95,6 @@
                 android:text="@string/no_search_result"
                 android:textSize="@dimen/text_sub"
                 />
-
-
-
         </LinearLayout>
 
     </FrameLayout>

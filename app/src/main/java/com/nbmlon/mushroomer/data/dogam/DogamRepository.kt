@@ -9,6 +9,7 @@ import com.nbmlon.mushroomer.domain.DogamUseCaseReqeust
 import com.nbmlon.mushroomer.domain.DogamUseCaseResponse
 import com.nbmlon.mushroomer.domain.toDogamDomain
 import com.nbmlon.mushroomer.model.Mushroom
+import com.nbmlon.mushroomer.ui.dogam.DogamSortingOption
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -17,7 +18,8 @@ import java.io.IOException
 import javax.inject.Inject
 
 interface DogamRepository {
-    fun getDogamstream(domain : DogamUseCaseReqeust.LoadDogamResquestDomain): Flow<PagingData<Mushroom>>
+    suspend fun fetchDogam() : DogamUseCaseResponse.LoadDogamResponse
+    fun getDogamstream(domain : DogamUseCaseReqeust.LoadDogamResquestDomain, items : List<Mushroom>): Flow<PagingData<Mushroom>>
     suspend fun getSpecificDogam(domain : DogamUseCaseReqeust.SpecificDogamRequestDomain) : DogamUseCaseResponse.SpecificDogamResponse
 }
 
@@ -30,14 +32,26 @@ private class DogamRepositoryImpl : DogamRepository {
 
     @Inject
     lateinit var backend : MushroomService
+    override suspend fun fetchDogam(): DogamUseCaseResponse.LoadDogamResponse {
+        return withContext(Dispatchers.IO){
+            backend.getMushrooms().await().toDogamDomain()
+        }
+    }
 
-    override fun getDogamstream(domain : DogamUseCaseReqeust.LoadDogamResquestDomain): Flow<PagingData<Mushroom>> {
+    override fun getDogamstream(domain : DogamUseCaseReqeust.LoadDogamResquestDomain, items : List<Mushroom>): Flow<PagingData<Mushroom>> {
+        val filteredItems = items.filter { it.name.contains(domain.query.orEmpty(), ignoreCase = true) }
+            .sortedWith(compareBy(
+                { it.name },
+                { it.dogamNo },
+                { it.rarity }
+            ))
+
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { DogamPagingSource( backend, domain) }
+            pagingSourceFactory = { DogamPagingSource( filteredItems )}
         ).flow
     }
 
@@ -51,6 +65,13 @@ private class DogamRepositoryImpl : DogamRepository {
         }catch (e : Exception){
             DogamUseCaseResponse.SpecificDogamResponse(false)
         }
+    }
 
+
+
+    suspend fun fetchData(): DogamUseCaseResponse.LoadDogamResponse {
+        return withContext(Dispatchers.IO) {
+            backend.getMushrooms().await().toDogamDomain()
+        }
     }
 }
