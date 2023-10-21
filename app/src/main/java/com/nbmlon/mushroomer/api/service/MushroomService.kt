@@ -13,7 +13,7 @@ import retrofit2.http.Path
 
 interface MushroomService {
     @GET("/mushrooms")
-    suspend fun getMushrooms(query : String?, sort : DogamSortingOption) : Call<MushroomResponseDTO.MushesResponseDTO>
+    suspend fun getMushrooms() : Call<MushroomResponseDTO.MushesResponseDTO>
     @GET("/mushrooms/{mushId}")
     suspend fun getMushroom(@Path("mushId") mushId : Int) : Call<MushroomResponseDTO.MushResponseDTO>
 }
