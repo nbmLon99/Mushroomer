@@ -28,10 +28,12 @@ class DogamPagingSource(
             // Start refresh at page 1 if undefined.
             val startKey = params.key ?: STARTING_KEY
             val range = startKey.until(startKey + params.loadSize)
-            
+
+            val data = items.subList(startKey, startKey + params.loadSize)
+
             //val response = DogamResponse(Dogam.getDummy(3,query) )
             return LoadResult.Page(
-                data = items,
+                data = data,
                 prevKey = when (startKey) {
                     STARTING_KEY -> null
                     else -> when (val prevKey = ensureValidKey(key = range.first - params.loadSize)) {
@@ -40,7 +42,7 @@ class DogamPagingSource(
                         else -> prevKey
                     }
                 },
-                nextKey = range.last + 1
+                nextKey = if (startKey + params.loadSize >= items.size) null else range.last + 1
             )
         } catch (e: IOException) {
             // IOException for network failures.
