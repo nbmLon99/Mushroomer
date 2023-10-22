@@ -8,6 +8,7 @@ import com.nbmlon.mushroomer.model.User
 import com.nbmlon.mushroomer.ui.commu.board.BoardType
 import org.joda.time.DateTime
 
+
 sealed class BoardResponseDTO{
     data class PostsArrayResponseDTO(
         @SerializedName("data") val posts: ArrayList<PostResponseDTO>,

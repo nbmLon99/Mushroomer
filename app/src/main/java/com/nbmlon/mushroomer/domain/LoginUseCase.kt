@@ -1,5 +1,7 @@
 package com.nbmlon.mushroomer.domain
 
+import com.nbmlon.mushroomer.MyApplication
+import com.nbmlon.mushroomer.api.EndConverter.sha256
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.UNDEFINED_ERROR_CODE
 import com.nbmlon.mushroomer.api.dto.UserRequestDTO
 import com.nbmlon.mushroomer.api.dto.UserResponseDTO.GenerateTokenResponseDTO
@@ -14,6 +16,7 @@ import com.nbmlon.mushroomer.domain.LoginUseCaseResponse.GenerateTokenResponseDo
 import com.nbmlon.mushroomer.domain.LoginUseCaseResponse.LoginResponseDomain
 import com.nbmlon.mushroomer.domain.LoginUseCaseResponse.SuccessResponseDomain
 import com.nbmlon.mushroomer.model.User
+import java.security.MessageDigest
 
 
 /** request**/
@@ -35,6 +38,14 @@ sealed class LoginUseCaseRequest{
         val cellphone : String
     ): LoginUseCaseRequest()
 
+    data class EditRequestDomain(
+        val name : String,
+        val password : String,
+        val nickname : String,
+        val cellphone : String,
+        val imageUrl : String
+    ): LoginUseCaseRequest()
+
     data class FindIdRequestDomain(
         val name : String,
         val cellphone: String
@@ -46,17 +57,29 @@ sealed class LoginUseCaseRequest{
     ) : LoginUseCaseRequest()
 }
 
+
+
 fun LoginRequestDomain.toDTO() : UserRequestDTO.LoginRequestDTO =
     UserRequestDTO.LoginRequestDTO(
         email = email,
-        password = password
+        password = sha256(password)
     )
+
+fun LoginUseCaseRequest.EditRequestDomain.toDTO() =
+    UserRequestDTO.EditRequestDTO(
+        name = name,
+        password = sha256(password),
+        nickname = nickname,
+        cellphone = cellphone,
+        imageUrl = imageUrl
+    )
+
 
 fun RegisterRequestDomain.toDTO() : UserRequestDTO.RegisterRequestDTO =
     UserRequestDTO.RegisterRequestDTO(
         name = name,
         email = email,
-        password = password,
+        password = sha256(password),
         nickname = nickname,
         cellphone = cellphone
     )

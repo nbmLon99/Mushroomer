@@ -17,6 +17,19 @@ sealed class UserRequestDTO{
         val nickname : String,
         val cellphone : String
     ) : UserRequestDTO()
+
+    data class EditRequestDTO(
+        val name : String,
+        val password : String,
+        val nickname : String,
+        val cellphone : String,
+        val imageUrl : String
+    )
+
+    data class WithdrawalRequestDTO(
+        val email : String,
+        val password: String
+    )
 }
 
 sealed class UserResponseDTO{

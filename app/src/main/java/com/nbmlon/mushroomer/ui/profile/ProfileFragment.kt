@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.api.EndConverter
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
 import com.nbmlon.mushroomer.databinding.DialogLoginMethodBinding
 import com.nbmlon.mushroomer.databinding.DialogModifyNicknameBinding
@@ -64,7 +65,7 @@ class ProfileFragment : Fragment(), DialogListener {
                     val imageUri = data.data!!
                     profileViewModel.request(
                         ProfileUseCaseRequest.ModifyIconRequestDomain(
-                            icon = imageUri.toString()
+                            icon = EndConverter.uriToPart(requireContext(), uri = imageUri)
                         )
                     )
                 }

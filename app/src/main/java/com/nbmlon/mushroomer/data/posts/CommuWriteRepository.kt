@@ -28,7 +28,7 @@ class CommuWriteRepositoryImpl : CommuWriteRepository {
     override suspend fun uploadPost(domain: CommuWriteUseCaseRequest.UploadPostDomain): CommuWriteUseCaseResponse {
         return try{
             withContext(Dispatchers.IO){
-                service.writePost(AppUser?.user!!.id, post = domain.post).await().toWriteDomain()
+                service.writePost(AppUser?.user!!.id, post = domain.post, images = domain.uploadImages).await().toWriteDomain()
             }
         }catch (e : IOException){
             CommuWriteUseCaseResponse.SuccessResponseDomain(false, NETWORK_ERROR_CODE)
@@ -40,7 +40,7 @@ class CommuWriteRepositoryImpl : CommuWriteRepository {
     override suspend fun modifyPost(domain: CommuWriteUseCaseRequest.ModifiyPostDomain): CommuWriteUseCaseResponse {
         return try{
             withContext(Dispatchers.IO){
-                service.modifyPost(AppUser?.user!!.id, domain.id, domain.modified).await().toWriteDomain()
+                service.modifyPost(AppUser?.user!!.id, domain.id, domain.modified, domain.uploadImages).await().toWriteDomain()
             }
         }catch (e : IOException){
             CommuWriteUseCaseResponse.SuccessResponseDomain(false, NETWORK_ERROR_CODE)

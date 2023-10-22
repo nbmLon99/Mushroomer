@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.api.EndConverter
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
 import com.nbmlon.mushroomer.databinding.FragmentCommuWriteBinding
 import com.nbmlon.mushroomer.domain.CommuWriteUseCaseRequest
@@ -133,7 +134,7 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
                 val newPostWrited = Post(
                     id = -1,
                     title = title.text.toString(),
-                    images = ArrayList(imageAdapter.currentList.map { it.toString() }),
+                    images = arrayListOf(),
                     content = content.text.toString(),
                     time = DateTime(),
                     writer = AppUser.user!!,
@@ -143,7 +144,7 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
                     boardType = mBoardType,
                     updated = false
                 )
-                if(newPostWrited.images!!.size <= 0 && mBoardType == BoardType.PicBoard){
+                if(imageAdapter.currentList.size <= 0 && mBoardType == BoardType.PicBoard){
                     Sweetalert(context, Sweetalert.BUTTON_CANCEL)
                         .setTitleText("사진 게시판에는 반드시 하나 이상의 사진 등록이 필요합니다!")
                         .setCancelButton("확인"){it.dismissWithAnimation()}
@@ -151,9 +152,9 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
                 }else {
                     loading.show()
                     if(modifyTarget == null){
-                        viewModel.request(CommuWriteUseCaseRequest.UploadPostDomain(newPostWrited))
+                        viewModel.request(CommuWriteUseCaseRequest.UploadPostDomain(newPostWrited, EndConverter.urisToParts(this@CommuFragment_write.requireContext(), imageAdapter.currentList)))
                     }else{
-                        viewModel.request(CommuWriteUseCaseRequest.ModifiyPostDomain(modifyTarget!!.id ,newPostWrited))
+                        viewModel.request(CommuWriteUseCaseRequest.ModifiyPostDomain(modifyTarget!!.id ,newPostWrited, EndConverter.urisToParts(this@CommuFragment_write.requireContext(), imageAdapter.currentList)))
                     }
                 }
             }
