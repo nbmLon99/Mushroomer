@@ -31,14 +31,14 @@ data class Mushroom (
         val name : String,
         val feature : String,
         val type : MushType,
-        val rarity : Long,
+        val rarity : Float,
         val myHistory : ArrayList<MushHistory>
         ) : Serializable{
     companion object {
         /** n(도감넘버), gotcha(발견 여부) 지정하여 더미데이터 생성 **/
         fun getDummy(n :Int, gotcha : Boolean, name: String? = null) : Mushroom{
             val mushName = name ?: "${n}번쨰 버섯"
-            val mush = Mushroom(n,"", mushName,"설명입니다.", MushType.EDIBLE,20L,ArrayList())
+            val mush = Mushroom(n,"", mushName,"설명입니다.", MushType.EDIBLE,20f,ArrayList())
             if(gotcha){ mush.myHistory.add(MushHistory(mush, ArrayList(), DateTime(), 0.0,0.0)) }
             return mush
         }
