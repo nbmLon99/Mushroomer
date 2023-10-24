@@ -142,6 +142,7 @@
                                     android:layout_height="0dp"
                                     app:layout_constraintDimensionRatio="1"
                                     app:layout_constraintTop_toTopOf="parent"
+                                    android:visibility="gone"
 
                                     app:sliderAnimationDuration="600"
                                     app:sliderAutoCycleDirection="back_and_forth"

@@ -96,8 +96,10 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
         if(domain.success){
             binding.apply {
                 post = domain.post!!
-                if(domain.post.images?.size ?: 0 > 0)
+                if(domain.post.images?.size ?: 0 > 0){
+                    imageSlider.visibility = View.VISIBLE
                     imageSlider.setSliderAdapter(ImageSliderAdapter(domain.post.images!!.toList()))
+                }
 
                 boardType.text = resources.getString(post?.boardType!!.boardNameResId)
                 domain.post?.comments?.let{ comments ->
