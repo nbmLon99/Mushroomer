@@ -31,7 +31,7 @@ import java.util.Locale
 class CameraViewModel : ViewModel() {
     private val repository = AnalyzeRepository()
     // MutableLiveData를 사용하여 분석 결과를 저장할 변수를 선언합니다.
-    //    private val _analysisRequest = MutableLiveData<>
+    // private val _analysisRequest = MutableLiveData<>
     private val _response = MutableLiveData<AnalyzeUseCaseResponse>()
     val response: LiveData<AnalyzeUseCaseResponse> get() = _response
 
@@ -72,7 +72,9 @@ class CameraViewModel : ViewModel() {
 
             //사진 저장 성공 -> History 저장
             if(success){
-                saveHistory(mush, paths, lat, lon)
+                val history = saveHistory(mush, paths, lat, lon)
+                _response.value = repository.saveHistory(AnalyzeUseCaseRequest.SaveHistoryDomain(history))
+
                 clearImages()
             }
             //사진 저장 실패
@@ -111,18 +113,14 @@ class CameraViewModel : ViewModel() {
             path
         }
     }
-    private fun saveHistory(mush : Mushroom, paths : ArrayList<String>, lat : Double?, lon : Double?){
-        val history_for_save = MushHistory(
+    private fun saveHistory(mush : Mushroom, paths : ArrayList<String>, lat : Double?, lon : Double?)  =
+        MushHistory(
             mushroom = mush,
             picPath = paths,
             date = DateTime(),
             lat = lat,
             lon = lon
         )
-        viewModelScope.launch{
-            _response.value = repository.saveHistory(AnalyzeUseCaseRequest.SaveHistoryDomain(history_for_save))
-        }
-    }
 
     private fun Image.toBitmap(): Bitmap {
         val buffer = planes[0].buffer
