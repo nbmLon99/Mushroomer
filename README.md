@@ -2,8 +2,7 @@
 캡스톤 디자인 
 
 ## Architecture diagrams
-
-... \[add diagrams here\]
+![image](https://github.com/nbmLon99/Mushroomer/assets/93704210/269b49a9-f68a-4aed-b488-930487e865fc)
 
 ### ScreenShot
 
