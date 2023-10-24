@@ -38,13 +38,13 @@ sealed class LoginUseCaseRequest{
         val cellphone : String
     ): LoginUseCaseRequest()
 
-    data class EditRequestDomain(
-        val name : String,
-        val password : String,
-        val nickname : String,
-        val cellphone : String,
-        val imageUrl : String
-    ): LoginUseCaseRequest()
+//    data class EditRequestDomain(
+//        val name : String,
+//        val password : String,
+//        val nickname : String,
+//        val cellphone : String,
+//        val imageUrl : String
+//    ): LoginUseCaseRequest()
 
     data class FindIdRequestDomain(
         val name : String,
@@ -65,14 +65,14 @@ fun LoginRequestDomain.toDTO() : UserRequestDTO.LoginRequestDTO =
         password = sha256(password)
     )
 
-fun LoginUseCaseRequest.EditRequestDomain.toDTO() =
-    UserRequestDTO.EditRequestDTO(
-        name = name,
-        password = sha256(password),
-        nickname = nickname,
-        cellphone = cellphone,
-        imageUrl = imageUrl
-    )
+//fun LoginUseCaseRequest.EditRequestDomain.toDTO() =
+//    UserRequestDTO.EditRequestDTO(
+//        name = name,
+//        password = sha256(password),
+//        nickname = nickname,
+//        cellphone = cellphone,
+//        imageUrl = imageUrl
+//    )
 
 
 fun RegisterRequestDomain.toDTO() : UserRequestDTO.RegisterRequestDTO =

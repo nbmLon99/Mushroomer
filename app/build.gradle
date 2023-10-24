@@ -151,7 +151,8 @@ dependencies {
     implementation 'joda-time:joda-time:2.12.5'
 
     //kakao Map
-    implementation 'com.kakao.maps.open:android:2.5.0'
+    implementation 'com.kakao.maps.open:android:2.6.0'
+    implementation "com.kakao.sdk:v2-common:2.17.0"
 
     //hilt-dagger
     implementation("com.google.dagger:hilt-android:2.44")

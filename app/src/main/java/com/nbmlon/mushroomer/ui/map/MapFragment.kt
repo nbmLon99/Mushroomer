@@ -2,7 +2,6 @@ package com.nbmlon.mushroomer.ui.map
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.R
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
@@ -56,6 +55,7 @@ class MapFragment() : Fragment() {
     // 라벨과 연관된 mushHistory를 저장하는 맵
     val labelToMushHistoryMap = mutableMapOf<Label, MushHistory>()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val viewModel by viewModels<MapViewModel>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,7 +86,6 @@ class MapFragment() : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentMapBinding.inflate(layoutInflater)
-        val viewModel by viewModels<MapViewModel>()
 
         binding.mapView.start( object : KakaoMapReadyCallback() {
             override fun onMapReady(kakaoMap: KakaoMap) {
@@ -105,6 +104,10 @@ class MapFragment() : Fragment() {
                             .show(requireActivity().supportFragmentManager,PictureDialogFragment.TAG)
                     }
                 }
+                if (checkLocationPermission()) {
+                    // 위치 권한이 이미 허용된 경우 위치 정보를 요청할 수 있습니다.
+                    requestLocationUpdates()
+                }
             }
 
             override fun getPosition(): LatLng {
@@ -113,10 +116,7 @@ class MapFragment() : Fragment() {
                         return LatLng.from(it.lat, it.lon)
                 }
 
-                if (checkLocationPermission()) {
-                    // 위치 권한이 이미 허용된 경우 위치 정보를 요청할 수 있습니다.
-                    requestLocationUpdates()
-                }
+
                 return super.getPosition()
             }
 
@@ -170,14 +170,13 @@ class MapFragment() : Fragment() {
             .setClickable(true)
 
 
-
         // 3. LabelLayer 가져오기 (또는 커스텀 Layer 생성)
         val layer = kakaoMap?.labelManager!!.layer
 
 
         // 4. LabelLayer 에 LabelOptions 을 넣어 Label 생성하기
-        val label = layer.addLabel(options)
-        labelToMushHistoryMap[label] = history
+        val label = layer?.addLabel(options)
+        label?.let {  labelToMushHistoryMap[it] = history }
     }
 
 
@@ -188,22 +187,37 @@ class MapFragment() : Fragment() {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    @SuppressLint("MissingPermission")
     private fun requestLocationUpdates()  {
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                location?.let {
-                    val latitude = location.latitude
-                    val longitude = location.longitude
-                    // 여기에서 위도와 경도를 사용하세요.
-                    //카메라 중심점 이동
-                    kakaoMap?.moveCamera( CameraUpdateFactory.newCenterPosition(LatLng.from(latitude,longitude)))
+        if (checkLocationPermission()) {
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location: Location? ->
+                    location?.let {
+                        val latitude = location.latitude
+                        val longitude = location.longitude
+                        
+                        //테스트 코드
+                        viewModel.test(latitude, longitude)
+
+                        // 여기에서 위도와 경도를 사용하세요.
+                        //카메라 중심점 이동
+                        kakaoMap?.moveCamera(
+                            CameraUpdateFactory.newCenterPosition(
+                                LatLng.from(
+                                    latitude,
+                                    longitude
+                                )
+                            )
+                        )
+                    }
                 }
-            }
-            .addOnFailureListener {
-                // 위치 정보를 가져오는 데 실패한 경우 처리하세요.
-                Toast.makeText(requireActivity(),"위치 정보를 가져오는 데 실패했습니다.",Toast.LENGTH_SHORT).show()
-            }
+                .addOnFailureListener {
+                    // 위치 정보를 가져오는 데 실패한 경우 처리하세요.
+                    Toast.makeText(requireActivity(), "위치 정보를 가져오는 데 실패했습니다.", Toast.LENGTH_SHORT)
+                        .show()
+                }
+        }else{
+            Toast.makeText(requireContext(), "권한을 확인하세요!",Toast.LENGTH_SHORT).show()
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 package com.nbmlon.mushroomer.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.nbmlon.mushroomer.R
@@ -16,6 +17,8 @@ import com.nbmlon.mushroomer.ui.dialog_picture.pictureDialogListener
 import com.nbmlon.mushroomer.ui.dogam.DogamFragment
 import com.nbmlon.mushroomer.ui.map.MapFragment
 import com.nbmlon.mushroomer.ui.profile.ProfileFragment
+import com.kakao.sdk.common.util.Utility
+
 
 
 class MainActivity : AppCompatActivity(), pictureDialogListener {
@@ -35,6 +38,8 @@ class MainActivity : AppCompatActivity(), pictureDialogListener {
         val bottomNavigationView = binding.bottomNavigationView
         bottomNavigationView.selectedItemId = R.id.camera
         bottomNavigationView.setOnItemSelectedListener(::changeMenuItemListener)
+
+        Log.d("키 해시", Utility.getKeyHash(this))
 
         // 초기 프래그먼트를 설정
         supportFragmentManager.beginTransaction()
@@ -120,4 +125,5 @@ class MainActivity : AppCompatActivity(), pictureDialogListener {
             setOnItemSelectedListener(::changeMenuItemListener)
         }
     }
+
 }

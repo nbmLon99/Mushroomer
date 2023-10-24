@@ -14,13 +14,12 @@ data class MushHistory (
     val lon : Double?
 ) : Serializable{
     companion object{
-        fun getDummy() = MushHistory(
+        fun getDummy(lat : Double? = null, lon : Double? = null) = MushHistory(
             mushroom = Mushroom.getDummy(123,true),
             picPath = arrayListOf(),
             date = DateTime(),
-            lat = null,
-            lon = null
-
+            lat = lat,
+            lon = lon
         )
     }
 }
