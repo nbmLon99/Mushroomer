@@ -71,7 +71,6 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
                 RequestCodeConstants.LOCATION_PERMISSION_REQUEST_CODE
             )
         }
-        viewModel.response.observe(viewLifecycleOwner, ::responseObserver)
         loading = Sweetalert(requireActivity(),Sweetalert.PROGRESS_TYPE).apply {
             titleText = resources.getString(R.string.ANLAYZE_IN_PROGRESS)
             setCancelable(false)
@@ -84,8 +83,7 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCameraBinding.inflate(inflater, container, false)
-
-
+        viewModel.response.observe(viewLifecycleOwner, ::responseObserver)
         return binding.root
     }
 
