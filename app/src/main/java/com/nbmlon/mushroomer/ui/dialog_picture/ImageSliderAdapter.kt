@@ -2,6 +2,7 @@ package com.nbmlon.mushroomer.ui.dialog_picture
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.databinding.ItemImagesliderBinding
 import com.nbmlon.mushroomer.utils.GlideApp
 import com.smarteist.autoimageslider.SliderViewAdapter
@@ -11,6 +12,7 @@ class ImageSliderAdapter(private val sliderItems : List<String>) : SliderViewAda
         fun bind(pos : Int){
             GlideApp.with(itemView)
                 .load(sliderItems[pos])
+                .error(R.drawable.drawable_error)
                 .into(itembinding.ivImage)
         }
     }

@@ -174,7 +174,7 @@
                     android:paddingTop="10dp"
                     android:paddingBottom="5dp"
 
-                    android:text='@{"전체 사용자 중" + String.valueOf(analyze_result.mushroom.rarity) + "%만이 이 버섯을 발견하였습니다!" }'
+                    android:text='@{"전체 사용자 중" + String.format("%.2f", analyze_result.mushroom.rarity) + "%만이 이 버섯을 발견하였습니다!" }'
                     android:textAlignment="center"
                     />
             </LinearLayout>
