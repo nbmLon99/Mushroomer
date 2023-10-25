@@ -1,7 +1,6 @@
 package com.nbmlon.mushroomer.ui.map
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.R
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
@@ -10,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.compose.ui.graphics.Color
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -24,6 +24,7 @@ import com.kakao.vectormap.label.Label
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.api.RequestCodeConstants.LOCATION_PERMISSION_REQUEST_CODE
 import com.nbmlon.mushroomer.databinding.FragmentMapBinding
 import com.nbmlon.mushroomer.model.MushHistory
@@ -158,8 +159,9 @@ class MapFragment() : Fragment() {
         val styles = kakaoMap?.labelManager!!
             .addLabelStyles(
                 LabelStyles.from(
-                    LabelStyle.from(R.drawable.ic_dialog_map)
+                    LabelStyle.from(R.drawable.marker_mush)
                         .setAnchorPoint(0.5f,0.5f)
+                        .setTextStyles(18, R.color.negativeRed)
                 )
             )
 
