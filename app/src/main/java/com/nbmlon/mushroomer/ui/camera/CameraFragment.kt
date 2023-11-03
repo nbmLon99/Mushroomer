@@ -289,16 +289,13 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
                 if(response.success){
                     analyzeResult = response.toResultModel()
                     viewModel.onSuccessAnalyze(requireActivity(), analyzeResult!!.mushroom, lat,lon)
-                }else if(response.code == LOW_ACCURACY_ERROR){
-                    CameraFragment_result.getInstance(response = response.toResultModel())
-                        .show(requireActivity().supportFragmentManager, CameraFragment_result.TAG)
-                    Toast.makeText(requireActivity(), "정확도가 기준에 미치지 않습니다. 해당 결과는 저장되지 않습니다!", Toast.LENGTH_SHORT).show()
-                }else if(response.code == NETWORK_ERROR_CODE){
-                    Toast.makeText(requireActivity(), "네트워크 연결을 확인하세요!", Toast.LENGTH_SHORT).show()
                 }else{
-                    Toast.makeText(requireActivity(), "요청이 실패하였습니다. 잠시 후 다시 시도하세요!", Toast.LENGTH_SHORT).show()
+                    if(loading.isShowing)
+                        loading.dismissWithAnimation()
+                    Toast.makeText(requireActivity(), "알 수 없는 이유로 요청에 실패하였습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
+            //분석 마무리
             is AnalyzeUseCaseResponse.SuccessResponseDomain ->{
                 if(loading.isShowing)
                     loading.dismissWithAnimation()

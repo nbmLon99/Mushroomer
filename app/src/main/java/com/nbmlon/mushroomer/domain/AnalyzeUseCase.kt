@@ -18,6 +18,10 @@ sealed class AnalyzeUseCaseRequest{
     ) : AnalyzeUseCaseRequest()
 }
 
+/** 분석에 대한 마무리 response 값은 항상 SuccessResponseDomain으로 반환됨.
+ * (결과값 성공) -> (AnalyzeResponseDomain으로 반환) -> (서버에 History 저장 요청 후 결과값 SuccessResponseDomain으로 반환)
+ * (결과값 실패) -> (SuccessResponseDomain으로 반환)
+ * **/
 sealed class AnalyzeUseCaseResponse{
     abstract val success : Boolean
     abstract val code : Int
@@ -28,11 +32,6 @@ sealed class AnalyzeUseCaseResponse{
         var isNew : Boolean = false,
         var accuracy : Int = -1
     ) :AnalyzeUseCaseResponse()
-
-    /** 분석에 대한 마무리 response 값은 항상 이걸로 반환
-     * (결과값 성공)-> (History 저장)
-     * (결과값 실패)
-     * **/
     data class SuccessResponseDomain(
         override val success: Boolean = false,
         override val code : Int = ResponseCodeConstants.UNDEFINED_ERROR_CODE
