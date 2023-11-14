@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.UNDEFINED_ERROR_CODE
 import com.nbmlon.mushroomer.databinding.FragmentCommuHistoryBinding
 import com.nbmlon.mushroomer.model.Post
 import com.nbmlon.mushroomer.ui.commu.post.CommuFragment_post
@@ -50,17 +52,36 @@ class CommuFragment_history private constructor():  Fragment(), PostClickListene
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCommuHistoryBinding.inflate(layoutInflater)
-        val viewModel = ViewModelBoardHistory(forMyPost)
-        myPostAdpater = AdapterBoardPaging(mBoardType, this@CommuFragment_history::openPost)
-
-        lifecycleScope.launch{
-            viewModel.pagingDataFlow.collectLatest{myPostAdpater.submitData(it)}
-        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val viewModel = ViewModelBoardHistory(forMyPost)
+        myPostAdpater = AdapterBoardPaging(mBoardType, this@CommuFragment_history::openPost)
+        viewModel.loadedPosts.observe(viewLifecycleOwner){
+            if(it.success){
+                if(it.posts.isEmpty()){
+                    binding.emptyList.visibility = View.VISIBLE
+                    binding.historyRV.visibility = View.GONE
+                }else{
+                    binding.emptyList.visibility = View.GONE
+                    binding.historyRV.visibility = View.VISIBLE
+                    myPostAdpater.submitList(it.posts)
+                }
+            }else{
+                binding.emptyList.visibility = View.VISIBLE
+                binding.historyRV.visibility = View.GONE
+                if(it.code == NETWORK_ERROR_CODE){
+                    binding.tvError.text = getString(R.string.network_error_msg)
+                }else{
+                    binding.tvError.text = getString(R.string.error_msg)
+                }
+            }
+        }
+        viewModel.loadMyPosts()
+
+
         binding.apply {
             boardTitle.text = resources.getString(mBoardType.boardNameResId)
             btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }

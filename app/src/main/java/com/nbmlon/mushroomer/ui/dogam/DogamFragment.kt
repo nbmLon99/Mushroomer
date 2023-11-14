@@ -27,6 +27,8 @@ import com.nbmlon.mushroomer.model.MushHistory
 import com.nbmlon.mushroomer.model.Mushroom
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -35,6 +37,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import taimoor.sultani.sweetalert2.Sweetalert
 private const val TARGET_DOGAM_DETAIL = "target_dogam_detail"
 
@@ -103,7 +106,20 @@ class DogamFragment : Fragment(), DogamItemClickListner {
                     )
                     // 성공시 Observer를 제거하여 한 번만 호출되게 함
                     viewModel.responseLiveData.removeObserver(this)
+                    GlobalScope.launch {
+                        withContext(Dispatchers.Default){
+                            try{
+                                val dogams = viewModel.responseLiveData.value?.items
+                                val gotchas = dogams?.filter { it.gotcha }
+                                val percent = gotchas?.size ?: 0 / 54
+                                binding.progressBar.progress = percent
+                                binding.progressText.text = "$percent%"
 
+                            }catch (e :Exception){
+
+                            }
+                        }
+                    }
                 }else {
                     //에러 처리
                     binding.dogamRV.visibility = View.GONE
@@ -123,16 +139,6 @@ class DogamFragment : Fragment(), DogamItemClickListner {
         })
 
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.apply {
-            AppUser.percent?.let {
-                progressBar.progress = it
-                progressText.text = "$it%"
-            }
-        }
     }
 
 

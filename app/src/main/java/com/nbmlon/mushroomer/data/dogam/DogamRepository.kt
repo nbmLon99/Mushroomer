@@ -4,12 +4,13 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.SUCCESS_CODE
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.UNDEFINED_ERROR_CODE
 import com.nbmlon.mushroomer.api.service.MushroomService
 import com.nbmlon.mushroomer.domain.DogamUseCaseReqeust
 import com.nbmlon.mushroomer.domain.DogamUseCaseResponse
-import com.nbmlon.mushroomer.domain.toDogamDomain
+import com.nbmlon.mushroomer.model.MushType
 import com.nbmlon.mushroomer.model.Mushroom
-import com.nbmlon.mushroomer.ui.dogam.DogamSortingOption
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -30,11 +31,30 @@ private class DogamRepositoryImpl : DogamRepository {
         const val NETWORK_PAGE_SIZE = 50
     }
 
-    @Inject
-    lateinit var backend : MushroomService
+    @Inject lateinit var mushService : MushroomService
     override suspend fun fetchDogam(): DogamUseCaseResponse.LoadDogamResponse {
-        return withContext(Dispatchers.IO){
-            backend.getMushrooms().await().toDogamDomain()
+        return try{
+            withContext(Dispatchers.IO){
+                val result = mushService.getMushrooms().await()
+                DogamUseCaseResponse.LoadDogamResponse(
+                    true,
+                    SUCCESS_CODE,
+                    result.data.map { Mushroom(
+                        dogamNo = it.id,
+                        imageUrl = it.imageUrl,
+                        name = it.name,
+                        feature = it.feature,
+                        type = if(it.type == "EDIBLE") MushType.EDIBLE else MushType.POISON,
+                        rarity = it.rarity,
+                        myHistory = listOf(),
+                        gotcha = it.gotcha=="true"
+                    ) }
+                )
+            }
+        }catch (e :IOException){
+            DogamUseCaseResponse.LoadDogamResponse(false, NETWORK_ERROR_CODE, listOf())
+        }catch (e :Exception){
+            DogamUseCaseResponse.LoadDogamResponse(false, UNDEFINED_ERROR_CODE, listOf())
         }
     }
 
@@ -58,20 +78,28 @@ private class DogamRepositoryImpl : DogamRepository {
     override suspend fun getSpecificDogam(domain: DogamUseCaseReqeust.SpecificDogamRequestDomain): DogamUseCaseResponse.SpecificDogamResponse {
         return try {
             withContext(Dispatchers.IO){
-                backend.getMushroom(domain.id).await().toDogamDomain()
+                val result = mushService.getMushroom(domain.id).await()
+                DogamUseCaseResponse.SpecificDogamResponse(
+                    true,
+                    SUCCESS_CODE,
+                    mush = Mushroom(
+                        dogamNo = result.data.id,
+                        imageUrl = result.data.imageUrl,
+                        name =result.data.name,
+                        feature = result.data.feature,
+                        type = if(result.data.type == "EDIBLE") MushType.EDIBLE else MushType.POISON,
+                        rarity = result.data.rarity,
+                        myHistory = listOf(),
+                        gotcha = result.data.gotcha =="true"
+                    ),
+                    history = null,
+
+                )
             }
         }catch (e : IOException){
             DogamUseCaseResponse.SpecificDogamResponse(false, NETWORK_ERROR_CODE)
         }catch (e : Exception){
             DogamUseCaseResponse.SpecificDogamResponse(false)
-        }
-    }
-
-
-
-    suspend fun fetchData(): DogamUseCaseResponse.LoadDogamResponse {
-        return withContext(Dispatchers.IO) {
-            backend.getMushrooms().await().toDogamDomain()
         }
     }
 }

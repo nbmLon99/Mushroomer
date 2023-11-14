@@ -21,10 +21,3 @@ sealed class CommuWriteUseCaseResponse{
         val message : String = ""
         ) : CommuWriteUseCaseResponse()
 }
-
-fun BoardResponseDTO.SuccessResponseDTO.toWriteDomain() : CommuWriteUseCaseResponse =
-    CommuWriteUseCaseResponse.SuccessResponseDomain(
-        success = success,
-        code = code,
-        message  = message
-    )

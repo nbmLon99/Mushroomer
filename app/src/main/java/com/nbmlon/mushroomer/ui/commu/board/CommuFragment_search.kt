@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.api.ResponseCodeConstants
 import com.nbmlon.mushroomer.data.posts.PostsSearchRepository
 import com.nbmlon.mushroomer.databinding.FragmentCommuSearchBinding
 import com.nbmlon.mushroomer.model.Post
@@ -67,18 +68,10 @@ class CommuFragment_search private constructor(): Fragment(), PostClickListener 
         // Inflate the layout for this fragment
         _binding = FragmentCommuSearchBinding.inflate(layoutInflater)
 
-        val viewModelFactory = SearchViewModelFactory(
-            owner = this,
-            repository = PostsSearchRepository(),
-            boardType = mBoardType
-        )
-        val viewModel: ViewModelBoardSearch by viewModels { viewModelFactory }
-
-        binding.bindState(
-            uiState = viewModel.state,
-            pagingData = viewModel.pagingDataFlow,
-            uiActions = viewModel.accept
-        )
+//        val layoutManager = when (mBoardType) {
+//            BoardType.PicBoard -> StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+//            else -> LinearLayoutManager(requireContext())
+//        }
 
         return binding.root
     }
@@ -87,144 +80,55 @@ class CommuFragment_search private constructor(): Fragment(), PostClickListener 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val searchAdapter =
+            AdapterBoardPaging(boardType = mBoardType, cl = this@CommuFragment_search::openPost)
+        binding.postRV.adapter = searchAdapter
+        val viewModelFactory = SearchViewModelFactory(
+            owner = this,
+            repository = PostsSearchRepository(),
+            boardType = mBoardType
+        )
+        val viewModel: ViewModelBoardSearch by viewModels { viewModelFactory }
+        viewModel.loadedPosts.observe(viewLifecycleOwner){
+            if(it.success){
+                val filteredPosts = it.posts.filter { p -> p.boardType == mBoardType }
+                if(filteredPosts.isEmpty()){
+                    binding.emptyList.visibility = View.VISIBLE
+                    binding.postRV.visibility = View.GONE
+                }else{
+                    binding.emptyList.visibility = View.GONE
+                    binding.postRV.visibility = View.VISIBLE
+                    searchAdapter.submitList(filteredPosts)
+                }
+            }else{
+                binding.emptyList.visibility = View.VISIBLE
+                binding.postRV.visibility = View.GONE
+                if(it.code == ResponseCodeConstants.NETWORK_ERROR_CODE){
+                    binding.tvError.text = getString(R.string.network_error_msg)
+                }else{
+                    binding.tvError.text = getString(R.string.error_msg)
+                }
+            }
+        }
+
         binding.apply {
             btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
+            btnSearch.setOnClickListener {
+                if(etSearch.text.isNotEmpty()){
+                    viewModel.searchPosts(etSearch.text.toString())
+                }
+            }
             etSearch.requestFocus()
             (requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
                 .showSoftInput(etSearch, InputMethodManager.SHOW_IMPLICIT)
         }
+
+
     }
-
-
 
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
-    }
-
-
-    private fun FragmentCommuSearchBinding.bindState(
-        uiState: StateFlow<SearchUiState>,
-        pagingData: Flow<PagingData<Post>>,
-        uiActions: (SearchUiAction) -> Unit,
-    ){
-        val searchAdapter =
-            AdapterBoardPaging(boardType = mBoardType, cl = this@CommuFragment_search::openPost)
-        val layoutManager = when (mBoardType) {
-            BoardType.PicBoard -> StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-            else -> LinearLayoutManager(requireContext())
-        }
-        postRV.adapter = searchAdapter
-        postRV.layoutManager = layoutManager
-
-        bindList(
-            uiState = uiState,
-            adapter = searchAdapter,
-            pagingData = pagingData,
-            onScrollChanged = uiActions
-        )
-
-        bindSearch(
-            uiState = uiState,
-            onSearchBtnClicked = uiActions
-        )
-
-    }
-
-    private fun FragmentCommuSearchBinding.bindList(
-        uiState: StateFlow<SearchUiState>,
-        adapter : AdapterBoardPaging,
-        pagingData: Flow<PagingData<Post>>,
-        onScrollChanged: (SearchUiAction.Scroll) -> Unit
-    ){
-        postRV.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy != 0) onScrollChanged(SearchUiAction.Scroll(uiState.value.query))
-            }
-        })
-        //Flow 생성
-        val notLoading = adapter.loadStateFlow
-            // Only emit when REFRESH LoadState for the paging source changes.
-            .distinctUntilChangedBy { it.source.refresh }
-            // Only react to cases where REFRESH completes i.e., NotLoading.
-            .map {
-                it.source.refresh is LoadState.NotLoading
-            }
-
-        //Flow 생성
-        val hasNotScrolledForCurrentSort = uiState
-            .map {
-                it.hasNotScrolledForCurrentQuery
-            }
-            .distinctUntilChanged()
-
-        val shouldScrollToTop = combine(
-            notLoading,
-            hasNotScrolledForCurrentSort,
-            Boolean::and
-        )
-            .distinctUntilChanged()
-
-        lifecycleScope.launch{
-            //페이징 데이터 UI 반영
-            pagingData.collectLatest{adapter.submitData(it)}
-        }
-        lifecycleScope.launch {
-            shouldScrollToTop.collect { shouldScroll ->
-                if (shouldScroll)
-                    postRV.scrollToPosition(0)
-            }
-        }
-
-
-        lifecycleScope.launch {
-            adapter.loadStateFlow.collect { loadState ->
-                val isListEmpty =
-                    loadState.refresh is LoadState.NotLoading && adapter.itemCount == 0
-                // 검색상태 표현하기
-                // Check if the query is not empty before updating UI for empty list
-                if (uiState.value.query.isEmpty()) {
-                    emptyList.isVisible = false
-                }else{
-                    emptyList.isVisible = isListEmpty
-                }
-
-                // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
-                val errorState = loadState.source.append as? LoadState.Error
-                    ?: loadState.source.prepend as? LoadState.Error
-                    ?: loadState.append as? LoadState.Error
-                    ?: loadState.prepend as? LoadState.Error
-                errorState?.let {
-                    Toast.makeText(
-                        requireContext(),
-                        "\uD83D\uDE28 Wooops ${it.error}",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
-        }
-    }
-
-
-    private fun FragmentCommuSearchBinding.bindSearch(
-        uiState: StateFlow<SearchUiState>,
-        onSearchBtnClicked: (SearchUiAction.Search) -> Unit,
-    ){
-        btnSearch.setOnClickListener {
-            if(etSearch.text.isNotEmpty()){
-                onSearchBtnClicked(SearchUiAction.Search(etSearch.text.toString()))
-            }
-        }
-
-        lifecycleScope.launch {
-            uiState
-                .map { it.query }
-                .distinctUntilChanged()
-                .collect{query ->
-                    etSearch.setText(query)
-                    etSearch.setSelection(query.length)
-                }
-        }
     }
 
 

@@ -67,7 +67,8 @@ class CommuFragment_report private constructor() : DialogFragment() {
                 cl.onDialogReportBtnClicked(
                     CommuPostUseCaseRequest.ReportRequestDomain(
                         type = targetType,
-                        id = (post?.id ?: comment?.id)!!
+                        id = (post?.id ?: comment?.id)!!,
+                        articleId = targetPost?.id ?: targetComment?.id ?: -1,
                     )
                 )
             }

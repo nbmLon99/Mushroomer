@@ -71,7 +71,7 @@ class PictureDialogFragment private constructor(): DialogFragment() {
                 PictureDialogFrom.DogamFrag -> getString(R.string.findAtMap)
                 PictureDialogFrom.MapFrag -> getString(R.string.findAtDogam)
             }
-            imageSlider.setSliderAdapter(ImageSliderAdapter(mMushHistory.picPath.toList()))
+            imageSlider.setSliderAdapter(ImageSliderAdapter(mMushHistory.picPath.map{it.toString()}.toList()))
 
             btnGoAnother.setOnClickListener { goAnother(); this@PictureDialogFragment.dismiss() }
             btnGoBoard.setOnClickListener { goPicBoard(); this@PictureDialogFragment.dismiss() }

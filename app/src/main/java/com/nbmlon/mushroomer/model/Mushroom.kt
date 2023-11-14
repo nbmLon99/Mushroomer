@@ -1,5 +1,6 @@
 package com.nbmlon.mushroomer.model
 
+import android.net.Uri
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -31,33 +32,43 @@ data class Mushroom (
         val name : String,
         val feature : String,
         val type : MushType,
-        val rarity : Float,
-        val myHistory : ArrayList<MushHistory>
+        val rarity : Int,
+        val myHistory : List<MushHistory>,
+        val gotcha: Boolean
         ) : Serializable{
     companion object {
         /** n(도감넘버), gotcha(발견 여부) 지정하여 더미데이터 생성 **/
         fun getDummy(n :Int, gotcha : Boolean, name: String? = null) : Mushroom{
             val mushName = name ?: "${n}번쨰 버섯"
-            val mush = Mushroom(n,"", mushName,"설명입니다.", MushType.EDIBLE,20f,ArrayList())
-            if(gotcha){ mush.myHistory.add(MushHistory(mush, ArrayList(), DateTime(), 0.0,0.0)) }
+            val mush = Mushroom(n,"", mushName,"설명입니다.", MushType.EDIBLE,20, listOf(),true)
             return mush
         }
     }
-    val gotcha : Boolean get() =  myHistory.size > 0
 }
 
 class MushDataBindingAdapter{
     companion object{
         @JvmStatic
         @BindingAdapter("imageFromUrlIntoMushPreview")
-        fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
-            if (!imageUrl.isNullOrEmpty()) {
+        fun bindImageFromUrl(view: ImageView, imageUrl: Uri?) {
+            if (imageUrl != null) {
                 Glide.with(view.context)
                     .load(imageUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(view)
             }else{
                 //Default
+            }
+        }
+
+        @JvmStatic
+        @BindingAdapter("imageFromString")
+        fun bindImageFromString(view : ImageView, imageUrl: String?){
+            if (imageUrl != null) {
+                Glide.with(view.context)
+                    .load(imageUrl)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(view)
             }
         }
 

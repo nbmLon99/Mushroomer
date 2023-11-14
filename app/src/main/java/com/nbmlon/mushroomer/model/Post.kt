@@ -1,5 +1,6 @@
 package com.nbmlon.mushroomer.model
 
+import android.net.Uri
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -32,7 +33,7 @@ import java.text.SimpleDateFormat
 data class Post(
     val id : Int,
     val title: String,
-    val images: ArrayList<String>?,
+    val images: List<String>,
     val content: String,
     val time: DateTime,
     val writer: User,
@@ -48,7 +49,7 @@ data class Post(
             return Post(
                 id = 0,
                 title = query ?: "제목",
-                images = null,
+                images = listOf(),
                 content = "내용",
                 time = DateTime(),
                 writer = writer ?: User.getDummy(),
@@ -74,7 +75,7 @@ class PostDataBindingAdapter{
     companion object {
         @JvmStatic
         @BindingAdapter("imageFromUrlArrayIntoPicPostPreview")
-        fun bindImageFromUrlArray(view: ImageView, imageUrl: ArrayList<String>?) {
+        fun bindImageFromUrlArray(view: ImageView, imageUrl: List<String>?) {
             if (!imageUrl.isNullOrEmpty()) {
                 Glide.with(view.context)
                     .load(imageUrl[0])
@@ -85,7 +86,7 @@ class PostDataBindingAdapter{
 
         @JvmStatic
         @BindingAdapter("setImageIntoPreview")
-        fun bindImageIntoTextPost(view: ImageView, imageUrl: ArrayList<String>?) {
+        fun bindImageIntoTextPost(view: ImageView, imageUrl: List<String>?) {
             if (!imageUrl.isNullOrEmpty()) {
                 Glide.with(view.context)
                     .load(imageUrl[0])

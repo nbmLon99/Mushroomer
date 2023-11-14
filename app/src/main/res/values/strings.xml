@@ -79,7 +79,7 @@
 
     <string name="chg_id_nickname">닉네임 변경</string>
     <string name="chg_id_exit">회원 탈퇴</string>
-    <string name="chg_app_login">로그인 방법 변경</string>
+    <string name="chg_app_login">자동 로그인 설정</string>
     <string name="chg_oth_logout">로그아웃</string>
 
     <string name="dialog_title_modify_nickname">닉네임 변경</string>
@@ -126,6 +126,9 @@
     <string name="sort_like">추천순</string>
     <string name="no_results">현재 발견한 버섯이 없습니다.\n사진을 찍어 버섯을 발견해보세요!</string>
     <string name="retry">재시도</string>
+    <string name="no_post">등록된 게시글이 없습니다.</string>
+    <string name="no_post_history">작성한 내용이 없습니다.</string>
+
 
     <string name="invalid_username">이메일 형식을 확인하세요!</string>
 

@@ -207,16 +207,15 @@
 
                 <!-- 댓글 -->
                 <androidx.recyclerview.widget.RecyclerView
-                    android:padding="10dp"
                     android:id="@+id/commentRV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
                     android:orientation="vertical"
 
-                    android:nestedScrollingEnabled="false"
+                    android:padding="10dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_post_comment"
-                    />
+                    tools:listitem="@layout/item_post_comment" />
             </LinearLayout>
 
 

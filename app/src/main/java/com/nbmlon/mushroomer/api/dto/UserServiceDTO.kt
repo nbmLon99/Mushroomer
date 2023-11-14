@@ -17,60 +17,57 @@ sealed class UserRequestDTO{
         val nickname : String,
         val cellphone : String
     ) : UserRequestDTO()
-
-    data class EditRequestDTO(
-        val name : String,
-        val password : String,
-        val nickname : String,
-        val cellphone : String,
-        val imageUrl : String
+    data class EditNicknameDTO(
+        @SerializedName("nickname") val nickname: String
+    )
+    data class EditIconDTO(
+        @SerializedName("imageUrl") val imageUrl : String
     )
 
     data class WithdrawalRequestDTO(
         val email : String,
         val password: String
     )
+
+    data class TargetEmailDTO(
+        val email : String
+    )
+
+    data class TargetPhoneDTO(
+        val cellphone : String
+    )
 }
 
 sealed class UserResponseDTO{
     data class LoginResponseDTO(
-        @SerializedName("isSuccess") val success: Boolean = false,
-        val refreshToken : String? = null,
-        val token : String? = null,
-        val loginUser : User? = null,
+        @SerializedName("userId") val id : Int,
+        @SerializedName("name") val name: String,
+        @SerializedName("nickname") val nickname: String,
+        @SerializedName("cellphone") val phone : String,
+        @SerializedName("email") val email : String,
+        @SerializedName("image") val imageUrl: String,
+        @SerializedName("accessToken") val accessToken : String,
+        @SerializedName("refreshToken") val refreshToken : String,
+
+        @SerializedName("message") val message: String,
         val percentage : Int? = null
     ) : UserResponseDTO()
 
     data class GenerateTokenResponseDTO(
-        @SerializedName("isSuccess") val success: Boolean,
-        val code: Int = -1,
+         @SerializedName("data") val code: Int = -1,
         val message: String = ""
     ) : UserResponseDTO()
 
-    data class KakaoLoginResponseDTO(
-        @SerializedName("isSuccess") val success: Boolean = false,
-        val refreshToken : String? = null,
-        val token : String? = null,
-        val loginUser : User? = null,
-        val percentage : Int? = null
+    data class AuthCodeResponseDTO(
+        @SerializedName("authcode") val authCode : String
     ) : UserResponseDTO()
 
-    data class ModifyUserResponseDTO(
-        @SerializedName("isSuccess") val success: Boolean,
-        val code: Int = -1,
-        val message: String = ""
+    data class FoundPasswordDTO(
+        val password : String
     ) : UserResponseDTO()
 
-    data class WithdrawalResponseDTO(
-        @SerializedName("isSuccess") val success: Boolean,
-        val code: Int = -1,
-        val message: String = ""
-    ) : UserResponseDTO()
-
-    data class SignUpResponseDTO(
-        @SerializedName("isSuccess") val success: Boolean,
-        val code: Int = -1,
-        val message: String = ""
+    data class FoundIdDTO(
+        val userEmail : String
     ) : UserResponseDTO()
 }
 

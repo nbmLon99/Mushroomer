@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
 import com.nbmlon.mushroomer.data.posts.BoardPostsRepository
 import com.nbmlon.mushroomer.databinding.FragmentCommuHotBinding
 
@@ -47,25 +48,9 @@ class CommuFragmentBoard_hot private constructor(): CommuBoardFragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCommuHotBinding.inflate(layoutInflater)
-        Log.d(TAG, mBoardType.name)
-        val viewModelFactory = BoardViewModelFactory(
-            owner = this,
-            repository = BoardPostsRepository(),
-            boardType =  mBoardType
-        )
-
-        val viewModel: ViewModelBoard by viewModels { viewModelFactory }
         bindView(
             boardType = mBoardType,
-            sortGroup = null,
-            boardGroup = binding.boardRadioGroup,
             list = binding.postRV
-        )
-
-        bindState(
-            uiState = viewModel.state,
-            pagingData = viewModel.pagingDataFlow,
-            uiActions = viewModel.accept
         )
 
         return binding.root
@@ -73,6 +58,33 @@ class CommuFragmentBoard_hot private constructor(): CommuBoardFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val viewModelFactory = BoardViewModelFactory(
+            owner = this,
+            repository = BoardPostsRepository(),
+            boardType =  mBoardType
+        )
+
+        val viewModel: ViewModelBoard by viewModels { viewModelFactory }
+
+        viewModel.loadedPosts.observe(viewLifecycleOwner){
+            if(it.success){
+                binding.emptyList.visibility = View.GONE
+                binding.postRV.visibility = View.VISIBLE
+                if(it.posts.isNotEmpty())
+                    (binding.postRV.adapter as AdapterBoardPaging).submitList(it.posts)
+            }else {
+                binding.emptyList.visibility = View.VISIBLE
+                binding.postRV.visibility = View.GONE
+                if(it.code == NETWORK_ERROR_CODE){
+                    binding.tvError.text = getString(R.string.network_error_msg)
+                }else{
+                    binding.tvError.text = getString(R.string.error_msg)
+                }
+            }
+        }
+        viewModel.fetchPosts(BoardType.HotBoard)
+
         binding.apply {
             btnBack.setOnClickListener { requireActivity().onBackPressedDispatcher.onBackPressed() }
             btnSearch.setOnClickListener {

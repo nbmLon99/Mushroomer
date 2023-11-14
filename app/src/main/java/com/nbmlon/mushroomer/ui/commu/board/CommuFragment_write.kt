@@ -171,7 +171,7 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
 
     private fun setInitialImage() {
         mushHistoryForWriting?.let { target->
-            val uris = target.picPath.map { Uri.parse(it) }
+            val uris = target.picPath
             viewModel.addUris(ArrayList(uris))
         }
     }

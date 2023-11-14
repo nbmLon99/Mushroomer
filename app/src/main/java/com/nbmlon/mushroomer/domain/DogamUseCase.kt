@@ -26,12 +26,3 @@ sealed class DogamUseCaseResponse{
         val history : MushHistory? = null
     ) : DogamUseCaseResponse()
 }
-
-
-fun MushroomResponseDTO.MushesResponseDTO.toDogamDomain() : DogamUseCaseResponse.LoadDogamResponse {
-    TODO("API 명세서 보고 작업필요")
-}
-
-fun MushroomResponseDTO.MushResponseDTO.toDogamDomain() : DogamUseCaseResponse.SpecificDogamResponse{
-    TODO("API 명세서 보고 작업필요")
-}

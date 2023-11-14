@@ -142,11 +142,11 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
             setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.like ->{
-                        onChangeLike(targetPost, null, true)
+                        onChangeLike(targetPost,true)
                         true
                     }
                     R.id.dislike ->{
-                        onChangeLike(targetPost, null,  false)
+                        onChangeLike(targetPost, false)
                         true
                     }
                     R.id.report -> {
@@ -213,7 +213,7 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
             viewModel.request(
                 CommuPostUseCaseRequest.DeleteRequestDomain(
                     type = TargetType.POST ,
-                    id = target_post.id
+                    target_post.id
                 )
             )
             onResponseSuccess = {
@@ -232,7 +232,8 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
             viewModel.request(
                 CommuPostUseCaseRequest.DeleteRequestDomain(
                     type = TargetType.COMMENT ,
-                    id = target_comment.id
+                    articleId = targetPost.id,
+                    commentId = target_comment.id
                 )
             )
             onResponseSuccess = {
@@ -275,6 +276,7 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
     private fun requestModify(target : Comment, modifiedContent : String){
         viewModel.request(
             CommuPostUseCaseRequest.ModifyCommentRequestDomain(
+                targetPost.id,
                 target = target,
                 modified = modifiedContent
             )
@@ -299,16 +301,12 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
         binding.setReplyTarget(replyFor)
     }
 
-    override fun onChangeLike(target_post: Post?, target_comment: Comment?, like: Boolean) {
-        viewModel.request(CommuPostUseCaseRequest.ChangeThumbsUpRequestDomain(like))
+    override fun onChangeLike(target_post: Post, like: Boolean) {
+        viewModel.request(CommuPostUseCaseRequest.ChangeThumbsUpRequestDomain(like, target_post.id))
         onResponseSuccess = {
             target_post?.let{
                 it.myThumbsUp = like
                 it.ThumbsUpCount += 1
-            }
-            target_comment?.let {
-                it.myThumbsUp = like
-                it.thumbsUpCount += 1
             }
         }
     }

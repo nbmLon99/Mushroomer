@@ -1,19 +1,16 @@
 package com.nbmlon.mushroomer.domain
 
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.UNDEFINED_ERROR_CODE
-import com.nbmlon.mushroomer.api.dto.BoardResponseDTO
-import com.nbmlon.mushroomer.api.dto.CommentResponseDTO
-import com.nbmlon.mushroomer.api.dto.ReportResponseDTO
 import com.nbmlon.mushroomer.model.Comment
 import com.nbmlon.mushroomer.model.Post
 
 sealed class CommuPostUseCaseRequest{
-    data class ReportRequestDomain(val type : TargetType, val id : Int) : CommuPostUseCaseRequest()
-    data class DeleteRequestDomain(val type : TargetType, val id : Int) : CommuPostUseCaseRequest()
-    data class UploadCommentRequestDomain(val target : Comment) : CommuPostUseCaseRequest()
-    data class ModifyCommentRequestDomain(val target : Comment, val modified : String) : CommuPostUseCaseRequest()
+    data class ReportRequestDomain(val articleId : Int, val type : TargetType, val id : Int) : CommuPostUseCaseRequest()
+    data class DeleteRequestDomain( val type : TargetType,val articleId : Int, val commentId : Int? = null) : CommuPostUseCaseRequest()
+    data class UploadCommentRequestDomain(val articleId : Int, val target : Comment) : CommuPostUseCaseRequest()
+    data class ModifyCommentRequestDomain(val articleId : Int, val target : Comment, val modified : String) : CommuPostUseCaseRequest()
     data class LoadPostRequestDomain(val id : Int) :  CommuPostUseCaseRequest()
-    data class ChangeThumbsUpRequestDomain(val toLike : Boolean) : CommuPostUseCaseRequest()
+    data class ChangeThumbsUpRequestDomain(val toLike : Boolean, val articleId : Int) : CommuPostUseCaseRequest()
 
 }
 
@@ -30,33 +27,10 @@ sealed class CommuPostUseCaseResponse{
         override val code : Int = UNDEFINED_ERROR_CODE,
         val post : Post? = null
     ) : CommuPostUseCaseResponse()
+    data class PostsResponseDomain(
+        override val success: Boolean = false,
+        override val code : Int = UNDEFINED_ERROR_CODE,
+        val posts : List<Post> = listOf()
+    ) : CommuPostUseCaseResponse()
 }
-
-// 굳이 필없을듯?
-fun BoardResponseDTO.PostResponseDTO.toPostDomain() : CommuPostUseCaseResponse.PostResponseDomain =
-    CommuPostUseCaseResponse.PostResponseDomain(
-        success = true,
-        post = this.toPost()
-    )
-
-fun ReportResponseDTO.SuccessResponseDTO.toPostDomain() : CommuPostUseCaseResponse =
-    CommuPostUseCaseResponse.SuccessResponseDomain(
-        success = success,
-        code = code,
-        message = message
-    )
-
-
-fun BoardResponseDTO.SuccessResponseDTO.toPostDomain() : CommuPostUseCaseResponse =
-    CommuPostUseCaseResponse.SuccessResponseDomain(
-        success = success, code = code, message = message
-    )
-
-
-fun CommentResponseDTO.SuccessResponseDTO.toPostDomain() : CommuPostUseCaseResponse =
-    CommuPostUseCaseResponse.SuccessResponseDomain(
-        success= success, code= code, message= message
-    )
-
-
 enum class TargetType { POST, COMMENT }

@@ -58,12 +58,10 @@ object EndConverter {
     // List<Bitmap>을 MultipartBody.Part로 변환하는 함수
     fun bitmapsToParts(bitmaps: List<Bitmap>): List<MultipartBody.Part> {
         val parts = mutableListOf<MultipartBody.Part>()
-
         bitmaps.forEachIndexed { index, bitmap ->
             val part = bitmapToBody(bitmap,"image[$index]","image_$index.jpg")
             parts.add(part)
         }
-
         return parts
     }
 

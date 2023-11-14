@@ -1,10 +1,12 @@
 package com.nbmlon.mushroomer.ui.commu.board
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.paging.PagingData
+import androidx.lifecycle.viewModelScope
 import com.nbmlon.mushroomer.data.posts.CommuHistoryRepository
+import com.nbmlon.mushroomer.domain.CommuPostUseCaseResponse
 import com.nbmlon.mushroomer.model.Post
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 
 /** 내 댓글, 내 포스트 보여주는화면
@@ -14,15 +16,14 @@ class ViewModelBoardHistory(
     private val forMyPost : Boolean
 ) : ViewModel() {
     private val repository : CommuHistoryRepository = CommuHistoryRepository()
-    val pagingDataFlow: Flow<PagingData<Post>>
-    init{
-        pagingDataFlow = loadMyPosts()
-    }
+    val loadedPosts = MutableLiveData<CommuPostUseCaseResponse.PostsResponseDomain>()
 
     /** 페이징 데이터 요청 **/
-    private fun loadMyPosts (): Flow<PagingData<Post>> {
-        return if(forMyPost){
-            repository.getPostHistoryStream()
-        }else repository.getCommentHistoryStream()
+    fun loadMyPosts () {
+        viewModelScope.launch {
+            loadedPosts.value = if(forMyPost){
+                repository.getPostHistories()
+            }else repository.getCommentHistories()
+        }
     }
 }

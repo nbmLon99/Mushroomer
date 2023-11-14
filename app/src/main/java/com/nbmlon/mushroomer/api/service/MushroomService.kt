@@ -12,10 +12,14 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface MushroomService {
-    @GET("/mushrooms")
-    suspend fun getMushrooms() : Call<MushroomResponseDTO.MushesResponseDTO>
-    @GET("/mushrooms/{mushId}")
-    suspend fun getMushroom(@Path("mushId") mushId : Int) : Call<MushroomResponseDTO.MushResponseDTO>
+    @GET("/api/mushrooms")
+    suspend fun getMushrooms(
+
+    ) : Call<MushroomResponseDTO.MushesResponseDTO>
+    @GET("/api/mushrooms/{mushId}")
+    suspend fun getMushroom(
+        @Path("mushId") mushId : Int
+    ) : Call<MushroomResponseDTO.MushResponseDTO>
 }
 
 @Module

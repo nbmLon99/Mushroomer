@@ -19,13 +19,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
-                android:text="지문인증"
+                android:text="자동로그인 설정"
                 />
             <RadioButton
                 android:id="@+id/login_password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="아이디/패스워드"
+                android:text="자동로그인 해제"
                 android:textColor="@color/black"
 
                 />

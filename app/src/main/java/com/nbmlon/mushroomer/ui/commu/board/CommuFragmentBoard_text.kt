@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.api.ResponseCodeConstants
 import com.nbmlon.mushroomer.data.posts.BoardPostsRepository
 import com.nbmlon.mushroomer.databinding.FragmentCommuTextBinding
 
@@ -28,8 +29,6 @@ class CommuFragmentBoard_text private constructor(): CommuBoardFragment() {
     }
 
 
-
-    // TODO: Rename and change types of parameters
     private var board_type_idx: Int? = null
     private lateinit var mBoardType : BoardType
     private var _binding: FragmentCommuTextBinding? = null
@@ -48,6 +47,11 @@ class CommuFragmentBoard_text private constructor(): CommuBoardFragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCommuTextBinding.inflate(layoutInflater)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val viewModelFactory = BoardViewModelFactory(
             owner = this,
             repository = BoardPostsRepository(),
@@ -57,22 +61,27 @@ class CommuFragmentBoard_text private constructor(): CommuBoardFragment() {
         val viewModel: ViewModelBoard by viewModels { viewModelFactory }
         bindView(
             boardType = mBoardType,
-            sortGroup = binding.sortRadioGroup,
-            boardGroup = null,
             list = binding.postRV
         )
+        viewModel.loadedPosts.observe(viewLifecycleOwner){
+            if(it.success){
+                binding.emptyList.visibility = View.GONE
+                binding.postRV.visibility = View.VISIBLE
+                if(it.posts.isNotEmpty())
+                    (binding.postRV.adapter as AdapterBoardPaging).submitList(it.posts)
+            }else {
+                binding.emptyList.visibility = View.VISIBLE
+                binding.postRV.visibility = View.GONE
+                if(it.code == ResponseCodeConstants.NETWORK_ERROR_CODE){
+                    binding.tvError.text = getString(R.string.network_error_msg)
+                }else{
+                    binding.tvError.text = getString(R.string.error_msg)
+                }
+            }
+        }
+        viewModel.fetchPosts(mBoardType)
 
-        bindState(
-            uiState = viewModel.state,
-            pagingData = viewModel.pagingDataFlow,
-            uiActions = viewModel.accept
-        )
 
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         binding.apply {
             boardTitle.text = if (board_type_idx == BoardType.FreeBoard.ordinal) getString(R.string.FreeBoard) else getString(R.string.QnABoard)
             btnBack.setOnClickListener {
@@ -99,18 +108,23 @@ class CommuFragmentBoard_text private constructor(): CommuBoardFragment() {
                     .addToBackStack(null)
                     .commit()
             }
+            sortRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+                if(viewModel.loadedPosts.value?.success == true){
+                    when(checkedId){
+                        R.id.sort_time->
+                            (binding.postRV.adapter as AdapterBoardPaging).submitList(viewModel.loadedPosts.value!!.posts.sortedByDescending { it.time })
 
-            bindSort()
+                        R.id.sort_like->
+                            (binding.postRV.adapter as AdapterBoardPaging).submitList(viewModel.loadedPosts.value!!.posts.sortedByDescending { it.ThumbsUpCount })
+                    }
+                }
+            }
         }
     }
 
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
-    }
-
-    private fun FragmentCommuTextBinding.bindSort(){
-
     }
 
 

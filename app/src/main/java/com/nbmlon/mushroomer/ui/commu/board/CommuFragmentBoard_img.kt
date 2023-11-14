@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.api.ResponseCodeConstants
 import com.nbmlon.mushroomer.data.posts.BoardPostsRepository
 import com.nbmlon.mushroomer.databinding.FragmentCommuImageBinding
 
@@ -41,8 +42,17 @@ class CommuFragmentBoard_img private constructor(): CommuBoardFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentCommuImageBinding.inflate(layoutInflater)
+        bindView(
+            boardType = mBoardType,
+            list = binding.postRV
+        )
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val viewModelFactory = BoardViewModelFactory(
             owner = this,
             repository = BoardPostsRepository(),
@@ -50,24 +60,25 @@ class CommuFragmentBoard_img private constructor(): CommuBoardFragment() {
         )
 
         val viewModel: ViewModelBoard by viewModels { viewModelFactory }
-        bindView(
-            boardType = mBoardType,
-            sortGroup = binding.sortRadioGroup,
-            boardGroup = null,
-            list = binding.postRV
-        )
 
-        bindState(
-            uiState = viewModel.state,
-            pagingData = viewModel.pagingDataFlow,
-            uiActions = viewModel.accept
-        )
+        viewModel.loadedPosts.observe(viewLifecycleOwner){
+            if(it.success){
+                binding.emptyList.visibility = View.GONE
+                binding.postRV.visibility = View.VISIBLE
+                if(it.posts.isNotEmpty())
+                    (binding.postRV.adapter as AdapterBoardPaging).submitList(it.posts)
+            }else {
+                binding.emptyList.visibility = View.VISIBLE
+                binding.postRV.visibility = View.GONE
+                if(it.code == ResponseCodeConstants.NETWORK_ERROR_CODE){
+                    binding.tvError.text = getString(R.string.network_error_msg)
+                }else{
+                    binding.tvError.text = getString(R.string.error_msg)
+                }
+            }
+        }
+        viewModel.fetchPosts(mBoardType)
 
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         binding.apply {
             btnBack.setOnClickListener {
                 requireActivity().supportFragmentManager.popBackStack()
@@ -92,6 +103,19 @@ class CommuFragmentBoard_img private constructor(): CommuBoardFragment() {
                     )
                     .addToBackStack(null)
                     .commit()
+            }
+            
+            //정렬
+            sortRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+                if(viewModel.loadedPosts.value?.success == true){
+                    when(checkedId){
+                        R.id.sort_time->
+                            (binding.postRV.adapter as AdapterBoardPaging).submitList(viewModel.loadedPosts.value!!.posts.sortedByDescending { it.time })
+
+                        R.id.sort_like->
+                            (binding.postRV.adapter as AdapterBoardPaging).submitList(viewModel.loadedPosts.value!!.posts.sortedByDescending { it.ThumbsUpCount })
+                    }
+                }
             }
         }
     }

@@ -70,6 +70,8 @@
             android:id="@+id/postRV"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:orientation="vertical"
             tools:listitem="@layout/item_commu_home_text"
             />
         <LinearLayout
@@ -89,6 +91,7 @@
                 android:src="@drawable/icons_fail"
                 />
             <TextView
+                android:id="@+id/tv_error"
                 android:layout_margin="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

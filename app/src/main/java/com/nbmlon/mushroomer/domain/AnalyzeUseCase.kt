@@ -5,7 +5,9 @@ import com.nbmlon.mushroomer.api.ResponseCodeConstants
 import com.nbmlon.mushroomer.api.dto.MushroomResponseDTO
 import com.nbmlon.mushroomer.model.AnalyzeResult
 import com.nbmlon.mushroomer.model.MushHistory
+import com.nbmlon.mushroomer.model.MushType
 import com.nbmlon.mushroomer.model.Mushroom
+import okhttp3.MultipartBody
 
 
 sealed class AnalyzeUseCaseRequest{
@@ -14,7 +16,8 @@ sealed class AnalyzeUseCaseRequest{
     ) : AnalyzeUseCaseRequest()
 
     data class SaveHistoryDomain(
-        val mushHistory: MushHistory
+        val mushHistory: MushHistory,
+        val images : List<MultipartBody.Part>
     ) : AnalyzeUseCaseRequest()
 }
 
@@ -38,11 +41,28 @@ sealed class AnalyzeUseCaseResponse{
     ) :AnalyzeUseCaseResponse()
 }
 
-fun MushroomResponseDTO.MushResponseDTO.toAnalyzeDomain() : AnalyzeUseCaseResponse =
-    AnalyzeUseCaseResponse.AnalyzeResponseDomain(
-        success = success,
-        mushroom = TODO("명세서 아직임")
+fun MushroomResponseDTO.MushResponseDTO.toAnalyzeDomain() : AnalyzeUseCaseResponse {
+    val type = when(data.type){
+        "EAT"-> MushType.EDIBLE;
+        "POISON" -> MushType.POISON;
+        else-> MushType.POISON;
+    }
+
+    return AnalyzeUseCaseResponse.AnalyzeResponseDomain(
+        success = data != null,
+        mushroom = Mushroom(
+            dogamNo = data.id,
+            imageUrl = data.imageUrl,
+            name = data.name,
+            feature = data.feature,
+            type = type,
+            rarity = data.rarity,
+            myHistory = listOf(),
+            gotcha = data.gotcha == "true"
+        )
     )
+}
+
 
 fun AnalyzeUseCaseResponse.AnalyzeResponseDomain.toResultModel() : AnalyzeResult =
     AnalyzeResult(

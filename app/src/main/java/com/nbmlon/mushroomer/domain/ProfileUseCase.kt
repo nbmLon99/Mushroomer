@@ -1,11 +1,8 @@
 package com.nbmlon.mushroomer.domain
 
-import android.graphics.Bitmap
-import android.net.Uri
 import com.nbmlon.mushroomer.api.EndConverter.sha256
 import com.nbmlon.mushroomer.api.ResponseCodeConstants
 import com.nbmlon.mushroomer.api.dto.UserRequestDTO
-import com.nbmlon.mushroomer.api.dto.UserResponseDTO
 import com.nbmlon.mushroomer.model.User
 import okhttp3.MultipartBody
 
@@ -44,9 +41,3 @@ sealed class ProfileUseCaseResponse{
     ) : ProfileUseCaseResponse()
 }
 
-
-fun UserResponseDTO.WithdrawalResponseDTO.toProfileDomain() : ProfileUseCaseResponse =
-    ProfileUseCaseResponse.SuccessResponseDomain(
-        success = success,
-        code = code
-    )

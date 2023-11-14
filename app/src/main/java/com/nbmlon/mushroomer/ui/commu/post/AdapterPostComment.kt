@@ -35,11 +35,9 @@ class AdapterPostComment(private val menu_cl: PopupMenuClickListener) : ListAdap
             val inflater = popupMenu.menuInflater
             inflater.inflate(R.menu.post_context_menu, popupMenu.menu)
             popupMenu.apply {
-                val isLike = targetComment?.myThumbsUp ?: true
-
                 //좋아요 표시
-                menu?.findItem(R.id.like)?.isVisible = isLike
-                menu?.findItem(R.id.dislike)?.isVisible = !isLike
+                menu?.findItem(R.id.like)?.isVisible = false
+                menu?.findItem(R.id.dislike)?.isVisible = false
 
 
                 menu?.findItem(R.id.report)?.isVisible = !(targetComment?.isMine ?: false)
@@ -49,11 +47,9 @@ class AdapterPostComment(private val menu_cl: PopupMenuClickListener) : ListAdap
                     // 메뉴 아이템 클릭 시 동작 처리
                     when (menuItem.itemId) {
                         R.id.like ->{
-                            menu_cl.onChangeLike(null, targetComment, true)
                             true
                         }
                         R.id.dislike ->{
-                            menu_cl.onChangeLike(null, targetComment, false)
                             true
                         }
                         R.id.report -> {
@@ -109,6 +105,8 @@ class AdapterPostComment(private val menu_cl: PopupMenuClickListener) : ListAdap
                 val inflater = popupMenu.menuInflater
                 inflater.inflate(R.menu.post_context_menu, popupMenu.menu)
                 popupMenu.apply {
+                    menu?.findItem(R.id.like)?.isVisible = false
+                    menu?.findItem(R.id.dislike)?.isVisible = false
                     menu?.findItem(R.id.menuForOwner)?.isVisible = targetReply?.isMine == true
                     menu?.findItem(R.id.menuForComment)?.isVisible = false
 
@@ -116,11 +114,9 @@ class AdapterPostComment(private val menu_cl: PopupMenuClickListener) : ListAdap
                         // 메뉴 아이템 클릭 시 동작 처리
                         when (menuItem.itemId) {
                             R.id.like ->{
-                                menu_cl.onChangeLike(null, targetReply, true)
                                 true
                             }
                             R.id.dislike ->{
-                                menu_cl.onChangeLike(null, targetReply, false)
                                 true
                             }
                             R.id.report -> {

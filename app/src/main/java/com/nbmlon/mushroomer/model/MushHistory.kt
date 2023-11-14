@@ -1,5 +1,6 @@
 package com.nbmlon.mushroomer.model
 
+import android.net.Uri
 import android.util.Log
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
@@ -8,7 +9,7 @@ import java.io.Serializable
 
 data class MushHistory (
     val mushroom : Mushroom,
-    val picPath : ArrayList<String>,
+    val picPath : ArrayList<Uri>,
     val date : DateTime,
     val lat : Double?,
     val lon : Double?

@@ -12,6 +12,7 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Observer
 import com.nbmlon.mushroomer.AppUser
+import com.nbmlon.mushroomer.AppUserManager
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.NICKNAME_DUPLICATED
@@ -95,26 +96,15 @@ class LoginActivity : AppCompatActivity() {
      */
     override fun onResume() {
         super.onResume()
-
-
         val autoLoginEnabled = sharedPrefs.getBoolean("autoLoginEnabled", false)
         //자동로그인
-        if(ciphertextWrapper != null && !autoLoginEnabled){
-            if (AppUser.refreshToken == null) {
-                autoLogin()
-            } else {
-                // The user has already logged in, so proceed to the rest of the app
-                // this is a todo for you, the developer
-                updateApp()
-            }
-        }
-        //지문로그인
-        else if (ciphertextWrapper != null) {
-            if (AppUser.refreshToken == null) {
-                showBiometricPromptForDecryption()
-            } else {
-                // The user has already logged in, so proceed to the rest of the app
-                // this is a todo for you, the developer
+        if(autoLoginEnabled){
+            if (AppUserManager.isAppUserSaved(applicationContext)){
+                val savedUser = AppUserManager.loadAppUser(applicationContext)
+                AppUser.refreshToken = savedUser?.refreshToken
+                AppUser.token = savedUser?.token
+                AppUser.user = savedUser?.user
+
                 updateApp()
             }
         }
@@ -128,20 +118,24 @@ class LoginActivity : AppCompatActivity() {
                     AppUser.refreshToken = response.refreshToken
                     AppUser.token = response.token
                     AppUser.user = response.loginUser
-                    AppUser.percent = response.percentage
-
 
                     //자동로그인 토큰 저장
                     if(sharedPrefs.getBoolean("autoLoginEnabled", false)){
-                        encryptAndStoreServerTokenForAutoLogin()
+                        //encryptAndStoreServerTokenForAutoLogin()
+                        AppUserManager.saveAppUser( applicationContext, AppUser)
                     }
                     updateApp()
                 }
             }
             is FindResponseDomain ->{
-                if(response.success)
-                    TODO("아이디 비번 찾기 결과값 표시")
-
+                if(response.success){
+                    Sweetalert(applicationContext,Sweetalert.BUTTON_NEUTRAL ).apply {
+                        titleText = "힌트메시지"
+                        contentText = response.hint
+                        setNeutralButton("확인"){ this.dismissWithAnimation() }
+                        show()
+                    }
+                }
             }
             is SuccessResponseDomain ->{
                 if(response.success){
@@ -217,86 +211,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun updateApp() {
-        AppUser.user = User(1,binding.username.text.toString(),"","닉네임","","01000000000")
-        AppUser.percent = 50
         startActivity(Intent(this,MainActivity::class.java))
         this@LoginActivity.finish()
     }
-
-
-
-
-    // BIOMETRICS SECTION
-    /**지문 복호화 프롬포트 **/
-    private fun showBiometricPromptForDecryption() {
-        ciphertextWrapper?.let { textWrapper ->
-            val secretKeyName = REFRESH_TOKEN_ENCRYPTION_KEY
-            val cipher = cryptographyManager.getInitializedCipherForDecryption(
-                secretKeyName, textWrapper.initializationVector
-            )
-            val biometricPrompt =
-                BiometricPromptUtils.createBiometricPrompt(
-                    this,
-                    ::decryptServerTokenFromStorage
-                )
-            val promptInfo = BiometricPromptUtils.createPromptInfo(this)
-            biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
-        }
-    }
-    private fun decryptServerTokenFromStorage(authResult: BiometricPrompt.AuthenticationResult) {
-        ciphertextWrapper?.let { textWrapper ->
-            CoroutineScope(Dispatchers.Default).launch {
-                authResult.cryptoObject?.cipher?.let {
-                    val plaintext =
-                        cryptographyManager.decryptData(textWrapper.ciphertext, it)
-
-                    //라이브 데이터로 변경된 내용
-                    loginViewModel.request(TokenLoginRequestDomain(plaintext))
-                    //----------------------
-                    loading.show()
-                }
-            }
-        }
-    }
-
-
-    /** AUTO_LOGIN SECTION **/
-    private fun autoLogin(){
-        ciphertextWrapper?.let { textWrapper ->
-            CoroutineScope(Dispatchers.Default).launch{
-                val secretKeyName = REFRESH_TOKEN_ENCRYPTION_KEY
-                val cipher = cryptographyManager.getInitializedCipherForDecryption(
-                    secretKeyName, textWrapper.initializationVector
-                )
-                val plaintext =
-                    cryptographyManager.decryptData(textWrapper.ciphertext, cipher)
-
-                //라이브 데이터로 변경된 내용
-                loginViewModel.request(TokenLoginRequestDomain(plaintext))
-                //----------------------
-                loading.show()
-            }
-        }
-    }
-
-    //자동로그인을 위한 refreshToken 저장
-    private fun encryptAndStoreServerTokenForAutoLogin(){
-        CoroutineScope(Dispatchers.Default).launch {
-            AppUser.refreshToken?.let{
-                val cipher = cryptographyManager.getInitializedCipherForEncryption(
-                    REFRESH_TOKEN_ENCRYPTION_KEY)
-                val encryptedServerTokenWrapper = cryptographyManager.encryptData(it, cipher)
-                cryptographyManager.persistCiphertextWrapperToSharedPrefs(
-                    encryptedServerTokenWrapper,
-                    this@LoginActivity.applicationContext,
-                    SHARED_PREFS_FILENAME,
-                    Context.MODE_PRIVATE,
-                    CIPHERTEXT_WRAPPER
-                )
-            }
-        }
-    }
-
 
 
 
@@ -370,5 +287,87 @@ class LoginActivity : AppCompatActivity() {
             show()
         }
     }
+
+
+
+
+
+
+
+
+
+    /** AUTO_LOGIN SECTION **/
+    private fun autoLogin(){
+        ciphertextWrapper?.let { textWrapper ->
+            CoroutineScope(Dispatchers.Default).launch{
+                val secretKeyName = REFRESH_TOKEN_ENCRYPTION_KEY
+                val cipher = cryptographyManager.getInitializedCipherForDecryption(
+                    secretKeyName, textWrapper.initializationVector
+                )
+                val plaintext =
+                    cryptographyManager.decryptData(textWrapper.ciphertext, cipher)
+
+                //라이브 데이터로 변경된 내용
+                loginViewModel.request(TokenLoginRequestDomain(plaintext))
+                //----------------------
+                loading.show()
+            }
+        }
+    }
+
+    //자동로그인을 위한 refreshToken 저장
+    private fun encryptAndStoreServerTokenForAutoLogin(){
+        CoroutineScope(Dispatchers.Default).launch {
+            AppUser.refreshToken?.let{
+                val cipher = cryptographyManager.getInitializedCipherForEncryption(
+                    REFRESH_TOKEN_ENCRYPTION_KEY)
+                val encryptedServerTokenWrapper = cryptographyManager.encryptData(it, cipher)
+                cryptographyManager.persistCiphertextWrapperToSharedPrefs(
+                    encryptedServerTokenWrapper,
+                    this@LoginActivity.applicationContext,
+                    SHARED_PREFS_FILENAME,
+                    Context.MODE_PRIVATE,
+                    CIPHERTEXT_WRAPPER
+                )
+            }
+        }
+    }
+
+    // BIOMETRICS SECTION
+    /**지문 복호화 프롬포트 **/
+    private fun showBiometricPromptForDecryption() {
+        ciphertextWrapper?.let { textWrapper ->
+            val secretKeyName = REFRESH_TOKEN_ENCRYPTION_KEY
+            val cipher = cryptographyManager.getInitializedCipherForDecryption(
+                secretKeyName, textWrapper.initializationVector
+            )
+            val biometricPrompt =
+                BiometricPromptUtils.createBiometricPrompt(
+                    this,
+                    ::decryptServerTokenFromStorage
+                )
+            val promptInfo = BiometricPromptUtils.createPromptInfo(this)
+            biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
+        }
+    }
+    private fun decryptServerTokenFromStorage(authResult: BiometricPrompt.AuthenticationResult) {
+        ciphertextWrapper?.let { textWrapper ->
+            CoroutineScope(Dispatchers.Default).launch {
+                authResult.cryptoObject?.cipher?.let {
+                    val plaintext =
+                        cryptographyManager.decryptData(textWrapper.ciphertext, it)
+
+                    //라이브 데이터로 변경된 내용
+                    loginViewModel.request(TokenLoginRequestDomain(plaintext))
+                    //----------------------
+                    loading.show()
+                }
+            }
+        }
+    }
+
+
+
+
 
 }

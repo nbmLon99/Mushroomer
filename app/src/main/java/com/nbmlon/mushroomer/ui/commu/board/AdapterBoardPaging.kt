@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.nbmlon.mushroomer.databinding.ItemPostImageBinding
 import com.nbmlon.mushroomer.databinding.ItemPostTextBinding
@@ -18,7 +19,7 @@ import com.nbmlon.mushroomer.ui.commu.home.HomeAdapterHolder
 class AdapterBoardPaging(
     val boardType: BoardType,
     val cl : PostClickListener
-) : PagingDataAdapter<Post, RecyclerView.ViewHolder>(PostDiffCallback) {
+) : ListAdapter<Post, RecyclerView.ViewHolder>(PostDiffCallback) {
     inner class TextPostViewHolder(private val itemBinding: ItemPostTextBinding) : RecyclerView.ViewHolder(itemBinding.root),
         HomeAdapterHolder {
         override fun bind(pos : Int){

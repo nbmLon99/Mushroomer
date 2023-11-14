@@ -5,13 +5,16 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.Image
+import android.net.Uri
 import android.os.Environment
 import android.util.Log
 import androidx.camera.core.ImageProxy
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nbmlon.mushroomer.api.EndConverter
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.BITMAP_SAVE_ERROR
 import com.nbmlon.mushroomer.data.analyze.AnalyzeRepository
 import com.nbmlon.mushroomer.domain.AnalyzeUseCaseRequest
@@ -55,7 +58,7 @@ class CameraViewModel : ViewModel() {
             val timestampFormat = SimpleDateFormat(FILENAME_FORMAT, Locale.getDefault())
             val timestamp = timestampFormat.format(Date())
             var success = true
-            val paths = arrayListOf<String>()
+            val uris = arrayListOf<Uri>()
 
             //사진 저장 시도
             capturedImages.value?.let {
@@ -65,15 +68,15 @@ class CameraViewModel : ViewModel() {
                     if(result == null){
                         success = false
                     }else {
-                        paths.add(result)
+                        uris.add(result)
                     }
                 }
             }
 
             //사진 저장 성공 -> History 저장
             if(success){
-                val history = saveHistory(mush, paths, lat, lon)
-                _response.value = repository.saveHistory(AnalyzeUseCaseRequest.SaveHistoryDomain(history))
+                val history = saveHistory(mush, uris, lat, lon)
+                _response.value = repository.saveHistory(AnalyzeUseCaseRequest.SaveHistoryDomain(history, EndConverter.urisToParts(context,history.picPath)))
 
                 clearImages()
             }
@@ -92,35 +95,42 @@ class CameraViewModel : ViewModel() {
     }
 
     /** 사진 저장 시도 **/
-    private suspend fun savePictureFromBitmap(context: Context, bitmap: Bitmap, filename: String): String? {
+    private suspend fun savePictureFromBitmap(context: Context, bitmap: Bitmap, filename: String): Uri? {
         return withContext(Dispatchers.IO) {
             val directory = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
             val file = File(directory, filename)
 
-            var path : String? = null
+            var uri: Uri? = null
             var fos: FileOutputStream? = null
             try {
                 fos = FileOutputStream(file)
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
                 fos.flush()
-                Log.d("성공",file.path)
-                path = file.path
+                Log.d("성공", file.path)
+                uri = file.toUri()
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {
                 fos?.close()
             }
-            path
+            uri
         }
     }
-    private fun saveHistory(mush : Mushroom, paths : ArrayList<String>, lat : Double?, lon : Double?)  =
-        MushHistory(
+    private fun saveHistory(
+        mush: Mushroom,
+        uris: ArrayList<Uri>,
+        lat: Double?,
+        lon: Double?
+    ): MushHistory {
+        return MushHistory(
             mushroom = mush,
-            picPath = paths,
+            picPath = uris,
             date = DateTime(),
             lat = lat,
             lon = lon
         )
+    }
+
 
     private fun Image.toBitmap(): Bitmap {
         val buffer = planes[0].buffer

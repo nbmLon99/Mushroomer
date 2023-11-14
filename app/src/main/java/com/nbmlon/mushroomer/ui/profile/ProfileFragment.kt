@@ -18,6 +18,7 @@ import androidx.biometric.BiometricPrompt
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.nbmlon.mushroomer.AppUser
+import com.nbmlon.mushroomer.AppUserManager
 import com.nbmlon.mushroomer.R
 import com.nbmlon.mushroomer.api.EndConverter
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
@@ -126,10 +127,10 @@ class ProfileFragment : Fragment(), DialogListener {
     private fun showDialogLoginMethod(){
         Sweetalert(context, Sweetalert.NORMAL_TYPE).apply {
             val dialogBinding = DialogLoginMethodBinding.inflate(layoutInflater)
-            titleText = "로그인 방법 변경"
+            titleText = getString(R.string.chg_app_login)
             setCustomView(dialogBinding.root)
             setNeutralButton("취소"){ it.dismissWithAnimation()}
-            setCancelButton("확인"){
+            setCancelButton("변경"){
                 dialogBinding.methodRadio.checkedRadioButtonId?.let {
                     loginMethodModify(it)
                 }}
@@ -140,8 +141,9 @@ class ProfileFragment : Fragment(), DialogListener {
     private fun logout(){
         AppUser.token = null
         AppUser.user = null
-        AppUser.percent = null
-
+        if(AppUserManager.isAppUserSaved(requireContext())){
+            AppUserManager.clearAppUser(requireContext())
+        }
         val intent = Intent(requireContext(), LoginActivity::class.java)
         startActivity(intent)
         requireActivity().finish()
@@ -262,17 +264,23 @@ class ProfileFragment : Fragment(), DialogListener {
 
 
     override fun loginMethodModify(radioCheckedId: Int?) {
-        Log.d(TAG, radioCheckedId.toString())
-        return ;
-
         radioCheckedId?.let { id->
-            deleteServerToken()
+            //deleteServerToken()
             when(id){
-                R.id.login_biometric -> showBiometricPromptForEncryption() ;
-                R.id.login_password-> TODO("로그인") ;
-                else -> error("잘못된 인증 방식 선택")
+                R.id.login_biometric -> setAutoLogin()
+                R.id.login_password-> noAutoLogin() ;
             }
         }
+    }
+    
+    //자동로그인 설정
+    private fun setAutoLogin(){
+        AppUserManager.saveAppUser(requireContext(), AppUser)
+    }
+    
+    //자동로그인 해제
+    private fun noAutoLogin(){
+        AppUserManager.clearAppUser(requireContext())
     }
 
 

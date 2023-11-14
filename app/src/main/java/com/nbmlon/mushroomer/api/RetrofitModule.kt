@@ -13,7 +13,7 @@ object RetrofitModule {
     @Provides
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://api.example.com/")
+            .baseUrl("http://ec2-3-34-20-160.ap-northeast-2.compute.amazonaws.com:1000")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

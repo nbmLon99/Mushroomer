@@ -46,14 +46,46 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/historyRV"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="10dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_post_text"
-        tools:itemCount="100"
-        />
+        >
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/historyRV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_post_text"
+            tools:itemCount="100"
+            />
+
+
+        <LinearLayout
+            android:id="@+id/emptyList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/bgGray"
+            android:gravity="center"
+            android:visibility="gone"
+            >
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="false"
+                android:scaleType="center"
+                android:src="@drawable/icons_fail"
+                />
+            <TextView
+                android:id="@+id/tv_error"
+                android:layout_margin="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_post_history"
+                android:textSize="@dimen/text_sub"
+                />
+        </LinearLayout>
+    </FrameLayout>
+
 </LinearLayout>

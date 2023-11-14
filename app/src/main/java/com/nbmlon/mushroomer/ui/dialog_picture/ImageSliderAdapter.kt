@@ -1,5 +1,6 @@
 package com.nbmlon.mushroomer.ui.dialog_picture
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.nbmlon.mushroomer.R

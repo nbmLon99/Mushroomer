@@ -1,22 +1,11 @@
 package com.nbmlon.mushroomer.domain
 
-import com.nbmlon.mushroomer.MyApplication
 import com.nbmlon.mushroomer.api.EndConverter.sha256
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.UNDEFINED_ERROR_CODE
 import com.nbmlon.mushroomer.api.dto.UserRequestDTO
-import com.nbmlon.mushroomer.api.dto.UserResponseDTO.GenerateTokenResponseDTO
-import com.nbmlon.mushroomer.api.dto.UserResponseDTO.KakaoLoginResponseDTO
-import com.nbmlon.mushroomer.api.dto.UserResponseDTO.LoginResponseDTO
-import com.nbmlon.mushroomer.api.dto.UserResponseDTO.ModifyUserResponseDTO
-import com.nbmlon.mushroomer.api.dto.UserResponseDTO.SignUpResponseDTO
-import com.nbmlon.mushroomer.api.dto.UserResponseDTO.WithdrawalResponseDTO
 import com.nbmlon.mushroomer.domain.LoginUseCaseRequest.LoginRequestDomain
 import com.nbmlon.mushroomer.domain.LoginUseCaseRequest.RegisterRequestDomain
-import com.nbmlon.mushroomer.domain.LoginUseCaseResponse.GenerateTokenResponseDomain
-import com.nbmlon.mushroomer.domain.LoginUseCaseResponse.LoginResponseDomain
-import com.nbmlon.mushroomer.domain.LoginUseCaseResponse.SuccessResponseDomain
 import com.nbmlon.mushroomer.model.User
-import java.security.MessageDigest
 
 
 /** request**/
@@ -117,36 +106,4 @@ sealed class LoginUseCaseResponse{
         val token : String
     ) : LoginUseCaseResponse()
 }
-
-
-fun LoginResponseDTO.toLoginDomain() : LoginUseCaseResponse =
-    LoginResponseDomain(
-        success = success,
-        refreshToken = refreshToken,
-        token = token,
-        loginUser = loginUser,
-        percentage = percentage
-    )
-
-fun KakaoLoginResponseDTO.toLoginDomain() : LoginUseCaseResponse =
-    LoginResponseDomain(
-        success = success,
-        refreshToken = refreshToken,
-        token = token,
-        loginUser = loginUser,
-        percentage = percentage
-    )
-
-fun GenerateTokenResponseDTO.toLoginDomain() : LoginUseCaseResponse =
-    GenerateTokenResponseDomain(
-        token = message
-    )
-
-fun ModifyUserResponseDTO.toLoginDomain() : LoginUseCaseResponse =
-    SuccessResponseDomain(success = success)
-fun WithdrawalResponseDTO.toLoginDomain(): LoginUseCaseResponse =
-    SuccessResponseDomain(success = success)
-fun SignUpResponseDTO.toLoginDomain(): LoginUseCaseResponse =
-    SuccessResponseDomain(success = success)
-
 

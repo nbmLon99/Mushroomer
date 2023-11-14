@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -23,16 +24,21 @@ import androidx.fragment.app.viewModels
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.nbmlon.mushroomer.R
+import com.nbmlon.mushroomer.api.EndConverter
 import com.nbmlon.mushroomer.api.RequestCodeConstants
 import com.nbmlon.mushroomer.api.RequestCodeConstants.CAMERA_PERMISSION_REQUEST_CODE
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.BITMAP_SAVE_ERROR
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.LOW_ACCURACY_ERROR
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
 import com.nbmlon.mushroomer.databinding.FragmentCameraBinding
+import com.nbmlon.mushroomer.domain.AnalyzeUseCaseRequest
 import com.nbmlon.mushroomer.domain.AnalyzeUseCaseResponse
 import com.nbmlon.mushroomer.domain.toResultModel
 import com.nbmlon.mushroomer.model.AnalyzeResult
 import taimoor.sultani.sweetalert2.Sweetalert
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 

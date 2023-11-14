@@ -1,3 +1,9 @@
 package com.nbmlon.mushroomer.api.dto
 
-sealed class ThumbsUpResponseDTO
+import com.google.gson.annotations.SerializedName
+
+sealed class ThumbsUpRequestDTO{
+    data class ThumbsUpDTO(
+        val articleId : Int
+    ) : ThumbsUpRequestDTO()
+}

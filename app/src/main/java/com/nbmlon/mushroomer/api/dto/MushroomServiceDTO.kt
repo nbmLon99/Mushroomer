@@ -4,13 +4,21 @@ import com.google.gson.annotations.SerializedName
 
 sealed class MushroomResponseDTO {
     data class MushesResponseDTO(
-        @SerializedName("isSuccess") val success: Boolean,
-        val code: Int = -1,
+        val data : List<MushDTO>,
         val message: String = ""
     ) : MushroomResponseDTO()
     data class MushResponseDTO(
-        @SerializedName("isSuccess") val success: Boolean,
-        val code: Int = -1,
+        val data : MushDTO,
         val message: String = ""
     ) : MushroomResponseDTO()
+
+    data class MushDTO(
+        @SerializedName("mushId") val id : Int,
+        val name : String,
+        val feature : String,
+        val rarity : Int,
+        @SerializedName("whichMush") val type : String,
+        @SerializedName("image") val imageUrl : String,
+        @SerializedName("isCatched") val gotcha : String
+    )
 }
