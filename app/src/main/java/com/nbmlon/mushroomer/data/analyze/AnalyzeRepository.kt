@@ -31,7 +31,7 @@ private class AnalyzeRepositoryImpl : AnalyzeRepository {
             val result = AnalyzerTF(domain).getResponseTF()
             if(result == null){
                 throw Exception("결과값 null")
-            }else if(result!!.accuracy * 100 <= 60 )
+            }else if(result!!.accuracy  <= 60 )
                 AnalyzeUseCaseResponse.SuccessResponseDomain(false,LOW_ACCURACY_ERROR)
             else{
                 val mush = withContext(Dispatchers.IO){

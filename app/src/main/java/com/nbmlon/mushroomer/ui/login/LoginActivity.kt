@@ -140,7 +140,7 @@ class LoginActivity : AppCompatActivity() {
                     Sweetalert(applicationContext,Sweetalert.BUTTON_NEUTRAL ).apply {
                         titleText = "힌트메시지"
                         contentText = response.hint
-                        setNeutralButton("확인"){ this.dismissWithAnimation() }
+                        setNeutralButton("확인"){ this.dismiss() }
                         show()
                     }
                 }
@@ -149,7 +149,7 @@ class LoginActivity : AppCompatActivity() {
                 if(response.success){
                     Toast.makeText(this@LoginActivity,"성공",Toast.LENGTH_SHORT).show()
                     if(registerDialog != null){
-                        registerDialog!!.dismissWithAnimation()
+                        registerDialog!!.dismiss()
                         registerDialog = null
                         registerBinding = null
                     }
@@ -248,7 +248,7 @@ class LoginActivity : AppCompatActivity() {
         val dialogBinding = DialogFindPwBinding.inflate(layoutInflater).apply {
             btnFindPw.setOnClickListener {
 
-                dialog.dismissWithAnimation()
+                dialog.dismiss()
             }
         }
         dialog.apply {

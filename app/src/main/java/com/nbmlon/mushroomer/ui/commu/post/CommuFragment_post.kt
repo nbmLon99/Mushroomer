@@ -69,7 +69,7 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
 
         //targetPost 로드되면 UI 반영
         viewModel.mPost.observe(viewLifecycleOwner){
-            loading.dismissWithAnimation()
+            loading.dismiss()
             bindingPost(it)
         }
 
@@ -170,10 +170,10 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
                             .setTitleText("정말로 삭제하시겠습니까?")
                             .setCancelButton("네"){
                                 onClickDel(targetPost,null)
-                                it.dismissWithAnimation()
+                                it.dismiss()
                             }
                             .setNeutralButton("아니요"){
-                                it.dismissWithAnimation()
+                                it.dismiss()
                             }
                             .show()
                         true
@@ -200,7 +200,7 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
         onResponseSuccess = {
             Sweetalert(this@CommuFragment_post.context, Sweetalert.BUTTON_NEUTRAL)
                 .setTitleText("신고되었습니다!")
-                .setCancelButton("확인"){it.dismissWithAnimation()}
+                .setCancelButton("확인"){it.dismiss()}
                 .show()
         }
         loading.show()
@@ -220,7 +220,7 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
                 Sweetalert(this@CommuFragment_post.context, Sweetalert.BUTTON_NEUTRAL)
                     .setTitleText("삭제되었습니다!")
                     .setCancelButton("확인"){
-                        it.dismissWithAnimation()
+                        it.dismiss()
                         requireActivity().onBackPressedDispatcher.onBackPressed()
                     }
                     .show()
@@ -244,7 +244,7 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
                             remove(target_comment)
                             commentAdapter.submitList(this)
                         }
-                        it.dismissWithAnimation()
+                        it.dismiss()
                     }
                     .show()
             }
@@ -263,10 +263,10 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
                 setCustomView(dialogBinding.root)
                 setCancelButton("수정"){
                     requestModify(target_comment,editText.text.toString())
-                    it.dismissWithAnimation()
+                    it.dismiss()
                 }
                 setNeutralButton(resources.getString(R.string.cancel)){
-                    it.dismissWithAnimation()
+                    it.dismiss()
                 }
                 show()
             }
@@ -289,7 +289,7 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
                         this[indexOf(target)].content = modifiedContent
                         commentAdapter.submitList(this)
                     }
-                    it.dismissWithAnimation()
+                    it.dismiss()
                 }
                 .show()
         }
@@ -315,7 +315,7 @@ class CommuFragment_post private constructor(): Fragment(), PopupMenuClickListen
     /** 서버 요청에 대한 결과값 처리 **/
     private fun responseObserver(response : CommuPostUseCaseResponse){
         if(loading.isShowing)
-            loading.dismissWithAnimation()
+            loading.dismiss()
         when(response){
             is CommuPostUseCaseResponse.SuccessResponseDomain ->{
                 if(response.success){

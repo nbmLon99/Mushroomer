@@ -82,11 +82,11 @@ class DogamFragment_detail private constructor(): Fragment(), DogamHistoryClickL
     private fun bindResponse(response : DogamUseCaseResponse.SpecificDogamResponse){
         val alert = Sweetalert(context, Sweetalert.BUTTON_CANCEL).apply {
             setCancelButton(getString(R.string.confirm)){
-                it.dismissWithAnimation()
+                it.dismiss()
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             }
         }
-        loading.dismissWithAnimation()
+        loading.dismiss()
         if(response.success){
             binding.apply {
                 mushroom = mMush

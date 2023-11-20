@@ -89,7 +89,7 @@ class ProfileFragment : Fragment(), DialogListener {
         loading = Sweetalert(context, Sweetalert.PROGRESS_TYPE).apply { setCancelable(false) }
         profileViewModel.response.observe(viewLifecycleOwner){response ->
             if(loading.isShowing)
-                loading.dismissWithAnimation()
+                loading.dismiss()
             if(response.success){
                 onSuccessResponse?.let { it(response) }
             }else if(response.code == NETWORK_ERROR_CODE) {
@@ -129,7 +129,7 @@ class ProfileFragment : Fragment(), DialogListener {
             val dialogBinding = DialogLoginMethodBinding.inflate(layoutInflater)
             titleText = getString(R.string.chg_app_login)
             setCustomView(dialogBinding.root)
-            setNeutralButton("취소"){ it.dismissWithAnimation()}
+            setNeutralButton("취소"){ it.dismiss()}
             setCancelButton("변경"){
                 dialogBinding.methodRadio.checkedRadioButtonId?.let {
                     loginMethodModify(it)
@@ -152,10 +152,10 @@ class ProfileFragment : Fragment(), DialogListener {
     private fun showLogoutDialog(){
         Sweetalert(context, Sweetalert.NORMAL_TYPE).apply {
             titleText = "로그아웃 하시겠습니까?"
-            setNeutralButton("취소"){ it.dismissWithAnimation()}
+            setNeutralButton("취소"){ it.dismiss()}
             setCancelButton("네"){
                 logout()
-                it.dismissWithAnimation()
+                it.dismiss()
             }
             show()
         }
@@ -177,7 +177,7 @@ class ProfileFragment : Fragment(), DialogListener {
                         Sweetalert(context,Sweetalert.NORMAL_TYPE).apply {
                             titleText = "회원 탈퇴가 성공적으로 처리되었습니다!\n이용해 주셔서 갑사합니다."
                             setCancelButton("확인"){
-                                it.dismissWithAnimation()
+                                it.dismiss()
                                 logout()
                             }
                             setCancelable(false)
@@ -215,7 +215,7 @@ class ProfileFragment : Fragment(), DialogListener {
                             setCancelButton("확인"){
                                 AppUser.user = AppUser.user!!.getModifiedNickname(newNickname)
                                 binding.user = AppUser.user!!
-                                it.dismissWithAnimation()
+                                it.dismiss()
                             }
                             setCancelable(false)
                             show()
@@ -249,7 +249,7 @@ class ProfileFragment : Fragment(), DialogListener {
                     onSuccessResponse = {
                         Sweetalert(context,Sweetalert.NORMAL_TYPE).apply {
                             titleText = "비밀번호 변경이 성공적으로 처리되었습니다!"
-                            setCancelButton("확인"){ it.dismissWithAnimation() }
+                            setCancelButton("확인"){ it.dismiss() }
                             setCancelable(false)
                             show()
                         }

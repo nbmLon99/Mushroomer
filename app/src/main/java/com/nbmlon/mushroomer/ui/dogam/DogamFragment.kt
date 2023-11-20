@@ -95,7 +95,7 @@ class DogamFragment : Fragment(), DogamItemClickListner {
 
         viewModel.responseLiveData.observe(viewLifecycleOwner, object : Observer<DogamUseCaseResponse.LoadDogamResponse> {
             override fun onChanged(response: DogamUseCaseResponse.LoadDogamResponse) {
-                loading.dismissWithAnimation()
+                loading.dismiss()
 
                 if(response.success){
                     fetchState = true
@@ -160,10 +160,10 @@ class DogamFragment : Fragment(), DogamItemClickListner {
             setCancelButton(resources.getString(R.string.CONFIRM)){
                 val query: String? = dialogBinding.editText.text.takeIf { it.isNotEmpty() }?.toString()
                 onSearchBtnClicked(DogamUiAction.Search(query = query))
-                it.dismissWithAnimation()
+                it.dismiss()
             }
             setNeutralButton(resources.getString(R.string.cancel)){
-                it.dismissWithAnimation()
+                it.dismiss()
             }
             show()
         }

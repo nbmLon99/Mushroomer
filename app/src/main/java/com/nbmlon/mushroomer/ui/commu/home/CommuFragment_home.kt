@@ -71,7 +71,7 @@ class CommuFragment_home : Fragment(), PostClickListener {
             }else if(response.code == UNDEFINED_ERROR_CODE){
                 Toast.makeText(requireActivity(),getString(R.string.error_msg), Toast.LENGTH_SHORT).show()
             }
-            loading?.dismissWithAnimation()
+            loading?.dismiss()
             loading = null
         }
         CoroutineScope(Dispatchers.Main).launch {
@@ -120,7 +120,7 @@ class CommuFragment_home : Fragment(), PostClickListener {
 
     override fun onDestroyView() {
         _binding = null
-        loading?.let { it.dismissWithAnimation() }
+        loading?.let { it.dismiss() }
         super.onDestroyView()
     }
 

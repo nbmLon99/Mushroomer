@@ -98,6 +98,8 @@ internal class AnalyzerTF(private val domain: AnalyzeUseCaseRequest.AnalyzeReque
             Log.d("Predicted Label", maxPos.toString()) // maxPos = 정확도가 가장 높은 index
             Log.d("Predicted Label", classes[maxPos]) // 예측한 버섯 이름
             Log.d("Predicted Label", Confidence.toString()) // 정확도
+            Log.d("Predicted Label", confidences.toString()) // 정확도
+
 
             // 예측 확인용
             val outputValues = FloatArray(outputFeature0.shape[1]) // Assuming shape[0] is 1

@@ -147,7 +147,7 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
                 if(imageAdapter.currentList.size <= 0 && mBoardType == BoardType.PicBoard){
                     Sweetalert(context, Sweetalert.BUTTON_CANCEL)
                         .setTitleText("사진 게시판에는 반드시 하나 이상의 사진 등록이 필요합니다!")
-                        .setCancelButton("확인"){it.dismissWithAnimation()}
+                        .setCancelButton("확인"){it.dismiss()}
                         .show()
                 }else {
                     loading.show()
@@ -236,12 +236,12 @@ class CommuFragment_write private constructor() : Fragment(), ImageDeleteListner
     }
     private fun responseObserver(response : CommuWriteUseCaseResponse){
         if(loading.isShowing)
-            loading.dismissWithAnimation()
+            loading.dismiss()
         if(response.success){
             Sweetalert(context,Sweetalert.BUTTON_CANCEL).apply {
                 titleText = "성공하였습니다!"
                 setCancelButton("확인"){
-                    it.dismissWithAnimation()
+                    it.dismiss()
                     requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
                 show()

@@ -133,10 +133,10 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
                             .setContentText(resources.getString(R.string.ALERT_CANCEL_CONTENT))
                             .setCancelButton(resources.getString(R.string.YES)) { dialog ->
                                 viewModel.clearImages()
-                                dialog.dismissWithAnimation()
+                                dialog.dismiss()
                             }
                             .setNeutralButton(resources.getString(R.string.NO)) { dialog ->
-                                dialog.dismissWithAnimation()
+                                dialog.dismiss()
                             }
                             .show()
                     }
@@ -145,7 +145,7 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
                             .setTitleText(resources.getString(R.string.TOAST_CANCEL_IMPOSSIBLE))
                             .setContentText(resources.getString(R.string.TOAST_CANCEL_IMPOSSIBLE_SUB))
                             .setNeutralButton(resources.getString(R.string.CONFIRM)) { dialog ->
-                                dialog.dismissWithAnimation()
+                                dialog.dismiss()
                             }
                             .show()}
                 }
@@ -303,14 +303,14 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
                     viewModel.onSuccessAnalyze(requireActivity(), analyzeResult!!.mushroom, lat,lon)
                 }else{
                     if(loading.isShowing)
-                        loading.dismissWithAnimation()
+                        loading.dismiss()
                     Toast.makeText(requireActivity(), "알 수 없는 이유로 요청에 실패하였습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
             //분석 마무리
             is AnalyzeUseCaseResponse.SuccessResponseDomain ->{
                 if(loading.isShowing)
-                    loading.dismissWithAnimation()
+                    loading.dismiss()
                 if(response.success){
                     analyzeResult?.let {
                         CameraFragment_result.getInstance(response = it)
@@ -320,11 +320,11 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
                 }else if(response.code == LOW_ACCURACY_ERROR){
                     Toast.makeText(requireActivity(), "정확도가 기준에 미치지 않습니다. 다른 각도로 촬영을 시도해보세요!", Toast.LENGTH_SHORT).show()
                 }else if(response.code == NETWORK_ERROR_CODE){
-                    Toast.makeText(requireActivity(), "네트워크 연결을 확인하세요!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireActivity(), "네트워크 연결을 확인하세요!", Toast.LENGTH_LONG).show()
                 }else if(response.code == BITMAP_SAVE_ERROR){
-                    Toast.makeText(requireActivity(), "사진 저장에 실패했습니다! 권한을 확인하세요", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireActivity(), "사진 저장에 실패했습니다! 권한을 확인하세요", Toast.LENGTH_LONG).show()
                 }else{
-                    Toast.makeText(requireActivity(), "요청이 실패하였습니다. 잠시 후 다시 시도하세요!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireActivity(), "요청이 실패하였습니다. 잠시 후 다시 시도하세요!", Toast.LENGTH_LONG).show()
                 }
 
             }
@@ -338,7 +338,7 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
             titleText = resources.getString(titleId)
             subid?.let { contentText = resources.getString(it) }
             setNeutralButton(resources.getString(R.string.CONFIRM)) { dialog ->
-                dialog.dismissWithAnimation()
+                dialog.dismiss()
             }
             show()
         }
