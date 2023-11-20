@@ -7,8 +7,12 @@ import com.nbmlon.mushroomer.api.dto.CommentRequestDTO
 import com.nbmlon.mushroomer.api.dto.DefaultResponseDTO
 import com.nbmlon.mushroomer.api.dto.ThumbsUpRequestDTO
 import com.nbmlon.mushroomer.api.service.BoardService
+import com.nbmlon.mushroomer.api.service.BoardServiceModule
 import com.nbmlon.mushroomer.api.service.CommentService
+import com.nbmlon.mushroomer.api.service.CommentServiceModule
 import com.nbmlon.mushroomer.api.service.ReportService
+import com.nbmlon.mushroomer.api.service.ReportServiceModule
+import com.nbmlon.mushroomer.api.service.ThumbsServiceModule
 import com.nbmlon.mushroomer.api.service.ThumbsUpService
 import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest
 import com.nbmlon.mushroomer.domain.CommuPostUseCaseRequest.DeleteRequestDomain
@@ -41,10 +45,10 @@ fun CommuPostRepository() : CommuPostRepository = CommuPostRepositoryImpl()
 
 
 class CommuPostRepositoryImpl : CommuPostRepository {
-    @Inject lateinit var boardService : BoardService
-    @Inject lateinit var reportService : ReportService
-    @Inject lateinit var commentService : CommentService
-    @Inject lateinit var thumbsUpService: ThumbsUpService
+    val boardService : BoardService = BoardServiceModule().getBoardService()
+    val reportService : ReportService = ReportServiceModule().getReportService()
+    val commentService : CommentService = CommentServiceModule().getCommentService()
+    val thumbsUpService: ThumbsUpService = ThumbsServiceModule().getThumbsService()
 
     override suspend fun report(domain : ReportRequestDomain): CommuPostUseCaseResponse {
         return try{

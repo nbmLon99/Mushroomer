@@ -1,12 +1,9 @@
 package com.nbmlon.mushroomer.api.service
 
+import com.nbmlon.mushroomer.api.RetrofitModule
 import com.nbmlon.mushroomer.api.dto.BoardRequestDTO
 import com.nbmlon.mushroomer.api.dto.BoardResponseDTO.*
 import com.nbmlon.mushroomer.api.dto.DefaultResponseDTO
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -83,11 +80,10 @@ interface BoardService {
 
 
 
-@Module
-@InstallIn(ViewModelComponent::class)
 class BoardServiceModule {
-    @Provides
-    fun provideBoardService(retrofit: Retrofit): BoardService {
+    val retrofit : Retrofit = RetrofitModule.getRetrofit()
+
+    fun getBoardService(): BoardService {
         return retrofit.create(BoardService::class.java)
     }
 }

@@ -14,8 +14,7 @@ import javax.inject.Inject
 
 
 internal class AnalyzerTF(private val domain: AnalyzeUseCaseRequest.AnalyzeRequestDomain) {
-    @Inject
-    lateinit var model: Model
+    val model: Model = domain.model
 
     suspend fun getResponseTF() : ResponseTF?{
         val candidate = arrayListOf<ResponseTF>()

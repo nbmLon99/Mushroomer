@@ -3,6 +3,7 @@ package com.nbmlon.mushroomer.data.posts
 import com.nbmlon.mushroomer.api.ResponseCodeConstants
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.SUCCESS_CODE
 import com.nbmlon.mushroomer.api.service.BoardService
+import com.nbmlon.mushroomer.api.service.BoardServiceModule
 import com.nbmlon.mushroomer.domain.CommuHomeUseCaseResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -20,7 +21,7 @@ interface CommuHomeRepository {
 fun CommuHomeRepository() : CommuHomeRepository = CommuHomeRepositoryImpl()
 
 private class CommuHomeRepositoryImpl : CommuHomeRepository {
-    @Inject lateinit var backend : BoardService
+    val backend : BoardService = BoardServiceModule().getBoardService()
     override suspend fun getRecentPostsIntoHome(): CommuHomeUseCaseResponse.CommuHomeDomain {
         return try{
             withContext(Dispatchers.IO){

@@ -8,6 +8,7 @@ import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.SUCCESS_CODE
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.UNDEFINED_ERROR_CODE
 import com.nbmlon.mushroomer.api.service.BoardService
+import com.nbmlon.mushroomer.api.service.BoardServiceModule
 import com.nbmlon.mushroomer.domain.CommuPostUseCaseResponse
 import com.nbmlon.mushroomer.model.Post
 import com.nbmlon.mushroomer.ui.commu.board.BoardType
@@ -32,7 +33,7 @@ fun CommuHistoryRepository() : CommuHistoryRepository = CommuHistoryRepositoryIm
 
 
 class CommuHistoryRepositoryImpl : CommuHistoryRepository {
-    @Inject lateinit var boardBackend : BoardService
+    val boardBackend : BoardService = BoardServiceModule().getBoardService()
 
     override suspend fun getPostHistories(): CommuPostUseCaseResponse.PostsResponseDomain {
         return try{

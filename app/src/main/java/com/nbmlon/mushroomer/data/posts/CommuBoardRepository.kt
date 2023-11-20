@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.nbmlon.mushroomer.api.ResponseCodeConstants
 import com.nbmlon.mushroomer.api.service.BoardService
+import com.nbmlon.mushroomer.api.service.BoardServiceModule
 import com.nbmlon.mushroomer.domain.CommuPostUseCaseResponse
 import com.nbmlon.mushroomer.ui.commu.board.BoardType
 import kotlinx.coroutines.Dispatchers
@@ -23,8 +24,7 @@ interface BoardPostsRepository {
 fun BoardPostsRepository() : BoardPostsRepository = BoardPostsRepositoryImpl()
 
 private class BoardPostsRepositoryImpl: BoardPostsRepository {
-    @Inject
-    lateinit var backend : BoardService
+    val backend : BoardService = BoardServiceModule().getBoardService()
 
     override suspend fun loadPosts(boardType: BoardType): CommuPostUseCaseResponse.PostsResponseDomain {
         return try{

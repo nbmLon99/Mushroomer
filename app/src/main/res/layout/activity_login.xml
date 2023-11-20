@@ -188,6 +188,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/or"
+        android:visibility="gone"
         android:textSize="@dimen/text_small"
         />
 
@@ -200,6 +201,7 @@
         android:background="@color/textGreen"
         android:gravity="center"
         android:text="카카오톡 로그인"
+        android:visibility="gone"
         android:textSize="@dimen/text_small"
         android:textColor="@color/white"
         android:letterSpacing="0.2"

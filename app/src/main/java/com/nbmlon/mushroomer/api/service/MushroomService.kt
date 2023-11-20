@@ -1,11 +1,7 @@
 package com.nbmlon.mushroomer.api.service
 
+import com.nbmlon.mushroomer.api.RetrofitModule
 import com.nbmlon.mushroomer.api.dto.MushroomResponseDTO
-import com.nbmlon.mushroomer.ui.dogam.DogamSortingOption
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.GET
@@ -22,11 +18,10 @@ interface MushroomService {
     ) : Call<MushroomResponseDTO.MushResponseDTO>
 }
 
-@Module
-@InstallIn(ViewModelComponent::class)
 class MushServiceModule {
-    @Provides
-    fun provideMushService(retrofit: Retrofit): MushroomService {
+    val retrofit : Retrofit = RetrofitModule.getRetrofit()
+
+    fun getMushService(): MushroomService {
         return retrofit.create(MushroomService::class.java)
     }
 }

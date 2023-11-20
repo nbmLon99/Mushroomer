@@ -4,6 +4,7 @@ import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.api.ResponseCodeConstants
 import com.nbmlon.mushroomer.api.dto.UserRequestDTO
 import com.nbmlon.mushroomer.api.service.UserService
+import com.nbmlon.mushroomer.api.service.UserServiceModule
 import com.nbmlon.mushroomer.domain.ProfileUseCaseRequest
 import com.nbmlon.mushroomer.domain.ProfileUseCaseResponse
 import kotlinx.coroutines.Dispatchers
@@ -25,8 +26,7 @@ interface  ProfileRepository{
 
 
 private class ProfileRepositoryImpl : ProfileRepository {
-    @Inject
-    lateinit var service : UserService
+    val service : UserService = UserServiceModule().getUserService()
 
     override suspend fun withdrawal(domain: ProfileUseCaseRequest.WithdrawalRequestDomain): ProfileUseCaseResponse {
         return try{

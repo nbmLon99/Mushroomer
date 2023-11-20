@@ -10,7 +10,7 @@ sealed class ProfileUseCaseRequest{
     data class WithdrawalRequestDomain(val email : String, val password : String) : ProfileUseCaseRequest(){
         fun toDTO() : UserRequestDTO.WithdrawalRequestDTO =
             UserRequestDTO.WithdrawalRequestDTO(
-                email = email, password = sha256(password)
+                email = email, password = password
             )
     }
     data class ModifyIconRequestDomain(val icon : MultipartBody.Part) : ProfileUseCaseRequest()
@@ -21,9 +21,9 @@ sealed class ProfileUseCaseRequest{
                 name = modified.name,
                 email = modified.email,
                 password = if(modifiedPwd != null) {
-                                sha256(modifiedPwd)
+                                modifiedPwd
                             } else{
-                                sha256(password)
+                                password
                             },
                 nickname = modified.nickname,
                 cellphone = modified.phone_number

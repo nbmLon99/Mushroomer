@@ -18,7 +18,7 @@ import com.nbmlon.mushroomer.ui.dogam.DogamFragment
 import com.nbmlon.mushroomer.ui.map.MapFragment
 import com.nbmlon.mushroomer.ui.profile.ProfileFragment
 import com.kakao.sdk.common.util.Utility
-
+import dagger.hilt.android.AndroidEntryPoint
 
 
 class MainActivity : AppCompatActivity(), pictureDialogListener {

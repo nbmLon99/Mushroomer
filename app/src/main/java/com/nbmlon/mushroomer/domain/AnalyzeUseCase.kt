@@ -3,6 +3,7 @@ package com.nbmlon.mushroomer.domain
 import android.graphics.Bitmap
 import com.nbmlon.mushroomer.api.ResponseCodeConstants
 import com.nbmlon.mushroomer.api.dto.MushroomResponseDTO
+import com.nbmlon.mushroomer.ml.Model
 import com.nbmlon.mushroomer.model.AnalyzeResult
 import com.nbmlon.mushroomer.model.MushHistory
 import com.nbmlon.mushroomer.model.MushType
@@ -12,7 +13,8 @@ import okhttp3.MultipartBody
 
 sealed class AnalyzeUseCaseRequest{
     data class AnalyzeRequestDomain(
-        val pictures : ArrayList<Bitmap>
+        val pictures : ArrayList<Bitmap>,
+        val model : Model
     ) : AnalyzeUseCaseRequest()
 
     data class SaveHistoryDomain(

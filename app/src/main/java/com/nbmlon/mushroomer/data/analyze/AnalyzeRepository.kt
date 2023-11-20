@@ -1,11 +1,12 @@
 package com.nbmlon.mushroomer.data.analyze
 
-import com.nbmlon.mushroomer.api.EndConverter
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.LOW_ACCURACY_ERROR
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
 import com.nbmlon.mushroomer.api.dto.ObserveRequestDTO
+import com.nbmlon.mushroomer.api.service.MushServiceModule
 import com.nbmlon.mushroomer.api.service.MushroomService
 import com.nbmlon.mushroomer.api.service.ObserveService
+import com.nbmlon.mushroomer.api.service.ObserveServiceModule
 import com.nbmlon.mushroomer.domain.AnalyzeUseCaseRequest
 import com.nbmlon.mushroomer.domain.AnalyzeUseCaseResponse
 import com.nbmlon.mushroomer.domain.toAnalyzeDomain
@@ -13,7 +14,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.await
 import java.io.IOException
-import javax.inject.Inject
 
 fun AnalyzeRepository() :AnalyzeRepository = AnalyzeRepositoryImpl()
 
@@ -23,8 +23,8 @@ interface AnalyzeRepository{
 }
 
 private class AnalyzeRepositoryImpl : AnalyzeRepository {
-    @Inject lateinit var mushService : MushroomService
-    @Inject lateinit var observeService : ObserveService
+    val mushService : MushroomService = MushServiceModule().getMushService()
+    val observeService : ObserveService = ObserveServiceModule().getObserveService()
 
     override suspend fun analyze(domain: AnalyzeUseCaseRequest.AnalyzeRequestDomain): AnalyzeUseCaseResponse {
         return try {

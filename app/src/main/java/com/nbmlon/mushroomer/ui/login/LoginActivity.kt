@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -36,10 +37,13 @@ import com.nbmlon.mushroomer.utils.CIPHERTEXT_WRAPPER
 import com.nbmlon.mushroomer.utils.CryptographyManager
 import com.nbmlon.mushroomer.utils.REFRESH_TOKEN_ENCRYPTION_KEY
 import com.nbmlon.mushroomer.utils.SHARED_PREFS_FILENAME
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import taimoor.sultani.sweetalert2.Sweetalert
+
 
 class LoginActivity : AppCompatActivity() {
    companion object{
@@ -85,10 +89,14 @@ class LoginActivity : AppCompatActivity() {
             btnRegister.setOnClickListener { openRegisterDialog() }
             btnFindID.setOnClickListener { openFindIdDialog() }
             btnFindPW.setOnClickListener { openFindPwDialog() }
+            btnKakaoLogin.setOnClickListener { kakaoLogin() }
         }
     }
 
 
+    private fun kakaoLogin(){
+
+    }
 
     /**
      * The logic is kept inside onResume instead of onCreate so that authorizing biometrics takes
@@ -111,7 +119,7 @@ class LoginActivity : AppCompatActivity() {
     }
     private fun responseObserver(response : LoginUseCaseResponse){
         if( loading.isShowing )
-            loading.dismissWithAnimation()
+            loading.dismiss()
         when(response){
             is LoginResponseDomain ->{
                 if(response.success){
@@ -264,7 +272,8 @@ class LoginActivity : AppCompatActivity() {
                     etEmail.error = "이메일 형식을 확인해 주세요"
                 }else if(etPassword.text.toString().length <=5 ) {
                     etPassword.error = "비밀번호는 최소 6글자입니다."
-                }else if(!etPassword.text.equals(etPasswordConfirm.text)){
+                }else if(etPassword.text.toString() != etPasswordConfirm.text.toString()){
+                    Log.d("PasswordComparison", "Password: " + etPassword.text + ", Confirm: " + etPasswordConfirm.text);
                     etPasswordConfirm.error = "비밀번호가 일치하지 않습니다!"
                 }else{
                     loginViewModel.request(

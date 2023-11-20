@@ -1,11 +1,8 @@
 package com.nbmlon.mushroomer.api.service
 
+import com.nbmlon.mushroomer.api.RetrofitModule
 import com.nbmlon.mushroomer.api.dto.DefaultResponseDTO
 import com.nbmlon.mushroomer.api.dto.ThumbsUpRequestDTO
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.Body
@@ -30,11 +27,10 @@ interface ThumbsUpService {
         ) : Call<DefaultResponseDTO>
 }
 
-@Module
-@InstallIn(ViewModelComponent::class)
 class ThumbsServiceModule {
-    @Provides
-    fun provideThumbsService(retrofit: Retrofit): ThumbsUpService {
+    val retrofit : Retrofit = RetrofitModule.getRetrofit()
+
+    fun getThumbsService(): ThumbsUpService {
         return retrofit.create(ThumbsUpService::class.java)
     }
 }

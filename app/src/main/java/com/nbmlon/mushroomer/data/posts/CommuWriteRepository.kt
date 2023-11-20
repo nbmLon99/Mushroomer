@@ -4,6 +4,7 @@ import com.nbmlon.mushroomer.AppUser
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
 import com.nbmlon.mushroomer.api.dto.BoardRequestDTO
 import com.nbmlon.mushroomer.api.service.BoardService
+import com.nbmlon.mushroomer.api.service.BoardServiceModule
 import com.nbmlon.mushroomer.domain.CommuWriteUseCaseRequest
 import com.nbmlon.mushroomer.domain.CommuWriteUseCaseResponse
 import kotlinx.coroutines.Dispatchers
@@ -22,8 +23,7 @@ fun CommuWriteRepository() : CommuWriteRepository = CommuWriteRepositoryImpl()
 
 
 class CommuWriteRepositoryImpl : CommuWriteRepository {
-    @Inject
-    lateinit var service : BoardService
+    val service : BoardService = BoardServiceModule().getBoardService()
 
     override suspend fun uploadPost(domain: CommuWriteUseCaseRequest.UploadPostDomain): CommuWriteUseCaseResponse {
         return try{

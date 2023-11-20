@@ -1,8 +1,10 @@
 package com.nbmlon.mushroomer.data.user
 
+import android.util.Log
 import com.nbmlon.mushroomer.api.ResponseCodeConstants
 import com.nbmlon.mushroomer.api.dto.UserRequestDTO
 import com.nbmlon.mushroomer.api.service.UserService
+import com.nbmlon.mushroomer.api.service.UserServiceModule
 import com.nbmlon.mushroomer.domain.LoginUseCaseRequest
 import com.nbmlon.mushroomer.domain.LoginUseCaseRequest.LoginRequestDomain
 import com.nbmlon.mushroomer.domain.LoginUseCaseRequest.RegisterRequestDomain
@@ -16,6 +18,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.await
 import java.io.IOException
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
 /**
@@ -41,9 +44,8 @@ interface UserRepository {
     suspend fun loginWithToken(domain : TokenLoginRequestDomain): LoginUseCaseResponse
 }
 
-private class UserRepositoryImpl: UserRepository {
-    @Inject
-    lateinit var service : UserService
+private class UserRepositoryImpl : UserRepository{
+    val service = UserServiceModule().getUserService()
     override suspend fun login(domain: LoginRequestDomain): LoginUseCaseResponse {
         return try{
             withContext(Dispatchers.IO){
@@ -64,6 +66,8 @@ private class UserRepositoryImpl: UserRepository {
                 ResponseCodeConstants.NETWORK_ERROR_CODE
             )
         }catch (e : Exception){
+            e.printStackTrace()
+            Log.e("api",e.toString())
             LoginUseCaseResponse.SuccessResponseDomain(false,
                 ResponseCodeConstants.UNDEFINED_ERROR_CODE
             )
@@ -76,6 +80,7 @@ private class UserRepositoryImpl: UserRepository {
 
     override suspend fun register(domain : RegisterRequestDomain): LoginUseCaseResponse {
         return try{
+            Log.d("api","회원가입 요청 완료")
             withContext(Dispatchers.IO) {
                 val result = service.signUp(domain.toDTO()).await()
                 LoginUseCaseResponse.SuccessResponseDomain(
@@ -89,6 +94,8 @@ private class UserRepositoryImpl: UserRepository {
                 ResponseCodeConstants.NETWORK_ERROR_CODE
             )
         }catch (e : Exception){
+            e.printStackTrace()
+            Log.e("api",e.toString())
             LoginUseCaseResponse.SuccessResponseDomain(false,
                 ResponseCodeConstants.UNDEFINED_ERROR_CODE
             )

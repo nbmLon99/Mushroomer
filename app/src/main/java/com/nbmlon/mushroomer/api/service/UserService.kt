@@ -1,12 +1,12 @@
 package com.nbmlon.mushroomer.api.service
 
+import com.nbmlon.mushroomer.api.RetrofitModule
 import com.nbmlon.mushroomer.api.dto.DefaultResponseDTO
 import com.nbmlon.mushroomer.api.dto.UserRequestDTO.*
 import com.nbmlon.mushroomer.api.dto.UserResponseDTO.*
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.components.SingletonComponent
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -103,23 +103,13 @@ interface UserService {
         @Body target : TargetEmailDTO
     ) : Call<FoundPasswordDTO>
 
-    /**
-    //토큰 재발급
-    @POST("/users/token/generateToken")
-    suspend fun generateToken() : Call<GenerateTokenResponseDTO>
-    //유저 정보 변경
-    @PUT("/users/{userId}")
-    suspend fun modifyUser(@Path("userId")id:Int, @Body request : RegisterRequestDTO) : Call<ModifyUserResponseDTO>
-    **/
 }
 
-@Module
-@InstallIn(ViewModelComponent::class)
+
 class UserServiceModule {
-    @Provides
-    fun provideUserService(retrofit: Retrofit): UserService {
-        return retrofit.create(UserService::class.java)
-    }
+    val retrofit : Retrofit = RetrofitModule.getRetrofit()
+    fun getUserService() : UserService =
+        retrofit.create(UserService::class.java)
 }
 
 

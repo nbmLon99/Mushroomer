@@ -30,6 +30,7 @@ import com.nbmlon.mushroomer.api.RequestCodeConstants.CAMERA_PERMISSION_REQUEST_
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.BITMAP_SAVE_ERROR
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.LOW_ACCURACY_ERROR
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
+import com.nbmlon.mushroomer.data.analyze.TFModule
 import com.nbmlon.mushroomer.databinding.FragmentCameraBinding
 import com.nbmlon.mushroomer.domain.AnalyzeUseCaseRequest
 import com.nbmlon.mushroomer.domain.AnalyzeUseCaseResponse
@@ -256,7 +257,12 @@ class CameraFragment : Fragment(), ImageDeleteListner, AnalyzeStartListener {
         if (checkLocationPermission()) {
             requestLocationUpdates()
         }
-        viewModel.startAnalysis()
+        viewModel.startAnalysis(
+            AnalyzeUseCaseRequest.AnalyzeRequestDomain(
+                viewModel.capturedImages.value!!,
+                TFModule().getModel(requireContext())
+            )
+        )
         loading.show()
     }
 

@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.NETWORK_ERROR_CODE
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.SUCCESS_CODE
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.UNDEFINED_ERROR_CODE
+import com.nbmlon.mushroomer.api.service.MushServiceModule
 import com.nbmlon.mushroomer.api.service.MushroomService
 import com.nbmlon.mushroomer.domain.DogamUseCaseReqeust
 import com.nbmlon.mushroomer.domain.DogamUseCaseResponse
@@ -31,7 +32,7 @@ private class DogamRepositoryImpl : DogamRepository {
         const val NETWORK_PAGE_SIZE = 50
     }
 
-    @Inject lateinit var mushService : MushroomService
+    val mushService : MushroomService = MushServiceModule().getMushService()
     override suspend fun fetchDogam(): DogamUseCaseResponse.LoadDogamResponse {
         return try{
             withContext(Dispatchers.IO){

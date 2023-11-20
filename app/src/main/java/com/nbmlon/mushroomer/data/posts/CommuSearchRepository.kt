@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import com.nbmlon.mushroomer.api.ResponseCodeConstants
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.SUCCESS_CODE
 import com.nbmlon.mushroomer.api.service.BoardService
+import com.nbmlon.mushroomer.api.service.BoardServiceModule
 import com.nbmlon.mushroomer.domain.CommuPostUseCaseResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -24,8 +25,7 @@ fun PostsSearchRepository() : PostsSearchRepository = PostsSearchRepositoryImpl(
 
 
 class PostsSearchRepositoryImpl : PostsSearchRepository {
-    @Inject
-    lateinit var backend : BoardService
+    val backend : BoardService = BoardServiceModule().getBoardService()
 
 
     override suspend fun searchPosts(searchKeyword : String) : CommuPostUseCaseResponse.PostsResponseDomain{

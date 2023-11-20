@@ -17,6 +17,8 @@ import androidx.lifecycle.viewModelScope
 import com.nbmlon.mushroomer.api.EndConverter
 import com.nbmlon.mushroomer.api.ResponseCodeConstants.BITMAP_SAVE_ERROR
 import com.nbmlon.mushroomer.data.analyze.AnalyzeRepository
+import com.nbmlon.mushroomer.data.analyze.AnalyzerTF
+import com.nbmlon.mushroomer.data.analyze.TFModule
 import com.nbmlon.mushroomer.domain.AnalyzeUseCaseRequest
 import com.nbmlon.mushroomer.domain.AnalyzeUseCaseResponse
 import com.nbmlon.mushroomer.model.MushHistory
@@ -44,9 +46,9 @@ class CameraViewModel : ViewModel() {
 
 
     // 분석 작업을 수행하는 함수입니다.
-    fun startAnalysis() {
+    fun startAnalysis(domain : AnalyzeUseCaseRequest.AnalyzeRequestDomain) {
         viewModelScope.launch {
-            _response.value = repository.analyze(AnalyzeUseCaseRequest.AnalyzeRequestDomain(capturedImages.value!!))
+            _response.value = repository.analyze(domain)
         }
     }
 

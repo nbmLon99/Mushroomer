@@ -44,6 +44,7 @@ sealed class LoginUseCaseRequest{
         val name : String,
         val email : String
     ) : LoginUseCaseRequest()
+
 }
 
 
@@ -51,7 +52,7 @@ sealed class LoginUseCaseRequest{
 fun LoginRequestDomain.toDTO() : UserRequestDTO.LoginRequestDTO =
     UserRequestDTO.LoginRequestDTO(
         email = email,
-        password = sha256(password)
+        password = password
     )
 
 //fun LoginUseCaseRequest.EditRequestDomain.toDTO() =
@@ -68,7 +69,7 @@ fun RegisterRequestDomain.toDTO() : UserRequestDTO.RegisterRequestDTO =
     UserRequestDTO.RegisterRequestDTO(
         name = name,
         email = email,
-        password = sha256(password),
+        password = password,
         nickname = nickname,
         cellphone = cellphone
     )
